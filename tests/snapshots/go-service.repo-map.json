@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "root": ".",
+  "summary": {
+    "purpose": "Go service that consumes queue events and writes normalized audit records.",
+    "primaryLanguage": "Go",
+    "packageManagers": [
+      "go modules"
+    ],
+    "frameworks": [],
+    "monorepo": false
+  },
+  "inventory": {
+    "fileCount": 6,
+    "directoryCount": 6,
+    "symlinkCount": 0,
+    "limitHit": false,
+    "gitignoreRuleCount": 0,
+    "configIgnoreRuleCount": 0
+  },
+  "config": {
+    "path": "agent-ready.config.json",
+    "loaded": false,
+    "profiles": [],
+    "warnings": []
+  },
+  "languages": [
+    {
+      "name": "Go",
+      "fileCount": 3,
+      "confidence": 0.95,
+      "evidence": [
+        "Detected 3 Go files.",
+        "Detected Go manifest signal."
+      ]
+    }
+  ],
+  "packageManagers": [
+    {
+      "name": "go modules",
+      "confidence": 0.98,
+      "evidence": [
+        "Detected go modules from go.mod."
+      ]
+    }
+  ],
+  "monorepo": {
+    "detected": false,
+    "kind": "single-package",
+    "tools": [],
+    "workspaceGlobs": [],
+    "packages": [],
+    "packageCount": 0
+  },
+  "frameworks": [],
+  "directories": [
+    {
+      "path": ".github",
+      "role": "GitHub workflows and repository automation",
+      "confidence": 0.85
+    },
+    {
+      "path": "cmd",
+      "role": "command entrypoints",
+      "confidence": 0.85
+    },
+    {
+      "path": "internal",
+      "role": "internal application packages",
+      "confidence": 0.85
+    }
+  ],
+  "entrypoints": [
+    {
+      "path": "cmd/worker/main.go",
+      "kind": "Go command entrypoint",
+      "confidence": 0.88
+    }
+  ],
+  "docs": [
+    {
+      "path": "README.md",
+      "role": "readme"
+    }
+  ],
+  "ci": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "provider": "GitHub Actions",
+      "runCommands": [
+        "go test ./..."
+      ]
+    }
+  ],
+  "generatedHints": []
+}

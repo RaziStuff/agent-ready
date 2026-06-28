@@ -1,0 +1,13 @@
+GEM
+  specs:
+    rails (7.1.0)
+    rspec-rails (6.1.0)
+    rubocop (1.60.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  rails
+  rspec-rails
+  rubocop

@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agent-ready.dev/schemas/run-receipt.schema.json",
+  "title": "agent-ready command receipt",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "root",
+    "requestedCommand",
+    "ok",
+    "status"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string"
+    },
+    "generatedAt": {
+      "type": "string"
+    },
+    "root": {
+      "type": "string"
+    },
+    "requestedCommand": {
+      "type": "string"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["passed", "failed", "timed_out", "refused", "unknown_command"]
+    },
+    "command": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "sideEffects": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "requiresNetwork": {
+          "type": "boolean"
+        },
+        "writesFiles": {
+          "type": "boolean"
+        },
+        "risk": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        }
+      }
+    },
+    "approvals": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "timeoutMs": {
+      "type": "number"
+    },
+    "startedAt": {
+      "type": "string"
+    },
+    "finishedAt": {
+      "type": "string"
+    },
+    "durationMs": {
+      "type": "number"
+    },
+    "exitCode": {
+      "type": "number"
+    },
+    "signal": {
+      "type": ["string", "null"]
+    },
+    "stdout": {
+      "type": "string"
+    },
+    "stderr": {
+      "type": "string"
+    },
+    "outputTruncated": {
+      "type": "boolean"
+    },
+    "refusalReasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "availableApprovals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "availableCommands": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

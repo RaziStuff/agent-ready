@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "commands": [
+    {
+      "name": "format",
+      "command": "cargo fmt --check",
+      "source": "Cargo.toml",
+      "confidence": 0.72,
+      "requiresNetwork": false,
+      "writesFiles": true,
+      "risk": "low"
+    },
+    {
+      "name": "lint",
+      "command": "cargo clippy",
+      "source": "Cargo.toml",
+      "confidence": 0.72,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "test",
+      "command": "cargo test",
+      "source": "Cargo.toml",
+      "confidence": 0.9,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "typecheck",
+      "command": "cargo check",
+      "source": "Cargo.toml",
+      "confidence": 0.84,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    }
+  ]
+}

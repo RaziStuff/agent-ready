@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "root": ".",
+  "summary": {
+    "purpose": "Spring Boot service for order lifecycle APIs and fulfillment events.",
+    "primaryLanguage": "Java",
+    "packageManagers": [
+      "maven"
+    ],
+    "frameworks": [
+      "Spring Boot"
+    ],
+    "monorepo": false
+  },
+  "inventory": {
+    "fileCount": 6,
+    "directoryCount": 11,
+    "symlinkCount": 0,
+    "limitHit": false,
+    "gitignoreRuleCount": 0,
+    "configIgnoreRuleCount": 0
+  },
+  "config": {
+    "path": "agent-ready.config.json",
+    "loaded": false,
+    "profiles": [],
+    "warnings": []
+  },
+  "languages": [
+    {
+      "name": "Java",
+      "fileCount": 3,
+      "confidence": 0.95,
+      "evidence": [
+        "Detected 3 Java files.",
+        "Detected Java manifest signal."
+      ]
+    }
+  ],
+  "packageManagers": [
+    {
+      "name": "maven",
+      "confidence": 0.96,
+      "evidence": [
+        "Detected maven from mvnw."
+      ]
+    }
+  ],
+  "monorepo": {
+    "detected": false,
+    "kind": "single-package",
+    "tools": [],
+    "workspaceGlobs": [],
+    "packages": [],
+    "packageCount": 0
+  },
+  "frameworks": [
+    {
+      "name": "Spring Boot",
+      "confidence": 0.9,
+      "evidence": [
+        "Detected Spring Boot from Java build files or application entrypoint."
+      ]
+    }
+  ],
+  "directories": [
+    {
+      "path": "src",
+      "role": "application source",
+      "confidence": 0.85
+    }
+  ],
+  "entrypoints": [
+    {
+      "path": "src/main/java/com/acme/orders/OrdersApplication.java",
+      "kind": "Spring Boot application entrypoint",
+      "confidence": 0.88
+    }
+  ],
+  "docs": [
+    {
+      "path": "README.md",
+      "role": "readme"
+    }
+  ],
+  "ci": [],
+  "generatedHints": []
+}

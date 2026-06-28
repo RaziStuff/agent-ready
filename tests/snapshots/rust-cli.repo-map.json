@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "root": ".",
+  "summary": {
+    "purpose": "Rust command-line tools for summarizing local log files.",
+    "primaryLanguage": "Rust",
+    "packageManagers": [
+      "cargo"
+    ],
+    "frameworks": [],
+    "monorepo": false
+  },
+  "inventory": {
+    "fileCount": 6,
+    "directoryCount": 2,
+    "symlinkCount": 0,
+    "limitHit": false,
+    "gitignoreRuleCount": 0,
+    "configIgnoreRuleCount": 0
+  },
+  "config": {
+    "path": "agent-ready.config.json",
+    "loaded": false,
+    "profiles": [],
+    "warnings": []
+  },
+  "languages": [
+    {
+      "name": "Rust",
+      "fileCount": 3,
+      "confidence": 0.95,
+      "evidence": [
+        "Detected 3 Rust files.",
+        "Detected Rust manifest signal."
+      ]
+    }
+  ],
+  "packageManagers": [
+    {
+      "name": "cargo",
+      "confidence": 0.96,
+      "evidence": [
+        "Detected cargo from Cargo.lock."
+      ]
+    }
+  ],
+  "monorepo": {
+    "detected": false,
+    "kind": "single-package",
+    "tools": [],
+    "workspaceGlobs": [],
+    "packages": [],
+    "packageCount": 0
+  },
+  "frameworks": [],
+  "directories": [
+    {
+      "path": "src",
+      "role": "application source",
+      "confidence": 0.85
+    },
+    {
+      "path": "tests",
+      "role": "tests",
+      "confidence": 0.85
+    }
+  ],
+  "entrypoints": [
+    {
+      "path": "src/main.rs",
+      "kind": "Rust binary entrypoint",
+      "confidence": 0.82
+    },
+    {
+      "path": "Cargo.toml",
+      "kind": "Rust package manifest",
+      "confidence": 0.82
+    }
+  ],
+  "docs": [
+    {
+      "path": "README.md",
+      "role": "readme"
+    }
+  ],
+  "ci": [],
+  "generatedHints": []
+}

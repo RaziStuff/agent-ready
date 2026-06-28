@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "0.1.0",
+  "profiles": ["generic"],
+  "ignore": ["examples/legacy/**"],
+  "riskPaths": ["billing/**", "infra/**"],
+  "generatedPaths": ["src/generated/**"],
+  "directoryRoles": {
+    "billing": "billing domain code"
+  },
+  "commands": {
+    "install": "pnpm install",
+    "test": "pnpm test",
+    "lint": "pnpm lint",
+    "verify": {
+      "command": "pnpm lint && pnpm test",
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    }
+  },
+  "sections": {
+    "purpose": "Short repo purpose written by a maintainer.",
+    "conventions": [
+      "Prefer existing service APIs before adding new cross-module imports.",
+      "Keep generated files scoped to generator output changes."
+    ]
+  }
+}

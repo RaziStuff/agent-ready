@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agent-ready.dev/schemas/preflight.schema.json",
+  "title": "agent-ready preflight report",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "root",
+    "ok",
+    "strict",
+    "status",
+    "pathSource",
+    "changedDefaulted",
+    "goal",
+    "summary",
+    "doctor",
+    "impact",
+    "recommendedValidation",
+    "handoffCommand",
+    "nextSteps"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string"
+    },
+    "generatedAt": {
+      "type": "string"
+    },
+    "root": {
+      "type": "string"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "strict": {
+      "type": "boolean"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ready", "needs_validation", "needs_review", "blocked"]
+    },
+    "pathSource": {
+      "type": "string",
+      "enum": ["provided", "git_changed"]
+    },
+    "changedDefaulted": {
+      "type": "boolean"
+    },
+    "goal": {
+      "type": ["string", "null"]
+    },
+    "summary": {
+      "type": "object"
+    },
+    "doctor": {
+      "type": "object",
+      "required": ["ok", "strict", "status", "counts", "nextSteps", "validation"],
+      "additionalProperties": true
+    },
+    "impact": {
+      "type": "object",
+      "required": ["status", "ok", "pathSource", "paths", "impacts", "affectedPackages", "recommendedCommands", "nextSteps"],
+      "additionalProperties": true
+    },
+    "recommendedValidation": {
+      "type": "array"
+    },
+    "handoffCommand": {
+      "type": "string"
+    },
+    "nextSteps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

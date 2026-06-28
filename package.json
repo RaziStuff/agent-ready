@@ -1,0 +1,55 @@
+{
+  "name": "agent-ready",
+  "version": "0.1.0",
+  "description": "Generate AGENTS.md and repo metadata so AI coding agents can onboard quickly.",
+  "type": "module",
+  "bin": {
+    "agent-ready": "./src/cli/main.js"
+  },
+  "scripts": {
+    "scan": "node src/cli/main.js scan",
+    "init": "node src/cli/main.js init",
+    "context": "node src/cli/main.js context",
+    "workspaces": "node src/cli/main.js workspaces",
+    "affected": "node src/cli/main.js affected",
+    "doctor": "node src/cli/main.js doctor",
+    "doctor:strict": "node src/cli/main.js doctor --strict",
+    "validate": "node src/cli/main.js validate",
+    "validate:strict": "node src/cli/main.js validate --strict",
+    "test": "node --test tests/*.test.js",
+    "snapshots:check": "node scripts/snapshots.js --check",
+    "snapshots:update": "node scripts/snapshots.js --write",
+    "mcp:compat": "node scripts/mcp-compat-smoke.js",
+    "package:check": "node scripts/package-smoke.js",
+    "package:install-smoke": "node scripts/package-install-smoke.js",
+    "release:notes": "node scripts/release-notes.js",
+    "release:notes:check": "node scripts/release-notes.js --check",
+    "release:notes:write": "node scripts/release-notes.js --write",
+    "ci": "npm test && npm run snapshots:check && npm run validate:strict && npm run doctor:strict && npm run mcp:compat && npm run package:check && npm run package:install-smoke && npm run release:notes:check"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "files": [
+    "src",
+    "schemas",
+    "docs",
+    "action.yml",
+    "agent-ready.config.example.json",
+    "AGENTS.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "RELEASE_NOTES.md",
+    "SECURITY.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "agents",
+    "AGENTS.md",
+    "ai",
+    "cli",
+    "repo"
+  ],
+  "license": "MIT"
+}

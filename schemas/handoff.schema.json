@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agent-ready.dev/schemas/handoff.schema.json",
+  "title": "agent-ready handoff report",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "root",
+    "ok",
+    "status",
+    "goal",
+    "summary",
+    "doctor",
+    "impact",
+    "recommendedValidation",
+    "relevantDocs",
+    "nextSteps"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string"
+    },
+    "generatedAt": {
+      "type": "string"
+    },
+    "root": {
+      "type": "string"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ready", "needs_attention", "blocked"]
+    },
+    "goal": {
+      "type": ["string", "null"]
+    },
+    "summary": {
+      "$ref": "#/$defs/summary"
+    },
+    "doctor": {
+      "$ref": "#/$defs/compactDoctor"
+    },
+    "impact": {
+      "$ref": "#/$defs/compactImpact"
+    },
+    "recommendedValidation": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/recommendedCommand"
+      }
+    },
+    "relevantDocs": {
+      "type": "array"
+    },
+    "nextSteps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "summary": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["purpose", "packageManagers", "frameworks"],
+      "properties": {
+        "purpose": {
+          "type": "string"
+        },
+        "packageManagers": {
+          "type": "array"
+        },
+        "frameworks": {
+          "type": "array"
+        }
+      }
+    },
+    "compactDoctor": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["ok", "strict", "status", "counts", "nextSteps", "validation"],
+      "properties": {
+        "ok": {
+          "type": "boolean"
+        },
+        "strict": {
+          "type": "boolean"
+        },
+        "status": {
+          "type": "string"
+        },
+        "counts": {
+          "type": "object"
+        },
+        "nextSteps": {
+          "type": "array"
+        },
+        "validation": {
+          "type": "object"
+        }
+      }
+    },
+    "compactImpact": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["status", "ok", "pathSource", "paths", "impacts", "affectedPackages", "recommendedCommands", "nextSteps"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "ok": {
+          "type": "boolean"
+        },
+        "pathSource": {
+          "type": "string",
+          "enum": ["provided", "git_changed"]
+        },
+        "paths": {
+          "type": "array"
+        },
+        "impacts": {
+          "type": "array"
+        },
+        "affectedPackages": {
+          "type": "array"
+        },
+        "recommendedCommands": {
+          "type": "array"
+        },
+        "nextSteps": {
+          "type": "array"
+        }
+      }
+    },
+    "recommendedCommand": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["name", "command", "reason", "risk", "requiresNetwork", "writesFiles"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "command": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "risk": {
+          "type": "string"
+        },
+        "requiresNetwork": {
+          "type": "boolean"
+        },
+        "writesFiles": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

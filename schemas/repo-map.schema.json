@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agent-ready.dev/schemas/repo-map.schema.json",
+  "title": "agent-ready repo map",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "root",
+    "summary",
+    "inventory",
+    "languages",
+    "packageManagers",
+    "frameworks",
+    "directories",
+    "entrypoints",
+    "docs",
+    "ci",
+    "generatedHints"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string"
+    },
+    "generatedAt": {
+      "type": "string"
+    },
+    "root": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "object",
+      "required": ["purpose", "packageManagers", "frameworks"],
+      "additionalProperties": true,
+      "properties": {
+        "purpose": {
+          "type": "string"
+        },
+        "primaryLanguage": {
+          "type": ["string", "null"]
+        },
+        "packageManagers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "frameworks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "inventory": {
+      "type": "object",
+      "required": ["fileCount", "directoryCount", "symlinkCount", "limitHit"],
+      "additionalProperties": true,
+      "properties": {
+        "fileCount": {
+          "type": "number"
+        },
+        "directoryCount": {
+          "type": "number"
+        },
+        "symlinkCount": {
+          "type": "number"
+        },
+        "limitHit": {
+          "type": "boolean"
+        }
+      }
+    },
+    "languages": {
+      "type": "array"
+    },
+    "packageManagers": {
+      "type": "array"
+    },
+    "monorepo": {
+      "type": "object",
+      "required": ["detected", "kind", "tools", "workspaceGlobs", "packages", "packageCount"],
+      "additionalProperties": true,
+      "properties": {
+        "detected": {
+          "type": "boolean"
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["single-package", "monorepo"]
+        },
+        "tools": {
+          "type": "array"
+        },
+        "workspaceGlobs": {
+          "type": "array"
+        },
+        "packages": {
+          "type": "array"
+        },
+        "packageCount": {
+          "type": "number"
+        }
+      }
+    },
+    "frameworks": {
+      "type": "array"
+    },
+    "directories": {
+      "type": "array"
+    },
+    "entrypoints": {
+      "type": "array"
+    },
+    "docs": {
+      "type": "array"
+    },
+    "ci": {
+      "type": "array"
+    },
+    "generatedHints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

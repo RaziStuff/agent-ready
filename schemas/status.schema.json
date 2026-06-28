@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agent-ready.dev/schemas/status.schema.json",
+  "title": "agent-ready status report",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "root",
+    "strict",
+    "summary",
+    "doctor",
+    "worktree",
+    "preflight",
+    "validation",
+    "adoption",
+    "ok",
+    "status",
+    "nextSteps"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string"
+    },
+    "generatedAt": {
+      "type": "string"
+    },
+    "root": {
+      "type": "string"
+    },
+    "strict": {
+      "type": "boolean"
+    },
+    "summary": {
+      "type": "object",
+      "required": ["purpose", "packageManagers", "frameworks"],
+      "additionalProperties": true
+    },
+    "doctor": {
+      "type": "object",
+      "required": ["ok", "strict", "status", "counts", "nextSteps", "validation"],
+      "additionalProperties": true
+    },
+    "worktree": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["available", "pathSource", "changedPathCount", "changedPaths"],
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "pathSource": {
+          "type": "string",
+          "enum": ["git_changed"]
+        },
+        "changedPathCount": {
+          "type": "number"
+        },
+        "changedPaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "preflight": {
+      "type": ["object", "null"]
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["recommended", "receipts"],
+      "properties": {
+        "recommended": {
+          "type": "array"
+        },
+        "receipts": {
+          "type": "array"
+        }
+      }
+    },
+    "adoption": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["recipes", "ci"],
+      "properties": {
+        "recipes": {
+          "type": "object",
+          "required": ["cli", "mcp", "recommendedRecipe"],
+          "additionalProperties": true
+        },
+        "ci": {
+          "type": "object",
+          "required": ["workflowPath", "workflowDetected", "previewCommand", "writeCommand", "note"],
+          "additionalProperties": true
+        }
+      }
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ready", "needs_attention", "needs_validation", "needs_review", "blocked"]
+    },
+    "nextSteps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

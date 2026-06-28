@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "root": ".",
+  "summary": {
+    "purpose": "FastAPI service for support ticket triage and account lookup.",
+    "primaryLanguage": "Python",
+    "packageManagers": [
+      "uv"
+    ],
+    "frameworks": [
+      "FastAPI"
+    ],
+    "monorepo": false
+  },
+  "inventory": {
+    "fileCount": 7,
+    "directoryCount": 4,
+    "symlinkCount": 0,
+    "limitHit": false,
+    "gitignoreRuleCount": 0,
+    "configIgnoreRuleCount": 0
+  },
+  "config": {
+    "path": "agent-ready.config.json",
+    "loaded": false,
+    "profiles": [],
+    "warnings": []
+  },
+  "languages": [
+    {
+      "name": "Python",
+      "fileCount": 3,
+      "confidence": 0.95,
+      "evidence": [
+        "Detected 3 Python files.",
+        "Detected Python manifest signal."
+      ]
+    }
+  ],
+  "packageManagers": [
+    {
+      "name": "uv",
+      "confidence": 0.96,
+      "evidence": [
+        "Detected uv from uv.lock."
+      ]
+    }
+  ],
+  "monorepo": {
+    "detected": false,
+    "kind": "single-package",
+    "tools": [],
+    "workspaceGlobs": [],
+    "packages": [],
+    "packageCount": 0
+  },
+  "frameworks": [
+    {
+      "name": "FastAPI",
+      "confidence": 0.82,
+      "evidence": [
+        "Detected FastAPI from Python project files."
+      ]
+    }
+  ],
+  "directories": [
+    {
+      "path": "alembic",
+      "role": "database migrations",
+      "confidence": 0.85
+    },
+    {
+      "path": "app",
+      "role": "application routes or app source",
+      "confidence": 0.85
+    },
+    {
+      "path": "tests",
+      "role": "tests",
+      "confidence": 0.85
+    }
+  ],
+  "entrypoints": [
+    {
+      "path": "app/main.py",
+      "kind": "Python application entrypoint",
+      "confidence": 0.82
+    }
+  ],
+  "docs": [
+    {
+      "path": "README.md",
+      "role": "readme"
+    }
+  ],
+  "ci": [],
+  "generatedHints": []
+}

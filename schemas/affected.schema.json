@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agent-ready.dev/schemas/affected.schema.json",
+  "title": "agent-ready affected workspaces report",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "root",
+    "ok",
+    "status",
+    "pathSource",
+    "paths",
+    "monorepo",
+    "affectedPackages",
+    "unmatchedPaths",
+    "recommendedCommands",
+    "nextSteps"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string"
+    },
+    "generatedAt": {
+      "type": "string"
+    },
+    "root": {
+      "type": "string"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["affected", "unaffected", "single-package", "blocked"]
+    },
+    "pathSource": {
+      "type": "string",
+      "enum": ["provided", "git_changed"]
+    },
+    "paths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "monorepo": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["detected", "kind", "tools", "workspaceGlobs", "packageCount"]
+    },
+    "affectedPackages": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/affectedPackage"
+      }
+    },
+    "unmatchedPaths": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/unmatchedPath"
+      }
+    },
+    "recommendedCommands": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/recommendedCommand"
+      }
+    },
+    "nextSteps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "affectedPackage": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["path", "name", "private", "scripts", "commands", "changedPaths"],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "private": {
+          "type": "boolean"
+        },
+        "scripts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "commands": {
+          "type": "array"
+        },
+        "changedPaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "unmatchedPath": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["path", "reason", "outsideRoot"],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "outsideRoot": {
+          "type": "boolean"
+        }
+      }
+    },
+    "recommendedCommand": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["packagePath", "packageName", "name", "command", "reason"],
+      "properties": {
+        "packagePath": {
+          "type": "string"
+        },
+        "packageName": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "command": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

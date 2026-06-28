@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "0.1.0",
+  "profiles": ["generic"],
+  "ignore": ["examples/**"],
+  "commands": {
+    "install": "npm install",
+    "test": {
+      "command": "node --test tests/*.test.js",
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    "verify": {
+      "command": "npm run ci",
+      "requiresNetwork": false,
+      "writesFiles": true,
+      "risk": "low"
+    }
+  },
+  "sections": {
+    "purpose": "`agent-ready` generates repo-native operating guides for AI coding agents.",
+    "conventions": [
+      "Example fixture repos live under `examples/` and are ignored for this repo's own command detection.",
+      "Generated `AGENTS.md` output is covered by snapshots in `tests/snapshots/`."
+    ]
+  }
+}

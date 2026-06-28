@@ -1,0 +1,3 @@
+CREATE TABLE account (
+  id TEXT PRIMARY KEY
+);

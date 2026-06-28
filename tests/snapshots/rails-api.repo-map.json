@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "root": ".",
+  "summary": {
+    "purpose": "Rails API for billing operations and account lifecycle workflows.",
+    "primaryLanguage": "Ruby",
+    "packageManagers": [
+      "bundler"
+    ],
+    "frameworks": [
+      "Rails"
+    ],
+    "monorepo": false
+  },
+  "inventory": {
+    "fileCount": 11,
+    "directoryCount": 9,
+    "symlinkCount": 0,
+    "limitHit": false,
+    "gitignoreRuleCount": 0,
+    "configIgnoreRuleCount": 0
+  },
+  "config": {
+    "path": "agent-ready.config.json",
+    "loaded": false,
+    "profiles": [],
+    "warnings": []
+  },
+  "languages": [
+    {
+      "name": "Ruby",
+      "fileCount": 7,
+      "confidence": 0.95,
+      "evidence": [
+        "Detected 7 Ruby files.",
+        "Detected Ruby manifest signal."
+      ]
+    }
+  ],
+  "packageManagers": [
+    {
+      "name": "bundler",
+      "confidence": 0.92,
+      "evidence": [
+        "Detected bundler from Gemfile.lock."
+      ]
+    }
+  ],
+  "monorepo": {
+    "detected": false,
+    "kind": "single-package",
+    "tools": [],
+    "workspaceGlobs": [],
+    "packages": [],
+    "packageCount": 0
+  },
+  "frameworks": [
+    {
+      "name": "Rails",
+      "confidence": 0.92,
+      "evidence": [
+        "Detected Rails from Gemfile or Rails config files."
+      ]
+    }
+  ],
+  "directories": [
+    {
+      "path": "app",
+      "role": "application routes or app source",
+      "confidence": 0.85
+    },
+    {
+      "path": "bin",
+      "role": "developer and framework command wrappers",
+      "confidence": 0.85
+    },
+    {
+      "path": "config",
+      "role": "configuration",
+      "confidence": 0.85
+    },
+    {
+      "path": "db",
+      "role": "database schema and migrations",
+      "confidence": 0.85
+    },
+    {
+      "path": "spec",
+      "role": "tests",
+      "confidence": 0.85
+    }
+  ],
+  "entrypoints": [
+    {
+      "path": "config/application.rb",
+      "kind": "Rails application config",
+      "confidence": 0.82
+    },
+    {
+      "path": "bin/rails",
+      "kind": "Rails command entrypoint",
+      "confidence": 0.82
+    }
+  ],
+  "docs": [
+    {
+      "path": "README.md",
+      "role": "readme"
+    }
+  ],
+  "ci": [],
+  "generatedHints": []
+}

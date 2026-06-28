@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agent-ready.dev/schemas/workspaces.schema.json",
+  "title": "agent-ready workspace catalog",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schemaVersion",
+    "generatedAt",
+    "root",
+    "summary",
+    "monorepo",
+    "commands",
+    "packages"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string"
+    },
+    "generatedAt": {
+      "type": "string"
+    },
+    "root": {
+      "type": "string"
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["workspace", "single-package"]
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["purpose", "monorepo", "packageManagers", "packageCount"],
+      "properties": {
+        "purpose": {
+          "type": "string"
+        },
+        "primaryLanguage": {
+          "type": ["string", "null"]
+        },
+        "monorepo": {
+          "type": "boolean"
+        },
+        "packageManagers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "frameworks": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "packageCount": {
+          "type": "number"
+        }
+      }
+    },
+    "monorepo": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["detected", "kind", "tools", "workspaceGlobs", "packageCount"],
+      "properties": {
+        "detected": {
+          "type": "boolean"
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["single-package", "monorepo"]
+        },
+        "tools": {
+          "type": "array"
+        },
+        "workspaceGlobs": {
+          "type": "array"
+        },
+        "packageCount": {
+          "type": "number"
+        }
+      }
+    },
+    "commands": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["workspace", "packageScoped"],
+      "properties": {
+        "workspace": {
+          "type": "array"
+        },
+        "packageScoped": {
+          "type": "array"
+        }
+      }
+    },
+    "packages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["path", "name", "private", "scripts", "commands"],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "private": {
+            "type": "boolean"
+          },
+          "scripts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "commands": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "nextSteps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

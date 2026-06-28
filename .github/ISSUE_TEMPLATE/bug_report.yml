@@ -1,0 +1,58 @@
+name: Bug Report
+description: Report a crash, incorrect validation result, or broken CLI behavior.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: Include the smallest repo shape or commands that reproduce the issue.
+      placeholder: |
+        1. Create files...
+        2. Run `agent-ready ...`
+        3. Observe...
+    validations:
+      required: true
+  - type: input
+    id: command
+    attributes:
+      label: Command
+      description: The exact command that failed or produced wrong output.
+      placeholder: agent-ready validate --strict
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should have happened?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Node version, package manager, OS, and agent/tool environment if relevant.
+      placeholder: |
+        Node:
+        Package manager:
+        OS:
+        Agent/tool:
+    validations:
+      required: false

@@ -1,0 +1,92 @@
+name: Agent Ready
+description: Generate or validate AGENTS.md and .agents metadata for AI coding agents.
+inputs:
+  command:
+    description: agent-ready command to run.
+    required: false
+    default: validate
+  root:
+    description: Repository root to scan.
+    required: false
+    default: .
+  mode:
+    description: Use "required" to fail on validation errors or "advisory" to warn only.
+    required: false
+    default: required
+  profile:
+    description: Optional comma-separated profile list for init or update.
+    required: false
+    default: ""
+  config:
+    description: Optional config path relative to the root.
+    required: false
+    default: ""
+  strict:
+    description: Set to "true" to fail validate on warnings as well as errors.
+    required: false
+    default: "false"
+  json:
+    description: Set to "true" to append --json to the agent-ready command.
+    required: false
+    default: "false"
+  args:
+    description: Extra whitespace-separated arguments appended after built-in options.
+    required: false
+    default: ""
+  output-file:
+    description: Optional file path that receives stdout from the agent-ready command.
+    required: false
+    default: ""
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        AGENT_READY_COMMAND: ${{ inputs.command }}
+        AGENT_READY_ROOT: ${{ inputs.root }}
+        AGENT_READY_MODE: ${{ inputs.mode }}
+        AGENT_READY_PROFILE: ${{ inputs.profile }}
+        AGENT_READY_CONFIG: ${{ inputs.config }}
+        AGENT_READY_STRICT: ${{ inputs.strict }}
+        AGENT_READY_JSON: ${{ inputs.json }}
+        AGENT_READY_ARGS: ${{ inputs.args }}
+        AGENT_READY_OUTPUT_FILE: ${{ inputs.output-file }}
+      run: |
+        ARGS=("$AGENT_READY_COMMAND" "--root" "$AGENT_READY_ROOT")
+        if [ -n "$AGENT_READY_PROFILE" ]; then
+          ARGS+=("--profile" "$AGENT_READY_PROFILE")
+        fi
+        if [ -n "$AGENT_READY_CONFIG" ]; then
+          ARGS+=("--config" "$AGENT_READY_CONFIG")
+        fi
+        if [ "$AGENT_READY_STRICT" = "true" ]; then
+          ARGS+=("--strict")
+        fi
+        if [ "$AGENT_READY_JSON" = "true" ]; then
+          ARGS+=("--json")
+        fi
+        if [ -n "$AGENT_READY_ARGS" ]; then
+          read -r -a EXTRA_ARGS <<< "$AGENT_READY_ARGS"
+          ARGS+=("${EXTRA_ARGS[@]}")
+        fi
+
+        set +e
+        if [ -n "$AGENT_READY_OUTPUT_FILE" ]; then
+          mkdir -p "$(dirname "$AGENT_READY_OUTPUT_FILE")"
+          node "$GITHUB_ACTION_PATH/src/cli/main.js" "${ARGS[@]}" > "$AGENT_READY_OUTPUT_FILE"
+        else
+          node "$GITHUB_ACTION_PATH/src/cli/main.js" "${ARGS[@]}"
+        fi
+        STATUS=$?
+        set -e
+
+        if [ -n "$AGENT_READY_OUTPUT_FILE" ]; then
+          echo "Wrote agent-ready output to $AGENT_READY_OUTPUT_FILE"
+        fi
+
+        if [ "$STATUS" -ne 0 ] && [ "$AGENT_READY_MODE" = "advisory" ]; then
+          echo "agent-ready reported issues, continuing because mode=advisory."
+          exit 0
+        fi
+
+        exit "$STATUS"

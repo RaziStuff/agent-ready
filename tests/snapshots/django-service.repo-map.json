@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "root": ".",
+  "summary": {
+    "purpose": "Django service for support ticket workflows and account lookup.",
+    "primaryLanguage": "Python",
+    "packageManagers": [
+      "pip"
+    ],
+    "frameworks": [
+      "Django"
+    ],
+    "monorepo": false
+  },
+  "inventory": {
+    "fileCount": 7,
+    "directoryCount": 2,
+    "symlinkCount": 0,
+    "limitHit": false,
+    "gitignoreRuleCount": 0,
+    "configIgnoreRuleCount": 0
+  },
+  "config": {
+    "path": "agent-ready.config.json",
+    "loaded": false,
+    "profiles": [],
+    "warnings": []
+  },
+  "languages": [
+    {
+      "name": "Python",
+      "fileCount": 5,
+      "confidence": 0.95,
+      "evidence": [
+        "Detected 5 Python files.",
+        "Detected Python manifest signal."
+      ]
+    }
+  ],
+  "packageManagers": [
+    {
+      "name": "pip",
+      "confidence": 0.75,
+      "evidence": [
+        "Detected pip from requirements.txt."
+      ]
+    }
+  ],
+  "monorepo": {
+    "detected": false,
+    "kind": "single-package",
+    "tools": [],
+    "workspaceGlobs": [],
+    "packages": [],
+    "packageCount": 0
+  },
+  "frameworks": [
+    {
+      "name": "Django",
+      "confidence": 0.82,
+      "evidence": [
+        "Detected Django from Python project files."
+      ]
+    }
+  ],
+  "directories": [
+    {
+      "path": "support",
+      "role": "project directory",
+      "confidence": 0.55
+    },
+    {
+      "path": "tickets",
+      "role": "project directory",
+      "confidence": 0.55
+    }
+  ],
+  "entrypoints": [
+    {
+      "path": "manage.py",
+      "kind": "Django management entrypoint",
+      "confidence": 0.82
+    }
+  ],
+  "docs": [
+    {
+      "path": "README.md",
+      "role": "readme"
+    }
+  ],
+  "ci": [],
+  "generatedHints": []
+}

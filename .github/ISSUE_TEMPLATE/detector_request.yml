@@ -1,0 +1,47 @@
+name: Detector Request
+description: Request support for a language, framework, package manager, command, or repo convention.
+title: "[Detector]: "
+labels:
+  - detector
+  - enhancement
+body:
+  - type: textarea
+    id: target
+    attributes:
+      label: Detection Target
+      description: What should agent-ready detect?
+      placeholder: Detect Poetry test/lint commands from pyproject.toml.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Repo Evidence
+      description: Which files, manifests, lockfiles, config keys, or CI commands prove this fact?
+      placeholder: |
+        - `pyproject.toml` contains...
+        - `poetry.lock` exists.
+        - CI runs...
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Desired AGENTS.md Output
+      description: What should appear in the generated guide?
+    validations:
+      required: true
+  - type: textarea
+    id: fixture
+    attributes:
+      label: Fixture Ideas
+      description: Suggest a small example repo shape that could test this detector.
+    validations:
+      required: false
+  - type: textarea
+    id: risk
+    attributes:
+      label: Risks or False Positives
+      description: What should the detector avoid claiming?
+    validations:
+      required: false

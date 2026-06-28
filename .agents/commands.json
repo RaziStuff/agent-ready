@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-06-27T22:06:01.101Z",
+  "commands": [
+    {
+      "name": "install",
+      "command": "npm install",
+      "source": "agent-ready.config.json:commands.install",
+      "confidence": 1,
+      "requiresNetwork": true,
+      "writesFiles": true,
+      "risk": "medium"
+    },
+    {
+      "name": "test",
+      "command": "node --test tests/*.test.js",
+      "source": "agent-ready.config.json:commands.test",
+      "confidence": 1,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "verify",
+      "command": "npm run ci",
+      "source": "agent-ready.config.json:commands.verify",
+      "confidence": 1,
+      "requiresNetwork": false,
+      "writesFiles": true,
+      "risk": "low"
+    }
+  ]
+}

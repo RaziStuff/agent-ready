@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "root": ".",
+  "summary": {
+    "purpose": "ASP.NET Core service for order intake and status APIs.",
+    "primaryLanguage": "C#",
+    "packageManagers": [
+      "dotnet"
+    ],
+    "frameworks": [
+      "ASP.NET Core"
+    ],
+    "monorepo": false
+  },
+  "inventory": {
+    "fileCount": 7,
+    "directoryCount": 2,
+    "symlinkCount": 0,
+    "limitHit": false,
+    "gitignoreRuleCount": 0,
+    "configIgnoreRuleCount": 0
+  },
+  "config": {
+    "path": "agent-ready.config.json",
+    "loaded": false,
+    "profiles": [],
+    "warnings": []
+  },
+  "languages": [
+    {
+      "name": "C#",
+      "fileCount": 2,
+      "confidence": 0.95,
+      "evidence": [
+        "Detected 2 C# files.",
+        "Detected C# manifest signal."
+      ]
+    }
+  ],
+  "packageManagers": [
+    {
+      "name": "dotnet",
+      "confidence": 0.9,
+      "evidence": [
+        "Detected dotnet from .sln/.csproj."
+      ]
+    }
+  ],
+  "monorepo": {
+    "detected": false,
+    "kind": "single-package",
+    "tools": [],
+    "workspaceGlobs": [],
+    "packages": [],
+    "packageCount": 0
+  },
+  "frameworks": [
+    {
+      "name": "ASP.NET Core",
+      "confidence": 0.88,
+      "evidence": [
+        "Detected ASP.NET Core from .NET project files."
+      ]
+    }
+  ],
+  "directories": [
+    {
+      "path": "Orders.Api",
+      "role": "project directory",
+      "confidence": 0.55
+    },
+    {
+      "path": "Orders.Api.Tests",
+      "role": "project directory",
+      "confidence": 0.55
+    }
+  ],
+  "entrypoints": [
+    {
+      "path": "Orders.Api/Program.cs",
+      "kind": ".NET application entrypoint",
+      "confidence": 0.84
+    }
+  ],
+  "docs": [
+    {
+      "path": "README.md",
+      "role": "readme"
+    }
+  ],
+  "ci": [],
+  "generatedHints": []
+}

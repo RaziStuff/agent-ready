@@ -1,0 +1,230 @@
+{
+  "schemaVersion": "0.1.0",
+  "name": "agent-ready adoption recipes",
+  "description": "Copy-paste workflows for agents that need to orient, inspect risk, validate, and hand off work in an agent-ready repository. Maintainer setup is covered by docs/adoption-playbook.md.",
+  "placeholders": {
+    "repoRoot": "/absolute/path/to/repo",
+    "changedPath": "src/example.js",
+    "commandName": "test"
+  },
+  "safetyRules": [
+    "Run context before editing so repo facts, docs, commands, and risks are loaded first.",
+    "Run status when you need one dashboard for readiness, current changes, validation, recipes, and CI adoption.",
+    "Run workspaces in monorepos before choosing package-local or repo-wide validation.",
+    "Run affected when you only need workspace packages touched by current or planned paths.",
+    "Run impact before editing known risky or workspace-owned paths, or before handoff with changed=true.",
+    "Use affectedPackages from impact and preflight to choose package-scoped validation in monorepos.",
+    "Use agent-ready run only for discovered or configured command names.",
+    "Pass --allow-network only when the command metadata requires network and the user has approved it.",
+    "Pass --allow-writes only when the command metadata writes files and the user has approved it.",
+    "Keep MCP usage read-only; command execution happens through the CLI."
+  ],
+  "recipes": [
+    {
+      "id": "cli-task-loop",
+      "title": "Universal CLI task loop",
+      "audience": ["codex", "claude-code", "cursor", "terminal-agent"],
+      "transport": "cli",
+      "steps": [
+        {
+          "phase": "status",
+          "command": "agent-ready status --root /absolute/path/to/repo --json",
+          "expect": "Read readiness, current git changes, validation receipts, recipe access, and CI adoption hints."
+        },
+        {
+          "phase": "orient",
+          "command": "agent-ready context --root /absolute/path/to/repo --json",
+          "expect": "Read status, purpose, docs, commands, risk paths, MCP surface, and recommended workflow."
+        },
+        {
+          "phase": "workspace-orientation",
+          "command": "agent-ready workspaces --root /absolute/path/to/repo --json",
+          "expect": "In monorepos, identify affected packages and package-scoped commands before choosing validation."
+        },
+        {
+          "phase": "affected-packages",
+          "command": "agent-ready affected --root /absolute/path/to/repo --json src/example.js",
+          "expect": "Identify workspace packages touched by planned paths without running the full impact report."
+        },
+        {
+          "phase": "readiness",
+          "command": "agent-ready doctor --root /absolute/path/to/repo --strict --json",
+          "expect": "Stop for blocking readiness failures; report warnings before editing if strict mode fails."
+        },
+        {
+          "phase": "planned-impact",
+          "command": "agent-ready impact --root /absolute/path/to/repo --json src/example.js",
+          "expect": "Review path risk, affected workspace packages, validation recommendations, and handoff notes before editing."
+        },
+        {
+          "phase": "pre-handoff",
+          "command": "agent-ready preflight --root /absolute/path/to/repo --json",
+          "expect": "Use current git changes to combine doctor status, impact, affected workspace packages, validation, and handoff guidance."
+        },
+        {
+          "phase": "validation-receipt",
+          "command": "agent-ready run test --root /absolute/path/to/repo --json",
+          "expect": "Attach the structured command receipt to the final handoff or use it to decide the next validation step."
+        },
+        {
+          "phase": "handoff",
+          "command": "agent-ready handoff --root /absolute/path/to/repo --changed --json",
+          "expect": "Generate transfer notes with changed paths, risks, validation guidance, and remaining work."
+        }
+      ]
+    },
+    {
+      "id": "mcp-first-loop",
+      "title": "MCP-first agent loop",
+      "audience": ["claude-desktop", "cursor", "mcp-host"],
+      "transport": "mcp-plus-cli",
+      "server": {
+        "command": "agent-ready",
+        "args": ["mcp", "--root", "/absolute/path/to/repo"]
+      },
+      "steps": [
+        {
+          "phase": "orient",
+          "mcp": {
+            "prompt": "agent-ready-orient",
+            "arguments": {
+              "focus": "current user task"
+            }
+          },
+          "expect": "Load the standard orientation prompt for the task focus."
+        },
+        {
+          "phase": "context",
+          "mcp": {
+            "resource": "agent-ready://context"
+          },
+          "expect": "Read the compact onboarding packet."
+        },
+        {
+          "phase": "workspace-orientation",
+          "mcp": {
+            "tool": "agent_ready_workspaces",
+            "arguments": {}
+          },
+          "expect": "In monorepos, identify workspace packages and package-scoped command suggestions."
+        },
+        {
+          "phase": "affected-packages",
+          "mcp": {
+            "tool": "agent_ready_affected",
+            "arguments": {
+              "paths": ["src/example.js"]
+            }
+          },
+          "expect": "Identify workspace packages touched by planned paths without running the full impact report."
+        },
+        {
+          "phase": "readiness",
+          "mcp": {
+            "tool": "agent_ready_doctor",
+            "arguments": {
+              "strict": true
+            }
+          },
+          "expect": "Confirm generated docs and metadata are ready."
+        },
+        {
+          "phase": "planned-impact",
+          "mcp": {
+            "tool": "agent_ready_impact",
+            "arguments": {
+              "paths": ["src/example.js"]
+            }
+          },
+          "expect": "Check planned path risk and affected workspace packages before editing."
+        },
+        {
+          "phase": "pre-handoff",
+          "mcp": {
+            "tool": "agent_ready_preflight",
+            "arguments": {
+              "changed": true
+            }
+          },
+          "expect": "Check readiness and changed-path guidance before transfer."
+        },
+        {
+          "phase": "validation-receipt",
+          "command": "agent-ready run test --root /absolute/path/to/repo --json",
+          "expect": "Use the CLI for command execution because the MCP server is read-only."
+        },
+        {
+          "phase": "handoff",
+          "mcp": {
+            "tool": "agent_ready_handoff",
+            "arguments": {
+              "changed": true
+            }
+          },
+          "expect": "Prepare the final transfer packet."
+        }
+      ]
+    },
+    {
+      "id": "final-answer-loop",
+      "title": "Final answer and transfer loop",
+      "audience": ["all-agents"],
+      "transport": "cli",
+      "steps": [
+        {
+          "phase": "preflight",
+          "command": "agent-ready status --root /absolute/path/to/repo --json",
+          "expect": "If status is needs_validation, run the recommended command by name."
+        },
+        {
+          "phase": "receipt",
+          "command": "agent-ready run test --root /absolute/path/to/repo --json",
+          "expect": "Capture ok, status, durationMs, exitCode, stdout, stderr, and sideEffects."
+        },
+        {
+          "phase": "handoff",
+          "command": "agent-ready handoff --root /absolute/path/to/repo --changed --json",
+          "expect": "Summarize completed work, changed files, validation receipts, open risks, and next steps."
+        }
+      ]
+    },
+    {
+      "id": "ci-adoption-loop",
+      "title": "CI adoption loop",
+      "audience": ["maintainer-agent", "repo-setup-agent"],
+      "transport": "cli",
+      "steps": [
+        {
+          "phase": "read-playbook",
+          "command": "cat docs/adoption-playbook.md",
+          "expect": "Review the full maintainer adoption path from local setup to CI receipts."
+        },
+        {
+          "phase": "preview",
+          "command": "agent-ready add-to-ci --root /absolute/path/to/repo --json",
+          "expect": "Review the generated GitHub Actions workflow without writing files, including status and contract receipt artifact steps."
+        },
+        {
+          "phase": "customize",
+          "command": "agent-ready add-to-ci --root /absolute/path/to/repo --uses your-org/agent-ready@v1 --mode required --strict --json",
+          "expect": "Confirm the action reference, mode, strictness, target path, receipt artifacts, and YAML content."
+        },
+        {
+          "phase": "write",
+          "command": "agent-ready add-to-ci --root /absolute/path/to/repo --write --uses your-org/agent-ready@v1 --mode required --strict",
+          "expect": "Create .github/workflows/agent-ready.yml only after the user approves the workflow."
+        },
+        {
+          "phase": "verify",
+          "command": "agent-ready validate --root /absolute/path/to/repo --strict",
+          "expect": "Confirm generated agent docs and metadata are current before relying on CI."
+        },
+        {
+          "phase": "read-receipts",
+          "command": "agent-ready ci-status --status-file agent-ready-status.json --contract-file agent-ready-contract.json",
+          "expect": "Summarize downloaded CI receipt artifacts for readiness, contract validity, and next steps."
+        }
+      ]
+    }
+  ]
+}

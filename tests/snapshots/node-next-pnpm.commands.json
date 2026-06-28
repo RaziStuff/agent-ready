@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "commands": [
+    {
+      "name": "build",
+      "command": "pnpm build",
+      "source": "package.json:scripts.build",
+      "confidence": 0.92,
+      "requiresNetwork": false,
+      "writesFiles": true,
+      "risk": "low"
+    },
+    {
+      "name": "dev server",
+      "command": "pnpm dev",
+      "source": "package.json:scripts.dev",
+      "confidence": 0.92,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "install",
+      "command": "pnpm install",
+      "source": "package manager detection",
+      "confidence": 0.9,
+      "requiresNetwork": true,
+      "writesFiles": true,
+      "risk": "medium"
+    },
+    {
+      "name": "lint",
+      "command": "pnpm lint",
+      "source": "package.json:scripts.lint",
+      "confidence": 0.92,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "test",
+      "command": "pnpm test",
+      "source": "package.json:scripts.test",
+      "confidence": 0.92,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "typecheck",
+      "command": "pnpm typecheck",
+      "source": "package.json:scripts.typecheck",
+      "confidence": 0.92,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    }
+  ]
+}

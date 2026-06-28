@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "commands": [
+    {
+      "name": "build",
+      "command": "dotnet build",
+      "source": "Orders.Api.sln",
+      "confidence": 0.86,
+      "requiresNetwork": false,
+      "writesFiles": true,
+      "risk": "low"
+    },
+    {
+      "name": "install",
+      "command": "dotnet restore",
+      "source": "Orders.Api.sln",
+      "confidence": 0.86,
+      "requiresNetwork": true,
+      "writesFiles": true,
+      "risk": "medium"
+    },
+    {
+      "name": "test",
+      "command": "dotnet test",
+      "source": "Orders.Api.sln",
+      "confidence": 0.82,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    }
+  ]
+}

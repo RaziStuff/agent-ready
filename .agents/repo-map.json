@@ -1,0 +1,143 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-06-27T22:06:01.101Z",
+  "root": "/Users/ahmedshaikh/Documents/agentic needs 1",
+  "summary": {
+    "purpose": "`agent-ready` generates repo-native operating guides for AI coding agents.",
+    "primaryLanguage": "JavaScript",
+    "packageManagers": [
+      "npm"
+    ],
+    "frameworks": [],
+    "monorepo": false
+  },
+  "inventory": {
+    "fileCount": 108,
+    "directoryCount": 26,
+    "symlinkCount": 0,
+    "limitHit": false,
+    "gitignoreRuleCount": 4,
+    "configIgnoreRuleCount": 1
+  },
+  "config": {
+    "path": "/Users/ahmedshaikh/Documents/agentic needs 1/agent-ready.config.json",
+    "loaded": true,
+    "profiles": [
+      "generic"
+    ],
+    "warnings": []
+  },
+  "languages": [
+    {
+      "name": "JavaScript",
+      "fileCount": 48,
+      "confidence": 0.95,
+      "evidence": [
+        "Detected 48 JavaScript files.",
+        "Detected JavaScript manifest signal."
+      ]
+    }
+  ],
+  "packageManagers": [
+    {
+      "name": "npm",
+      "confidence": 0.62,
+      "evidence": [
+        "Detected npm from package.json fallback."
+      ]
+    }
+  ],
+  "monorepo": {
+    "detected": false,
+    "kind": "single-package",
+    "tools": [],
+    "workspaceGlobs": [],
+    "packages": [],
+    "packageCount": 0
+  },
+  "frameworks": [],
+  "directories": [
+    {
+      "path": ".agents",
+      "role": "agent metadata and handoff files",
+      "confidence": 0.85
+    },
+    {
+      "path": ".github",
+      "role": "GitHub workflows and repository automation",
+      "confidence": 0.85
+    },
+    {
+      "path": "docs",
+      "role": "documentation",
+      "confidence": 0.85
+    },
+    {
+      "path": "examples",
+      "role": "example projects and fixtures",
+      "confidence": 0.85
+    },
+    {
+      "path": "schemas",
+      "role": "JSON schemas and structured contracts",
+      "confidence": 0.85
+    },
+    {
+      "path": "scripts",
+      "role": "developer scripts",
+      "confidence": 0.85
+    },
+    {
+      "path": "src",
+      "role": "application source",
+      "confidence": 0.85
+    },
+    {
+      "path": "tests",
+      "role": "tests",
+      "confidence": 0.85
+    }
+  ],
+  "entrypoints": [],
+  "docs": [
+    {
+      "path": "README.md",
+      "role": "readme"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "role": "developer documentation"
+    },
+    {
+      "path": "docs/agent-recipes.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/mcp-clients.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/release-checklist.md",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/roadmap.md",
+      "role": "documentation"
+    }
+  ],
+  "ci": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "provider": "GitHub Actions",
+      "runCommands": [
+        "npm test",
+        "npm run snapshots:check",
+        "npm run validate:strict",
+        "npm run package:check",
+        "npm run package:install-smoke",
+        "npm run release:notes:check"
+      ]
+    }
+  ],
+  "generatedHints": []
+}

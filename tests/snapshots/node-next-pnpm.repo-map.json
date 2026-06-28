@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "root": ".",
+  "summary": {
+    "purpose": "Customer portal built with Next.js for account and billing workflows.",
+    "primaryLanguage": "TypeScript",
+    "packageManagers": [
+      "pnpm"
+    ],
+    "frameworks": [
+      "Next.js",
+      "React"
+    ],
+    "monorepo": false
+  },
+  "inventory": {
+    "fileCount": 9,
+    "directoryCount": 6,
+    "symlinkCount": 0,
+    "limitHit": false,
+    "gitignoreRuleCount": 0,
+    "configIgnoreRuleCount": 0
+  },
+  "config": {
+    "path": "agent-ready.config.json",
+    "loaded": false,
+    "profiles": [],
+    "warnings": []
+  },
+  "languages": [
+    {
+      "name": "JavaScript",
+      "fileCount": 0,
+      "confidence": 0.78,
+      "evidence": [
+        "Detected JavaScript manifest signal."
+      ]
+    },
+    {
+      "name": "SQL",
+      "fileCount": 1,
+      "confidence": 0.65,
+      "evidence": [
+        "Detected 1 SQL file."
+      ]
+    },
+    {
+      "name": "TypeScript",
+      "fileCount": 3,
+      "confidence": 0.9,
+      "evidence": [
+        "Detected 3 TypeScript files.",
+        "Detected TypeScript manifest signal."
+      ]
+    }
+  ],
+  "packageManagers": [
+    {
+      "name": "pnpm",
+      "confidence": 0.98,
+      "evidence": [
+        "Detected pnpm from pnpm-lock.yaml."
+      ]
+    }
+  ],
+  "monorepo": {
+    "detected": false,
+    "kind": "single-package",
+    "tools": [],
+    "workspaceGlobs": [],
+    "packages": [],
+    "packageCount": 0
+  },
+  "frameworks": [
+    {
+      "name": "Next.js",
+      "confidence": 0.92,
+      "evidence": [
+        "Detected Next.js from package.json dependency next."
+      ]
+    },
+    {
+      "name": "React",
+      "confidence": 0.92,
+      "evidence": [
+        "Detected React from package.json dependency react."
+      ]
+    }
+  ],
+  "directories": [
+    {
+      "path": "app",
+      "role": "application routes or app source",
+      "confidence": 0.85
+    },
+    {
+      "path": "components",
+      "role": "shared UI components",
+      "confidence": 0.85
+    },
+    {
+      "path": "prisma",
+      "role": "Prisma schema and database migrations",
+      "confidence": 0.85
+    },
+    {
+      "path": "tests",
+      "role": "tests",
+      "confidence": 0.85
+    }
+  ],
+  "entrypoints": [
+    {
+      "path": "app/page.tsx",
+      "kind": "Next.js app route",
+      "confidence": 0.82
+    }
+  ],
+  "docs": [
+    {
+      "path": "README.md",
+      "role": "readme"
+    }
+  ],
+  "ci": [],
+  "generatedHints": []
+}

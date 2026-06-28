@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "commands": [
+    {
+      "name": "install",
+      "command": "python -m pip install -r requirements.txt",
+      "source": "requirements.txt",
+      "confidence": 0.78,
+      "requiresNetwork": true,
+      "writesFiles": true,
+      "risk": "medium"
+    },
+    {
+      "name": "test",
+      "command": "python manage.py test",
+      "source": "manage.py",
+      "confidence": 0.82,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    }
+  ]
+}

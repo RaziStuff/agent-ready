@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "commands": [
+    {
+      "name": "build",
+      "command": "go build ./...",
+      "source": "go.mod",
+      "confidence": 0.78,
+      "requiresNetwork": false,
+      "writesFiles": true,
+      "risk": "low"
+    },
+    {
+      "name": "lint",
+      "command": "go vet ./...",
+      "source": "go.mod",
+      "confidence": 0.68,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "test",
+      "command": "go test ./...",
+      "source": "go.mod",
+      "confidence": 0.9,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    }
+  ]
+}

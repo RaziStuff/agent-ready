@@ -1,0 +1,47 @@
+name: Output Quality Issue
+description: Report confusing, noisy, missing, or misleading generated AGENTS.md content.
+title: "[Output]: "
+labels:
+  - output-quality
+body:
+  - type: textarea
+    id: repo_shape
+    attributes:
+      label: Repo Shape
+      description: Describe the relevant files and folders.
+      placeholder: |
+        package.json
+        pnpm-lock.yaml
+        app/
+        prisma/migrations/
+    validations:
+      required: true
+  - type: textarea
+    id: current_output
+    attributes:
+      label: Current Generated Output
+      description: Paste the confusing or wrong section.
+    validations:
+      required: true
+  - type: textarea
+    id: preferred_output
+    attributes:
+      label: Preferred Output
+      description: What should the generated guide say instead?
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Command Used
+      description: Include flags and config path if relevant.
+      placeholder: agent-ready init --root .
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional Notes
+      description: Any context about conventions, risks, or generated files.
+    validations:
+      required: false
