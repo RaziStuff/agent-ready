@@ -322,8 +322,8 @@ back to deterministic scanner output without executing project commands.
 Use the bundled composite action to keep agent docs current in CI:
 
 ```bash
-agent-ready add-to-ci --uses RaziStuff/agent-ready@v0.1.0
-agent-ready add-to-ci --write --uses RaziStuff/agent-ready@v0.1.0
+agent-ready add-to-ci --uses RaziStuff/agent-ready@v0.1.1
+agent-ready add-to-ci --write --uses RaziStuff/agent-ready@v0.1.1
 ```
 
 `add-to-ci` previews by default. Pass `--write` to create
@@ -346,14 +346,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Validate agent metadata
-        uses: RaziStuff/agent-ready@v0.1.0
+        uses: RaziStuff/agent-ready@v0.1.1
         with:
           command: validate
           mode: required
           strict: "true"
       - name: Write agent-ready status receipt
         if: always()
-        uses: RaziStuff/agent-ready@v0.1.0
+        uses: RaziStuff/agent-ready@v0.1.1
         with:
           command: status
           mode: advisory
@@ -362,7 +362,7 @@ jobs:
           output-file: agent-ready-status.json
       - name: Verify status receipt contract
         if: always()
-        uses: RaziStuff/agent-ready@v0.1.0
+        uses: RaziStuff/agent-ready@v0.1.1
         with:
           command: verify-contract
           mode: required

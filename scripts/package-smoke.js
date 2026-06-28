@@ -132,8 +132,8 @@ async function assertManifest(packageJson) {
     fail('package.json must use "type": "module"');
   }
 
-  if (!packageJson.bin || packageJson.bin["agent-ready"] !== "./src/cli/main.js") {
-    fail('package.json bin.agent-ready must point to "./src/cli/main.js"');
+  if (!packageJson.bin || packageJson.bin["agent-ready"] !== "src/cli/main.js") {
+    fail('package.json bin.agent-ready must point to "src/cli/main.js"');
   }
 
   if (!Array.isArray(packageJson.files)) {

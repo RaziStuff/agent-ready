@@ -165,7 +165,7 @@ version.
 
 ## Publish Dry Run
 
-When npm is available, inspect the package before publishing:
+Inspect the package before publishing:
 
 ```bash
 npm pack --dry-run
@@ -196,10 +196,18 @@ known limitations.
 After the dry run looks correct:
 
 ```bash
-npm publish
+npm publish --access public
 ```
 
-For a first public release, publish from a clean working tree and tag the
+If only the bundled runtime is available, run npm through pnpm with Node on
+`PATH`:
+
+```bash
+env PATH=/path/to/node/bin:$PATH pnpm dlx npm@latest publish --access public
+```
+
+Prefer the npm CLI publish path for public releases because it populates the npm
+package page README metadata. Publish from a clean working tree and tag the
 release after npm accepts it.
 
 ## Post-Publish
@@ -207,8 +215,8 @@ release after npm accepts it.
 Smoke test the published package:
 
 ```bash
-npx agent-ready --version
-npx agent-ready init --dry-run
+npx -y @ahmedshaikh/agent-ready@latest --version
+npx -y @ahmedshaikh/agent-ready@latest init --dry-run
 ```
 
 Then create a release note with:

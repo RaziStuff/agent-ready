@@ -2,6 +2,15 @@
 
 All notable changes to `agent-ready` will be documented here.
 
+## 0.1.1 - Npm Metadata Patch
+
+### Fixed
+
+- Published under the npm user scope as `@ahmedshaikh/agent-ready` while keeping
+  the executable command as `agent-ready`.
+- Use the npm CLI publish path for patch releases so npm package pages receive
+  README metadata.
+
 ## 0.1.0 - Initial Release
 
 ### Added
