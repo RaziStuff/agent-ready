@@ -212,12 +212,17 @@ release after npm accepts it.
 
 ## Post-Publish
 
-Smoke test the published package:
+Smoke test the published package from the public npm registry:
 
 ```bash
+npm run published:smoke
 npx -y @ahmedshaikh/agent-ready@latest --version
 npx -y @ahmedshaikh/agent-ready@latest init --dry-run
 ```
+
+`npm run published:smoke` verifies the npm `latest` dist-tag, exact package
+version metadata, README metadata, CLI version, and `init` plus strict
+validation in a temporary target repo.
 
 Then create a release note with:
 

@@ -30,6 +30,7 @@
     "mcp:compat": "node scripts/mcp-compat-smoke.js",
     "package:check": "node scripts/package-smoke.js",
     "package:install-smoke": "node scripts/package-install-smoke.js",
+    "published:smoke": "node scripts/published-package-smoke.js",
     "release:notes": "node scripts/release-notes.js",
     "release:notes:check": "node scripts/release-notes.js --check",
     "release:notes:write": "node scripts/release-notes.js --write",

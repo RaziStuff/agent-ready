@@ -479,6 +479,10 @@ temporary target repo.
 Run `npm run release:notes:write` to generate `RELEASE_NOTES.md`, and
 `npm run release:notes:check` to verify it is current.
 
+After publishing, run `npm run published:smoke` to verify the package from the
+public npm registry, including `latest`, README metadata, CLI version, and a
+fresh temp-repo init plus strict validation.
+
 See `SECURITY.md` for the security model, `docs/adoption-playbook.md` for the
 adoption flow, `docs/roadmap.md` for planned work, and
 `docs/release-checklist.md` for the publish checklist.
