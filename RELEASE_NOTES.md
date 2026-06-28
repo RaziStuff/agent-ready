@@ -1,4 +1,4 @@
-# agent-ready v0.1.0
+# @ahmedshaikh/agent-ready v0.1.0
 
 Generate AGENTS.md, repo metadata, and MCP context so AI coding agents can onboard quickly.
 
@@ -91,7 +91,7 @@ Generate AGENTS.md, repo metadata, and MCP context so AI coding agents can onboa
 
 ## Package Surface
 
-- Package name: `agent-ready`.
+- Package name: `@ahmedshaikh/agent-ready`.
 - CLI bin: `agent-ready` -> `./src/cli/main.js`.
 - Node engine: `>=18.17`.
 - Repository: `git+https://github.com/RaziStuff/agent-ready.git`.

@@ -27,8 +27,10 @@ npm run release:notes:check
 
 Before the first public publish:
 
-- Confirm `agent-ready` is still available on npm with `npm view agent-ready version`
-  or `pnpm view agent-ready version`; a 404 means the name is unclaimed.
+- Confirm `@ahmedshaikh/agent-ready` is still available on npm with
+  `npm view @ahmedshaikh/agent-ready version` or
+  `pnpm view @ahmedshaikh/agent-ready version`; a 404 means the scoped name is
+  unclaimed.
 - Confirm the publishing shell is logged in with `npm whoami` or `pnpm whoami`.
 - Confirm `package.json#publishConfig.access` is `public`.
 - Confirm `package.json#repository`, `homepage`, and `bugs.url` point to

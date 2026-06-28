@@ -1,5 +1,5 @@
 {
-  "name": "agent-ready",
+  "name": "@ahmedshaikh/agent-ready",
   "version": "0.1.0",
   "description": "Generate AGENTS.md, repo metadata, and MCP context so AI coding agents can onboard quickly.",
   "type": "module",

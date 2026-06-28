@@ -11,15 +11,15 @@ repo facts, labels risk areas, and avoids reading secret-like files.
 Run directly in any repository:
 
 ```bash
-npx -y agent-ready@latest config init
-npx -y agent-ready@latest init
-npx -y agent-ready@latest doctor
+npx -y @ahmedshaikh/agent-ready@latest config init
+npx -y @ahmedshaikh/agent-ready@latest init
+npx -y @ahmedshaikh/agent-ready@latest doctor
 ```
 
 Or install the CLI:
 
 ```bash
-npm install -g agent-ready
+npm install -g @ahmedshaikh/agent-ready
 agent-ready config init
 agent-ready init
 ```
@@ -291,7 +291,7 @@ Example MCP client configuration with the published package:
   "mcpServers": {
     "agent-ready": {
       "command": "npx",
-      "args": ["-y", "agent-ready@latest", "mcp", "--root", "/path/to/repo"]
+      "args": ["-y", "@ahmedshaikh/agent-ready@latest", "mcp", "--root", "/path/to/repo"]
     }
   }
 }
