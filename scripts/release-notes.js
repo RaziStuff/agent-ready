@@ -125,6 +125,9 @@ function packageSurfaceLines(packageJson) {
     `- Package name: \`${packageJson.name}\`.`,
     `- CLI bin: \`agent-ready\` -> \`${bin}\`.`,
     `- Node engine: \`${packageJson.engines?.node ?? "not specified"}\`.`,
+    `- Repository: \`${packageJson.repository?.url ?? "not specified"}\`.`,
+    `- Homepage: \`${packageJson.homepage ?? "not specified"}\`.`,
+    `- Publish access: \`${packageJson.publishConfig?.access ?? "not specified"}\`.`,
     `- Published file allowlist: ${files.map((item) => `\`${item}\``).join(", ")}.`
   ];
 }

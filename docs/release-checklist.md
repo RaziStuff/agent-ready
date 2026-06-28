@@ -23,6 +23,17 @@ npm run package:install-smoke
 npm run release:notes:check
 ```
 
+## Registry Readiness
+
+Before the first public publish:
+
+- Confirm `agent-ready` is still available on npm with `npm view agent-ready version`
+  or `pnpm view agent-ready version`; a 404 means the name is unclaimed.
+- Confirm the publishing shell is logged in with `npm whoami` or `pnpm whoami`.
+- Confirm `package.json#publishConfig.access` is `public`.
+- Confirm `package.json#repository`, `homepage`, and `bugs.url` point to
+  `https://github.com/RaziStuff/agent-ready`.
+
 ## Package Smoke Check
 
 `npm run package:check` runs `scripts/package-smoke.js`.
@@ -30,6 +41,7 @@ npm run release:notes:check
 It verifies:
 
 - Required `package.json` fields exist.
+- Public npm publish metadata points at the GitHub repository.
 - `bin.agent-ready` points to `src/cli/main.js`.
 - The CLI supports top-level `--version`.
 - Required package files exist and are allowlisted in `package.json#files`.

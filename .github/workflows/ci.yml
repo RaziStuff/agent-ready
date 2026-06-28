@@ -13,9 +13,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm test
-      - run: npm run snapshots:check
-      - run: npm run validate:strict
-      - run: npm run package:check
-      - run: npm run package:install-smoke
-      - run: npm run release:notes:check
+      - run: npm run ci
+      - run: npm pack --dry-run

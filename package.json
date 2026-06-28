@@ -1,10 +1,18 @@
 {
   "name": "agent-ready",
   "version": "0.1.0",
-  "description": "Generate AGENTS.md and repo metadata so AI coding agents can onboard quickly.",
+  "description": "Generate AGENTS.md, repo metadata, and MCP context so AI coding agents can onboard quickly.",
   "type": "module",
   "bin": {
     "agent-ready": "./src/cli/main.js"
+  },
+  "homepage": "https://github.com/RaziStuff/agent-ready#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RaziStuff/agent-ready.git"
+  },
+  "bugs": {
+    "url": "https://github.com/RaziStuff/agent-ready/issues"
   },
   "scripts": {
     "scan": "node src/cli/main.js scan",
@@ -45,11 +53,20 @@
     "LICENSE"
   ],
   "keywords": [
+    "agentic",
     "agents",
     "AGENTS.md",
     "ai",
+    "ai-agents",
     "cli",
+    "codex",
+    "developer-tools",
+    "mcp",
+    "monorepo",
     "repo"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }

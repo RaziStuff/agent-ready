@@ -206,12 +206,12 @@
         },
         {
           "phase": "customize",
-          "command": "agent-ready add-to-ci --root /absolute/path/to/repo --uses your-org/agent-ready@v1 --mode required --strict --json",
+          "command": "agent-ready add-to-ci --root /absolute/path/to/repo --uses RaziStuff/agent-ready@v0.1.0 --mode required --strict --json",
           "expect": "Confirm the action reference, mode, strictness, target path, receipt artifacts, and YAML content."
         },
         {
           "phase": "write",
-          "command": "agent-ready add-to-ci --root /absolute/path/to/repo --write --uses your-org/agent-ready@v1 --mode required --strict",
+          "command": "agent-ready add-to-ci --root /absolute/path/to/repo --write --uses RaziStuff/agent-ready@v0.1.0 --mode required --strict",
           "expect": "Create .github/workflows/agent-ready.yml only after the user approves the workflow."
         },
         {

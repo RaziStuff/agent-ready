@@ -14,6 +14,21 @@ async function readJson(filePath) {
   return JSON.parse(await fs.readFile(filePath, "utf8"));
 }
 
+function assertReleaseMetadata(packageJson) {
+  if (!packageJson.homepage?.startsWith("https://github.com/RaziStuff/agent-ready")) {
+    fail("package.json homepage must point to the public GitHub repository.");
+  }
+  if (packageJson.repository?.type !== "git" || !packageJson.repository.url?.includes("github.com/RaziStuff/agent-ready")) {
+    fail("package.json repository must point to the public GitHub repository.");
+  }
+  if (!packageJson.bugs?.url?.startsWith("https://github.com/RaziStuff/agent-ready/issues")) {
+    fail("package.json bugs.url must point to GitHub issues.");
+  }
+  if (packageJson.publishConfig?.access !== "public") {
+    fail('package.json publishConfig.access must be "public".');
+  }
+}
+
 function run(command, args, options = {}) {
   return new Promise((resolve) => {
     const child = spawn(command, args, {
@@ -560,6 +575,7 @@ async function assertInstalledBinWorks(cliBin, packageJson, targetRoot) {
 
 async function main() {
   const packageJson = await readJson(path.join(process.cwd(), "package.json"));
+  assertReleaseMetadata(packageJson);
   const packageManager = await findPackageManager();
   const smokeRoot = await fs.mkdtemp(path.join(os.tmpdir(), "agent-ready-install-smoke-"));
   const packDir = path.join(smokeRoot, "pack");

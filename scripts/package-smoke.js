@@ -6,7 +6,21 @@ import process from "node:process";
 import { spawn } from "node:child_process";
 import { pathExists } from "../src/core/inventory.js";
 
-const REQUIRED_MANIFEST_FIELDS = ["name", "version", "description", "type", "bin", "license", "files"];
+const REQUIRED_MANIFEST_FIELDS = [
+  "name",
+  "version",
+  "description",
+  "type",
+  "bin",
+  "license",
+  "files",
+  "homepage",
+  "repository",
+  "bugs",
+  "keywords",
+  "engines",
+  "publishConfig"
+];
 const REQUIRED_PACKAGE_PATHS = [
   "src",
   "schemas",
@@ -124,6 +138,26 @@ async function assertManifest(packageJson) {
 
   if (!Array.isArray(packageJson.files)) {
     fail("package.json files must be an array");
+  }
+
+  if (!packageJson.homepage?.startsWith("https://github.com/RaziStuff/agent-ready")) {
+    fail("package.json homepage must point to the public GitHub repository.");
+  }
+
+  if (packageJson.repository?.type !== "git" || !packageJson.repository.url?.includes("github.com/RaziStuff/agent-ready")) {
+    fail("package.json repository must point to the public GitHub repository.");
+  }
+
+  if (!packageJson.bugs?.url?.startsWith("https://github.com/RaziStuff/agent-ready/issues")) {
+    fail("package.json bugs.url must point to GitHub issues.");
+  }
+
+  if (!Array.isArray(packageJson.keywords) || !packageJson.keywords.includes("mcp") || !packageJson.keywords.includes("ai-agents")) {
+    fail("package.json keywords must include mcp and ai-agents.");
+  }
+
+  if (packageJson.publishConfig?.access !== "public") {
+    fail('package.json publishConfig.access must be "public".');
   }
 
   for (const requiredPath of REQUIRED_PACKAGE_PATHS) {

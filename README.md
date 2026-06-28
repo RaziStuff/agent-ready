@@ -8,7 +8,18 @@ repo facts, labels risk areas, and avoids reading secret-like files.
 
 ## Quick Start
 
+Run directly in any repository:
+
 ```bash
+npx -y agent-ready@latest config init
+npx -y agent-ready@latest init
+npx -y agent-ready@latest doctor
+```
+
+Or install the CLI:
+
+```bash
+npm install -g agent-ready
 agent-ready config init
 agent-ready init
 ```
@@ -189,6 +200,8 @@ Generated JSON metadata is documented by:
 
 Runtime JSON reports are documented by:
 
+- `schemas/workspaces.schema.json`
+- `schemas/affected.schema.json`
 - `schemas/impact.schema.json`
 - `schemas/handoff.schema.json`
 - `schemas/preflight.schema.json`
@@ -271,7 +284,20 @@ Prompts exposed:
 - `agent-ready-handoff`: prepare a compact handoff from the generated template and metadata.
 - `agent-ready-risk-review`: check planned paths against risks and relevant validation.
 
-Example MCP client configuration:
+Example MCP client configuration with the published package:
+
+```json
+{
+  "mcpServers": {
+    "agent-ready": {
+      "command": "npx",
+      "args": ["-y", "agent-ready@latest", "mcp", "--root", "/path/to/repo"]
+    }
+  }
+}
+```
+
+Example MCP client configuration with a global install:
 
 ```json
 {
@@ -296,8 +322,8 @@ back to deterministic scanner output without executing project commands.
 Use the bundled composite action to keep agent docs current in CI:
 
 ```bash
-agent-ready add-to-ci --uses your-org/agent-ready@v1
-agent-ready add-to-ci --write --uses your-org/agent-ready@v1
+agent-ready add-to-ci --uses RaziStuff/agent-ready@v0.1.0
+agent-ready add-to-ci --write --uses RaziStuff/agent-ready@v0.1.0
 ```
 
 `add-to-ci` previews by default. Pass `--write` to create
@@ -320,14 +346,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Validate agent metadata
-        uses: your-org/agent-ready@v1
+        uses: RaziStuff/agent-ready@v0.1.0
         with:
           command: validate
           mode: required
           strict: "true"
       - name: Write agent-ready status receipt
         if: always()
-        uses: your-org/agent-ready@v1
+        uses: RaziStuff/agent-ready@v0.1.0
         with:
           command: status
           mode: advisory
@@ -336,7 +362,7 @@ jobs:
           output-file: agent-ready-status.json
       - name: Verify status receipt contract
         if: always()
-        uses: your-org/agent-ready@v1
+        uses: RaziStuff/agent-ready@v0.1.0
         with:
           command: verify-contract
           mode: required
@@ -433,6 +459,7 @@ npm run mcp:compat
 npm run package:check
 npm run package:install-smoke
 npm run release:notes:check
+npm pack --dry-run
 ```
 
 Strict validation checks that agent docs exist, generated command metadata is
@@ -441,9 +468,9 @@ expected metadata shape.
 
 ## Release
 
-Run `npm run package:check` before publishing. It validates the manifest, package
-allowlist, CLI bin, schemas, and a temp-repo `init` plus strict validation smoke
-test without touching the network.
+Run `npm run package:check` before publishing. It validates the manifest, public
+repository metadata, package allowlist, CLI bin, schemas, and a temp-repo `init`
+plus strict validation smoke test without touching the network.
 
 Run `npm run package:install-smoke` to create a real local tarball, install it
 into a temporary project, and run the installed `agent-ready` bin against a

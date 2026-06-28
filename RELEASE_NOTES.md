@@ -1,6 +1,6 @@
 # agent-ready v0.1.0
 
-Generate AGENTS.md and repo metadata so AI coding agents can onboard quickly.
+Generate AGENTS.md, repo metadata, and MCP context so AI coding agents can onboard quickly.
 
 ## Highlights
 
@@ -94,6 +94,9 @@ Generate AGENTS.md and repo metadata so AI coding agents can onboard quickly.
 - Package name: `agent-ready`.
 - CLI bin: `agent-ready` -> `./src/cli/main.js`.
 - Node engine: `>=18.17`.
+- Repository: `git+https://github.com/RaziStuff/agent-ready.git`.
+- Homepage: `https://github.com/RaziStuff/agent-ready#readme`.
+- Publish access: `public`.
 - Published file allowlist: `src`, `schemas`, `docs`, `action.yml`, `agent-ready.config.example.json`, `AGENTS.md`, `CHANGELOG.md`, `CONTRIBUTING.md`, `RELEASE_NOTES.md`, `SECURITY.md`, `README.md`, `LICENSE`.
 
 ## Verification
