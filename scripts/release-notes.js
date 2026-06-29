@@ -55,10 +55,21 @@ async function readFirstParagraph(readmePath) {
   const content = await fs.readFile(readmePath, "utf8");
   const lines = content
     .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .filter((line) => !line.startsWith("#"));
-  return lines[0] ?? "No description available.";
+    .map((line) => line.trim());
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
+    const nextLine = lines[index + 1] ?? "";
+    if (!line || line.startsWith("#")) {
+      continue;
+    }
+    if (/^(=+|-+)$/.test(line) || /^(=+|-+)$/.test(nextLine)) {
+      continue;
+    }
+    return line;
+  }
+
+  return "No description available.";
 }
 
 async function listExampleSummaries() {
@@ -171,9 +182,9 @@ export async function generateReleaseNotes() {
     "- Includes copy-paste and machine-readable adoption recipes for Codex, Claude, Cursor, MCP-capable hosts, and terminal agents.",
     "- Provides deterministic scanners for common repo facts without requiring network access or an API key.",
     "- Detects npm, pnpm, and Yarn workspaces, plus Turborepo and Nx monorepo signals.",
-    "- Detects Composer and Laravel projects, including Artisan, Pint, PHPUnit, Laravel directory roles, and migration risk areas.",
+    "- Detects Composer, Laravel, and Symfony projects, including Artisan, Symfony console, Pint, PHPUnit, PHP-CS-Fixer, PHPStan, framework directory roles, and migration risk areas.",
     "- Detects Makefile, justfile, Taskfile, and common CI provider commands.",
-    "- Covers Laravel, Rails, Django, Spring Boot, and ASP.NET Core fixture repos with snapshots.",
+    "- Covers Laravel, Symfony, Rails, Django, Spring Boot, and ASP.NET Core fixture repos with snapshots.",
     "- Snapshot-tests `AGENTS.md`, `repo-map.json`, and `commands.json` for every fixture.",
     "- Warns when `AGENTS.md` references stale local files, with strict mode support for CI.",
     "- Supports strict validation, metadata and runtime report schemas, fixture snapshots, MCP compatibility checks, package smoke checks, and a GitHub Action.",

@@ -111,6 +111,9 @@ export const TOP_LEVEL_DIR_ROLES = [
   { pattern: /^resources$/, role: "views, frontend assets, and localization resources" },
   { pattern: /^routes$/, role: "application route definitions" },
   { pattern: /^storage$/, role: "runtime storage, logs, and framework cache placeholders" },
+  { pattern: /^templates$/, role: "server-rendered templates" },
+  { pattern: /^translations$/, role: "localization messages" },
+  { pattern: /^data$/, role: "local data fixtures or development databases" },
   { pattern: /^assets$/, role: "assets" },
   { pattern: /^infra$/, role: "infrastructure" },
   { pattern: /^terraform$/, role: "infrastructure" }

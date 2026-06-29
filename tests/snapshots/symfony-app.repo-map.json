@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "root": ".",
+  "summary": {
+    "purpose": "Reference Symfony application for support operations and moderation workflows.",
+    "primaryLanguage": "PHP",
+    "packageManagers": [
+      "composer"
+    ],
+    "frameworks": [
+      "Symfony"
+    ],
+    "monorepo": false
+  },
+  "inventory": {
+    "fileCount": 17,
+    "directoryCount": 10,
+    "symlinkCount": 0,
+    "limitHit": false,
+    "gitignoreRuleCount": 0,
+    "configIgnoreRuleCount": 0
+  },
+  "config": {
+    "path": "agent-ready.config.json",
+    "loaded": false,
+    "profiles": [],
+    "warnings": []
+  },
+  "languages": [
+    {
+      "name": "PHP",
+      "fileCount": 6,
+      "confidence": 0.95,
+      "evidence": [
+        "Detected 6 PHP files.",
+        "Detected PHP manifest signal."
+      ]
+    }
+  ],
+  "packageManagers": [
+    {
+      "name": "composer",
+      "confidence": 0.92,
+      "evidence": [
+        "Detected composer from composer.lock."
+      ]
+    }
+  ],
+  "monorepo": {
+    "detected": false,
+    "kind": "single-package",
+    "tools": [],
+    "workspaceGlobs": [],
+    "packages": [],
+    "packageCount": 0
+  },
+  "frameworks": [
+    {
+      "name": "Symfony",
+      "confidence": 0.92,
+      "evidence": [
+        "Detected Symfony from Composer dependencies or Symfony project files."
+      ]
+    }
+  ],
+  "directories": [
+    {
+      "path": "bin",
+      "role": "developer and framework command wrappers",
+      "confidence": 0.85
+    },
+    {
+      "path": "config",
+      "role": "configuration",
+      "confidence": 0.85
+    },
+    {
+      "path": "public",
+      "role": "static assets",
+      "confidence": 0.85
+    },
+    {
+      "path": "src",
+      "role": "application source",
+      "confidence": 0.85
+    },
+    {
+      "path": "templates",
+      "role": "server-rendered templates",
+      "confidence": 0.85
+    },
+    {
+      "path": "tests",
+      "role": "tests",
+      "confidence": 0.85
+    },
+    {
+      "path": "translations",
+      "role": "localization messages",
+      "confidence": 0.85
+    }
+  ],
+  "entrypoints": [
+    {
+      "path": "bin/console",
+      "kind": "Symfony console entrypoint",
+      "confidence": 0.82
+    },
+    {
+      "path": "config/bundles.php",
+      "kind": "Symfony bundle registry",
+      "confidence": 0.82
+    },
+    {
+      "path": "config/routes.yaml",
+      "kind": "Symfony routes config",
+      "confidence": 0.82
+    },
+    {
+      "path": "public/index.php",
+      "kind": "PHP web front controller",
+      "confidence": 0.82
+    }
+  ],
+  "docs": [
+    {
+      "path": "README.md",
+      "role": "readme"
+    }
+  ],
+  "ci": [],
+  "generatedHints": []
+}

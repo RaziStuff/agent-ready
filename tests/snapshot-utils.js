@@ -13,6 +13,7 @@ export const SNAPSHOT_CASES = [
   "rust-cli",
   "rails-api",
   "laravel-app",
+  "symfony-app",
   "django-service",
   "spring-boot-api",
   "dotnet-web-api"

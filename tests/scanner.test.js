@@ -396,6 +396,62 @@ test("detects Laravel Composer projects and sanitizes HTML-heavy README purpose"
   assert.ok(scan.risks.some((item) => item.path.startsWith("database/migrations") && item.category === "database_migration"));
 });
 
+test("detects Symfony Composer projects and console-oriented commands", async () => {
+  const root = await makeFixture({
+    "README.md": "Symfony Demo Application\n========================\n\nReference app for Symfony best practices.\n",
+    "composer.json": JSON.stringify({
+      type: "project",
+      description: "Symfony Demo Application",
+      require: {
+        php: ">=8.3",
+        "symfony/console": "^7.0",
+        "symfony/framework-bundle": "^7.0",
+        "symfony/runtime": "^7.0",
+        "symfony/twig-bundle": "^7.0"
+      },
+      "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^11.0"
+      }
+    }),
+    "composer.lock": "{}",
+    "bin/console": "#!/usr/bin/env php\n<?php\n",
+    "bin/phpunit": "#!/usr/bin/env php\n<?php\n",
+    "config/bundles.php": "<?php\nreturn [Symfony\\Bundle\\FrameworkBundle\\FrameworkBundle::class => ['all' => true]];\n",
+    "config/packages/framework.yaml": "framework:\n  secret: '%env(APP_SECRET)%'\n",
+    "config/routes.yaml": "controllers:\n  resource: ../src/Controller/\n",
+    "public/index.php": "<?php\nuse App\\Kernel;\n",
+    "src/Controller/StatusController.php": "<?php\nnamespace App\\Controller;\nclass StatusController {}\n",
+    "templates/status.html.twig": "<h1>Status</h1>\n",
+    "translations/messages.en.yaml": "status: Status\n",
+    "tests/Controller/StatusControllerTest.php": "<?php\nnamespace App\\Tests\\Controller;\nclass StatusControllerTest {}\n",
+    "phpunit.dist.xml": "<phpunit />\n",
+    "phpstan.dist.neon": "parameters: {}\n",
+    ".php-cs-fixer.dist.php": "<?php\nreturn (new PhpCsFixer\\Config())->setRules([]);\n"
+  });
+
+  const scan = await scanRepo({ root });
+
+  assert.equal(scan.summary.purpose, "Reference app for Symfony best practices.");
+  assert.ok(scan.languages.some((item) => item.name === "PHP"));
+  assert.ok(scan.packageManagers.some((item) => item.name === "composer"));
+  assert.ok(scan.frameworks.some((item) => item.name === "Symfony"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "bin/console"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "config/bundles.php"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "config/routes.yaml"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "public/index.php"));
+  assert.ok(scan.directories.some((item) => item.path === "templates" && item.role === "server-rendered templates"));
+  assert.ok(scan.directories.some((item) => item.path === "translations" && item.role === "localization messages"));
+  assert.ok(scan.commands.some((item) => item.name === "install" && item.command === "composer install"));
+  assert.ok(scan.commands.some((item) => item.name === "console" && item.command === "./bin/console"));
+  assert.ok(scan.commands.some((item) => item.name === "serve" && item.command === "php -S localhost:8000 -t public/"));
+  assert.ok(scan.commands.some((item) => item.name === "test" && item.command === "./bin/phpunit"));
+  assert.ok(scan.commands.some((item) => item.name === "lint" && item.command === "vendor/bin/php-cs-fixer fix --dry-run --diff"));
+  assert.ok(scan.commands.some((item) => item.name === "typecheck" && item.command === "vendor/bin/phpstan analyse"));
+  assert.ok(scan.risks.some((item) => item.path === "composer.lock" && item.category === "lockfile"));
+});
+
 test("detects Django projects and manage.py test command", async () => {
   const root = await makeFixture({
     "README.md": "# Support Desk\n\nDjango service for support ticket workflows.\n",

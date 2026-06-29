@@ -2,6 +2,27 @@
 
 All notable changes to `agent-ready` will be documented here.
 
+## 0.2.1 - Symfony Coverage
+
+### Added
+
+- Added Symfony framework detection from Composer dependencies and Symfony
+  project files.
+- Added Symfony entrypoints for `bin/console`, `config/bundles.php`,
+  `config/routes.yaml`, and `public/index.php`.
+- Added Symfony-oriented command guidance for console access, PHPUnit,
+  PHP-CS-Fixer, PHPStan, and a dependency-free local PHP server.
+- Added directory roles for server-rendered templates, translations, and local
+  data fixtures.
+- Added a Symfony fixture with AGENTS.md, repo-map, and command snapshots.
+- Added an external dogfood report for the published CLI against
+  `symfony/demo`.
+
+### Fixed
+
+- Build README purpose summaries from complete Markdown paragraphs so wrapped
+  README descriptions are not truncated after the first line.
+
 ## 0.2.0 - Laravel Coverage
 
 ### Added

@@ -238,6 +238,9 @@ function detectEntrypoints(files) {
     ["config/application.rb", "Rails application config"],
     ["bin/rails", "Rails command entrypoint"],
     ["artisan", "Laravel Artisan command entrypoint"],
+    ["bin/console", "Symfony console entrypoint"],
+    ["config/bundles.php", "Symfony bundle registry"],
+    ["config/routes.yaml", "Symfony routes config"],
     ["public/index.php", "PHP web front controller"],
     ["routes/web.php", "Laravel web routes"],
     ["routes/api.php", "Laravel API routes"],
@@ -770,18 +773,45 @@ async function detectPhp(root, files, evidence) {
     }));
   }
 
+  const hasSymfony = hasComposerDependency(deps, "symfony/framework-bundle")
+    || files.has("bin/console")
+    || files.has("config/bundles.php")
+    || files.has("config/packages/framework.yaml");
+  if (hasSymfony) {
+    frameworks.push({
+      name: "Symfony",
+      confidence: 0.92,
+      evidence: [addEvidence(evidence, "Detected Symfony from Composer dependencies or Symfony project files.")]
+    });
+    if (files.has("bin/console")) {
+      commands.push(command("console", "./bin/console", "Symfony detection", 0.78));
+    }
+    if (files.has("public/index.php")) {
+      commands.push(command("serve", "php -S localhost:8000 -t public/", "Symfony detection", 0.72));
+    }
+  }
+
   const hasPhpUnit = hasComposerDependency(deps, "phpunit/phpunit")
     || files.has("phpunit.xml")
+    || files.has("phpunit.dist.xml")
     || files.has("phpunit.xml.dist")
     || [...files].some((file) => /^tests\/.+Test\.php$/.test(file));
   if (hasPhpUnit && !commands.some((item) => item.name === "test")) {
-    commands.push(command("test", "vendor/bin/phpunit", "PHPUnit detection", 0.84));
+    commands.push(command("test", files.has("bin/phpunit") ? "./bin/phpunit" : "vendor/bin/phpunit", "PHPUnit detection", 0.84));
     addEvidence(evidence, "Detected PHPUnit from PHP project files.");
   }
 
   if (hasComposerDependency(deps, "laravel/pint")) {
     commands.push(command("lint", "vendor/bin/pint --test", "composer.json:laravel/pint", 0.78));
     addEvidence(evidence, "Detected Laravel Pint from composer.json.");
+  }
+  if (hasComposerDependency(deps, "friendsofphp/php-cs-fixer") || files.has(".php-cs-fixer.dist.php")) {
+    commands.push(command("lint", "vendor/bin/php-cs-fixer fix --dry-run --diff", "PHP-CS-Fixer detection", 0.78));
+    addEvidence(evidence, "Detected PHP-CS-Fixer from PHP project files.");
+  }
+  if (hasComposerDependency(deps, "phpstan/phpstan") || [...files].some((file) => /^phpstan(\.dist)?\.neon$/.test(file))) {
+    commands.push(command("typecheck", "vendor/bin/phpstan analyse", "PHPStan detection", 0.78));
+    addEvidence(evidence, "Detected PHPStan from PHP project files.");
   }
 
   const composerScripts = composerJson?.scripts ?? {};
@@ -1263,14 +1293,48 @@ function extractPurposeFromMarkdown(content) {
     .replace(/\s+/g, " ")
     .trim();
 
-  const lines = content.split(/\r?\n/);
-  const nonEmpty = lines
-    .map(cleanMarkdownLine)
-    .filter(Boolean)
-    .filter((line) => !line.startsWith("#"))
-    .filter((line) => !line.startsWith("```"));
+  const lines = content.split(/\r?\n/).map(cleanMarkdownLine);
+  const paragraphs = [];
+  let current = [];
+  let inFence = false;
+  const flush = () => {
+    const paragraphText = current.join(" ").replace(/\s+/g, " ").trim();
+    if (paragraphText) {
+      paragraphs.push(paragraphText);
+    }
+    current = [];
+  };
 
-  const paragraph = nonEmpty.find((line) => line.length > 20 && !line.startsWith("[!") && !line.startsWith("<!--"));
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
+    const nextLine = lines[index + 1] ?? "";
+
+    if (!line) {
+      flush();
+      continue;
+    }
+    if (line.startsWith("```")) {
+      inFence = !inFence;
+      flush();
+      continue;
+    }
+    if (inFence) {
+      continue;
+    }
+    if (line.startsWith("#") || /^(=+|-+)$/.test(line) || /^(=+|-+)$/.test(nextLine)) {
+      flush();
+      continue;
+    }
+    if (line.startsWith("[!") || line.startsWith("<!--")) {
+      flush();
+      continue;
+    }
+
+    current.push(line);
+  }
+  flush();
+
+  const paragraph = paragraphs.find((line) => line.length > 20);
   if (!paragraph) {
     return null;
   }

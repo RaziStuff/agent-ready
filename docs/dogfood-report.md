@@ -89,3 +89,48 @@ Follow-up candidates:
 - Test a non-Laravel Composer package to tune generic PHP library behavior.
 - Add Symfony fixture coverage.
 - Add a Laravel monorepo or app-with-packages fixture if real users surface one.
+
+## 2026-06-29: External Symfony repo check
+
+Package tested: `@ahmedshaikh/agent-ready@0.2.0`
+
+Target repo: shallow clone of `symfony/demo` into `/private/tmp`, then ran the
+published CLI through `pnpm dlx`.
+
+Commands exercised:
+
+```bash
+agent-ready scan --json
+```
+
+What worked:
+
+- Composer and PHP were detected.
+- PHPUnit was detected from project files.
+- GitHub Actions run commands were extracted, including Composer install,
+  console lint commands, PHPStan, and PHPUnit.
+- Secret-like `.env*` files were flagged without reading contents.
+
+Friction found:
+
+- Symfony was not identified as a framework.
+- Symfony-native entrypoints such as `bin/console`, `config/bundles.php`, and
+  `config/routes.yaml` were not surfaced.
+- Symfony-friendly commands for console access, local serving, PHP-CS-Fixer,
+  and PHPStan were missing from the first-class command catalog.
+- README purpose extraction stopped at the first line of a wrapped paragraph.
+- `templates`, `translations`, and `data` directories were labeled as generic
+  project directories.
+
+Finding fixed:
+
+- Added Symfony detection, Symfony entrypoints, console/PHPUnit/PHP-CS-Fixer/
+  PHPStan command guidance, framework directory roles, paragraph-aware README
+  purpose extraction, and a committed Symfony fixture with AGENTS.md/repo-map/
+  commands snapshots.
+
+Follow-up candidates:
+
+- Test a generic Composer library with no web framework.
+- Test a PHP package that uses Pest instead of PHPUnit.
+- Consider parsing common Composer script arrays into more exact command text.

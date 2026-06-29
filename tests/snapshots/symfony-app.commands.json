@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "commands": [
+    {
+      "name": "console",
+      "command": "./bin/console",
+      "source": "Symfony detection",
+      "confidence": 0.78,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "install",
+      "command": "composer install",
+      "source": "composer.lock",
+      "confidence": 0.9,
+      "requiresNetwork": true,
+      "writesFiles": true,
+      "risk": "medium"
+    },
+    {
+      "name": "lint",
+      "command": "vendor/bin/php-cs-fixer fix --dry-run --diff",
+      "source": "PHP-CS-Fixer detection",
+      "confidence": 0.78,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "serve",
+      "command": "php -S localhost:8000 -t public/",
+      "source": "Symfony detection",
+      "confidence": 0.72,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "test",
+      "command": "./bin/phpunit",
+      "source": "PHPUnit detection",
+      "confidence": 0.84,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "typecheck",
+      "command": "vendor/bin/phpstan analyse",
+      "source": "PHPStan detection",
+      "confidence": 0.78,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    }
+  ]
+}

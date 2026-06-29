@@ -57,8 +57,10 @@ Focus: broader repo coverage and better update ergonomics.
 - Add direct affected package lookup through `agent-ready affected`, `agent-ready workspaces --changed`, JSON Schema, and MCP.
 - Add first external-repo dogfood pass with `laravel/laravel`.
 - Add Composer and Laravel detection, Artisan commands, Pint/PHPUnit hints, Laravel directory roles, and Laravel fixture snapshots.
+- Add external Symfony dogfood with `symfony/demo`.
+- Add Symfony detection, console/PHPUnit/PHP-CS-Fixer/PHPStan command guidance, Symfony directory roles, and Symfony fixture snapshots.
 - Continue improving monorepo update ergonomics around affected package detection.
-- Add more fixture repos for generic PHP/Composer, Symfony, Ruby/RSpec variants, mobile apps, and polyglot monorepos.
+- Add more fixture repos for generic PHP/Composer, Ruby/RSpec variants, mobile apps, and polyglot monorepos.
 
 ## v0.3
 
