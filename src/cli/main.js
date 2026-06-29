@@ -264,7 +264,7 @@ async function main() {
   const { command, options, positionals } = parseArgs(process.argv.slice(2));
 
   if (options.version) {
-    console.log("0.2.1");
+    console.log("0.2.2");
     return;
   }
 

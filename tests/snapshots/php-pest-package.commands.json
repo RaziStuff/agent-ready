@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "commands": [
+    {
+      "name": "install",
+      "command": "composer install",
+      "source": "composer.json",
+      "confidence": 0.82,
+      "requiresNetwork": true,
+      "writesFiles": true,
+      "risk": "medium"
+    },
+    {
+      "name": "test",
+      "command": "composer test",
+      "source": "composer.json:scripts.test",
+      "confidence": 0.82,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "typecheck",
+      "command": "composer test:type:check",
+      "source": "composer.json:scripts.test:type:check",
+      "confidence": 0.82,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "unit tests",
+      "command": "composer test:unit",
+      "source": "composer.json:scripts.test:unit",
+      "confidence": 0.82,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    }
+  ]
+}

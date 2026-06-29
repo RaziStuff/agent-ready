@@ -2,6 +2,26 @@
 
 All notable changes to `agent-ready` will be documented here.
 
+## 0.2.2 - Pest Coverage
+
+### Added
+
+- Added Pest framework detection from Composer package names, dependencies,
+  plugin dependencies, `bin/pest`, `tests/Pest.php`, and `pest.php`.
+- Added common Composer script aliases for unit, integration, parallel,
+  end-to-end, lint, typecheck, format, analyse/analyze, and PHPStan-style
+  scripts.
+- Added a generic Composer/Pest package fixture with AGENTS.md, repo-map, and
+  command snapshots.
+- Added an external dogfood report for the published CLI against `pestphp/pest`.
+
+### Fixed
+
+- Prefer declared Composer scripts such as `composer test` and
+  `composer test:type:check` before falling back to raw PHPUnit/PHPStan commands.
+- Skip README blockquote announcements and strip simple Markdown emphasis when
+  extracting repo purpose summaries.
+
 ## 0.2.1 - Symfony Coverage
 
 ### Added

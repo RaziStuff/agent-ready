@@ -737,6 +737,10 @@ function hasComposerDependency(deps, name) {
   return Object.prototype.hasOwnProperty.call(deps, name);
 }
 
+function hasComposerScript(composerJson, name) {
+  return Object.prototype.hasOwnProperty.call(composerJson?.scripts ?? {}, name);
+}
+
 async function detectPhp(root, files, evidence) {
   const commands = [];
   const frameworks = [];
@@ -791,32 +795,35 @@ async function detectPhp(root, files, evidence) {
     }
   }
 
-  const hasPhpUnit = hasComposerDependency(deps, "phpunit/phpunit")
-    || files.has("phpunit.xml")
-    || files.has("phpunit.dist.xml")
-    || files.has("phpunit.xml.dist")
-    || [...files].some((file) => /^tests\/.+Test\.php$/.test(file));
-  if (hasPhpUnit && !commands.some((item) => item.name === "test")) {
-    commands.push(command("test", files.has("bin/phpunit") ? "./bin/phpunit" : "vendor/bin/phpunit", "PHPUnit detection", 0.84));
-    addEvidence(evidence, "Detected PHPUnit from PHP project files.");
-  }
-
-  if (hasComposerDependency(deps, "laravel/pint")) {
-    commands.push(command("lint", "vendor/bin/pint --test", "composer.json:laravel/pint", 0.78));
-    addEvidence(evidence, "Detected Laravel Pint from composer.json.");
-  }
-  if (hasComposerDependency(deps, "friendsofphp/php-cs-fixer") || files.has(".php-cs-fixer.dist.php")) {
-    commands.push(command("lint", "vendor/bin/php-cs-fixer fix --dry-run --diff", "PHP-CS-Fixer detection", 0.78));
-    addEvidence(evidence, "Detected PHP-CS-Fixer from PHP project files.");
-  }
-  if (hasComposerDependency(deps, "phpstan/phpstan") || [...files].some((file) => /^phpstan(\.dist)?\.neon$/.test(file))) {
-    commands.push(command("typecheck", "vendor/bin/phpstan analyse", "PHPStan detection", 0.78));
-    addEvidence(evidence, "Detected PHPStan from PHP project files.");
+  const packageName = typeof composerJson?.name === "string" ? composerJson.name : "";
+  const hasPest = packageName.startsWith("pestphp/")
+    || hasComposerDependency(deps, "pestphp/pest")
+    || Object.keys(deps).some((name) => name.startsWith("pestphp/pest-plugin"))
+    || files.has("bin/pest")
+    || files.has("tests/Pest.php")
+    || files.has("pest.php");
+  if (hasPest) {
+    frameworks.push({
+      name: "Pest",
+      confidence: 0.86,
+      evidence: [addEvidence(evidence, "Detected Pest from Composer dependencies or Pest project files.")]
+    });
+    if (!hasComposerScript(composerJson, "test") && !commands.some((item) => item.name === "test")) {
+      commands.push(command("test", files.has("bin/pest") ? "php bin/pest" : "vendor/bin/pest", "Pest detection", 0.84));
+    }
   }
 
   const composerScripts = composerJson?.scripts ?? {};
   const composerScriptLabels = [
     ["test", "test"],
+    ["test:unit", "unit tests"],
+    ["test:integration", "integration tests"],
+    ["test:parallel", "parallel tests"],
+    ["test:e2e", "end-to-end tests"],
+    ["test:lint", "lint"],
+    ["test:type:check", "typecheck"],
+    ["test:types", "typecheck"],
+    ["test:static", "typecheck"],
     ["lint", "lint"],
     ["format", "format"],
     ["analyse", "typecheck"],
@@ -832,6 +839,35 @@ async function detectPhp(root, files, evidence) {
     }
     commands.push(command(label, `composer ${scriptName}`, `composer.json:scripts.${scriptName}`, 0.82));
     addEvidence(evidence, `Detected script "${scriptName}" in composer.json.`);
+  }
+
+  const hasPhpUnit = hasComposerDependency(deps, "phpunit/phpunit")
+    || files.has("phpunit.xml")
+    || files.has("phpunit.dist.xml")
+    || files.has("phpunit.xml.dist")
+    || [...files].some((file) => /^tests\/.+Test\.php$/.test(file));
+  if (hasPhpUnit && !hasComposerScript(composerJson, "test") && !commands.some((item) => item.name === "test")) {
+    commands.push(command("test", files.has("bin/phpunit") ? "./bin/phpunit" : "vendor/bin/phpunit", "PHPUnit detection", 0.84));
+    addEvidence(evidence, "Detected PHPUnit from PHP project files.");
+  }
+
+  if (hasComposerDependency(deps, "laravel/pint")) {
+    if (!commands.some((item) => item.name === "lint")) {
+      commands.push(command("lint", "vendor/bin/pint --test", "composer.json:laravel/pint", 0.78));
+    }
+    addEvidence(evidence, "Detected Laravel Pint from composer.json.");
+  }
+  if (hasComposerDependency(deps, "friendsofphp/php-cs-fixer") || files.has(".php-cs-fixer.dist.php")) {
+    if (!commands.some((item) => item.name === "lint")) {
+      commands.push(command("lint", "vendor/bin/php-cs-fixer fix --dry-run --diff", "PHP-CS-Fixer detection", 0.78));
+    }
+    addEvidence(evidence, "Detected PHP-CS-Fixer from PHP project files.");
+  }
+  if (hasComposerDependency(deps, "phpstan/phpstan") || [...files].some((file) => /^phpstan(\.dist)?\.neon$/.test(file))) {
+    if (!commands.some((item) => item.name === "typecheck")) {
+      commands.push(command("typecheck", "vendor/bin/phpstan analyse", "PHPStan detection", 0.78));
+    }
+    addEvidence(evidence, "Detected PHPStan from PHP project files.");
   }
 
   return { commands, frameworks, purpose };
@@ -1290,6 +1326,7 @@ function extractPurposeFromMarkdown(content) {
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
+    .replace(/[*_`]+/g, "")
     .replace(/\s+/g, " ")
     .trim();
 
@@ -1325,7 +1362,7 @@ function extractPurposeFromMarkdown(content) {
       flush();
       continue;
     }
-    if (line.startsWith("[!") || line.startsWith("<!--")) {
+    if (line.startsWith("[!") || line.startsWith("<!--") || line.startsWith(">")) {
       flush();
       continue;
     }

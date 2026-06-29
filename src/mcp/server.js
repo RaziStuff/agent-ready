@@ -24,7 +24,7 @@ import {
 import { validateRepo } from "../validators/validate.js";
 
 const SERVER_NAME = "agent-ready";
-const SERVER_VERSION = "0.2.1";
+const SERVER_VERSION = "0.2.2";
 const DEFAULT_PROTOCOL_VERSION = "2024-11-05";
 
 export const MCP_RESOURCES = [

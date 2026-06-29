@@ -59,8 +59,10 @@ Focus: broader repo coverage and better update ergonomics.
 - Add Composer and Laravel detection, Artisan commands, Pint/PHPUnit hints, Laravel directory roles, and Laravel fixture snapshots.
 - Add external Symfony dogfood with `symfony/demo`.
 - Add Symfony detection, console/PHPUnit/PHP-CS-Fixer/PHPStan command guidance, Symfony directory roles, and Symfony fixture snapshots.
+- Add external Pest dogfood with `pestphp/pest`.
+- Add Pest detection, richer Composer script aliases, safer README purpose extraction for blockquoted announcements, and generic Composer/Pest fixture snapshots.
 - Continue improving monorepo update ergonomics around affected package detection.
-- Add more fixture repos for generic PHP/Composer, Ruby/RSpec variants, mobile apps, and polyglot monorepos.
+- Add more fixture repos for generic Composer libraries without frameworks, Pest plugin variants, Ruby/RSpec variants, mobile apps, and polyglot monorepos.
 
 ## v0.3
 

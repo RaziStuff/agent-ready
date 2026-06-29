@@ -14,6 +14,7 @@ export const SNAPSHOT_CASES = [
   "rails-api",
   "laravel-app",
   "symfony-app",
+  "php-pest-package",
   "django-service",
   "spring-boot-api",
   "dotnet-web-api"

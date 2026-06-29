@@ -452,6 +452,51 @@ test("detects Symfony Composer projects and console-oriented commands", async ()
   assert.ok(scan.risks.some((item) => item.path === "composer.lock" && item.category === "lockfile"));
 });
 
+test("detects generic Composer packages that use Pest", async () => {
+  const root = await makeFixture({
+    "README.md": "<p align=\"center\"><img src=\"logo.svg\" alt=\"Pest\"></p>\n\n> Pest v4 is available.\n\n**Pest Tools** is a small package for expressive PHP tests.\n",
+    "composer.json": JSON.stringify({
+      name: "acme/pest-tools",
+      description: "Tiny Composer package for Pest assertions.",
+      type: "library",
+      require: {
+        php: "^8.3"
+      },
+      "require-dev": {
+        "pestphp/pest": "^4.0",
+        "phpstan/phpstan": "^2.0"
+      },
+      autoload: {
+        "psr-4": {
+          "Acme\\PestTools\\": "src/"
+        }
+      },
+      scripts: {
+        test: "pest",
+        "test:unit": "pest tests/Unit",
+        "test:type:check": "phpstan analyse"
+      }
+    }),
+    "src/Matcher.php": "<?php\nnamespace Acme\\PestTools;\nclass Matcher {}\n",
+    "tests/Pest.php": "<?php\nuses()->in('Unit');\n",
+    "tests/Unit/MatcherTest.php": "<?php\nit('matches values', fn () => expect(true)->toBeTrue());\n",
+    "phpstan.neon": "parameters: {}\n"
+  });
+
+  const scan = await scanRepo({ root });
+
+  assert.equal(scan.summary.purpose, "Pest Tools is a small package for expressive PHP tests.");
+  assert.ok(scan.languages.some((item) => item.name === "PHP"));
+  assert.ok(scan.packageManagers.some((item) => item.name === "composer"));
+  assert.ok(scan.frameworks.some((item) => item.name === "Pest"));
+  assert.ok(scan.commands.some((item) => item.name === "install" && item.command === "composer install"));
+  assert.ok(scan.commands.some((item) => item.name === "test" && item.command === "composer test"));
+  assert.ok(scan.commands.some((item) => item.name === "unit tests" && item.command === "composer test:unit"));
+  assert.ok(scan.commands.some((item) => item.name === "typecheck" && item.command === "composer test:type:check"));
+  assert.ok(scan.directories.some((item) => item.path === "src" && item.role === "application source"));
+  assert.ok(scan.directories.some((item) => item.path === "tests" && item.role === "tests"));
+});
+
 test("detects Django projects and manage.py test command", async () => {
   const root = await makeFixture({
     "README.md": "# Support Desk\n\nDjango service for support ticket workflows.\n",

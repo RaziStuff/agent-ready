@@ -134,3 +134,49 @@ Follow-up candidates:
 - Test a generic Composer library with no web framework.
 - Test a PHP package that uses Pest instead of PHPUnit.
 - Consider parsing common Composer script arrays into more exact command text.
+
+## 2026-06-29: External Pest repo check
+
+Package tested: `@ahmedshaikh/agent-ready@0.2.1`
+
+Target repo: shallow clone of `pestphp/pest` into `/private/tmp`, then ran the
+published CLI through `pnpm dlx`.
+
+Commands exercised:
+
+```bash
+agent-ready scan --json
+```
+
+What worked:
+
+- Composer, PHP, PHPStan, and GitHub Actions signals were detected.
+- CI run commands were extracted, including Composer install and test scripts.
+- README purpose extraction skipped the HTML image block and found the project
+  description paragraph.
+
+Friction found:
+
+- Pest was not identified as a framework.
+- The command catalog preferred raw PHPUnit fallback guidance over the project's
+  declared Composer/Pest scripts.
+- Common Composer script names such as `test:unit`, `test:integration`,
+  `test:parallel`, `test:lint`, and `test:type:check` were not surfaced as
+  first-class commands.
+- Blockquoted README announcements could become the detected purpose before the
+  project description.
+
+Finding fixed:
+
+- Added Pest detection, richer Composer script aliases, Composer-script-first
+  command ordering, blockquote-skipping README purpose extraction, simple
+  Markdown emphasis cleanup, and a committed generic Composer/Pest fixture with
+  AGENTS.md/repo-map/commands snapshots.
+
+Follow-up candidates:
+
+- Test a generic Composer library with no framework-specific dependencies.
+- Test a Pest plugin package to tune plugin-specific directory and command
+  guidance.
+- Consider parsing Composer script arrays into more exact command text while
+  keeping the simpler `composer <script>` command as the default agent action.
