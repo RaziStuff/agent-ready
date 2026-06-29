@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "commands": [
+    {
+      "name": "install",
+      "command": "composer install",
+      "source": "composer.json",
+      "confidence": 0.82,
+      "requiresNetwork": true,
+      "writesFiles": true,
+      "risk": "medium"
+    },
+    {
+      "name": "lint",
+      "command": "vendor/bin/php-cs-fixer fix --dry-run --diff",
+      "source": "PHP-CS-Fixer detection",
+      "confidence": 0.78,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "test",
+      "command": "composer test",
+      "source": "composer.json:scripts.test",
+      "confidence": 0.82,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "typecheck",
+      "command": "composer phpstan",
+      "source": "composer.json:scripts.phpstan",
+      "confidence": 0.82,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    }
+  ]
+}

@@ -17,6 +17,7 @@ export const SNAPSHOT_CASES = [
   "laravel-app",
   "symfony-app",
   "php-pest-package",
+  "php-composer-library",
   "django-service",
   "spring-boot-api",
   "dotnet-web-api"

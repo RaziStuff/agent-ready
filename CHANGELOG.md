@@ -2,6 +2,25 @@
 
 All notable changes to `agent-ready` will be documented here.
 
+## 0.2.5 - Generic Composer Library Coverage
+
+### Added
+
+- Added Composer library classification from `composer.json` type.
+- Added Composer script aliases for `phpstan`, `phpstan-baseline`, and common
+  PHP-CS-Fixer script names.
+- Added entrypoints for `composer.json`, PHPUnit config, PHPStan config, and
+  PHP-CS-Fixer config.
+- Added a generic Composer library fixture with PHPUnit, PHPStan, PHP-CS-Fixer,
+  AGENTS.md, repo-map, and command snapshots.
+- Added an external dogfood report for the published CLI against
+  `Seldaek/monolog`.
+
+### Fixed
+
+- Recognize `.php-cs-fixer.php` and `phpstan*.neon` files when inferring
+  Composer library lint/typecheck guidance.
+
 ## 0.2.4 - Minitest Ruby Gem Coverage
 
 ### Added

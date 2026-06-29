@@ -3,20 +3,19 @@
   "generatedAt": "2026-01-01T00:00:00.000Z",
   "root": ".",
   "summary": {
-    "purpose": "Tiny Composer package for expressive Pest assertions and matcher helpers.",
+    "purpose": "Log Tools is a small Composer library for routing application log records.",
     "primaryLanguage": "PHP",
     "packageManagers": [
       "composer"
     ],
     "frameworks": [
-      "Composer library",
-      "Pest"
+      "Composer library"
     ],
     "monorepo": false
   },
   "inventory": {
-    "fileCount": 6,
-    "directoryCount": 3,
+    "fileCount": 7,
+    "directoryCount": 2,
     "symlinkCount": 0,
     "limitHit": false,
     "gitignoreRuleCount": 0,
@@ -63,13 +62,6 @@
       "evidence": [
         "Detected Composer library from composer.json type."
       ]
-    },
-    {
-      "name": "Pest",
-      "confidence": 0.86,
-      "evidence": [
-        "Detected Pest from Composer dependencies or Pest project files."
-      ]
     }
   ],
   "directories": [
@@ -91,9 +83,19 @@
       "confidence": 0.82
     },
     {
-      "path": "phpstan.neon",
-      "kind": "PHPStan config",
+      "path": "phpunit.xml.dist",
+      "kind": "PHPUnit config",
       "confidence": 0.82
+    },
+    {
+      "path": ".php-cs-fixer.php",
+      "kind": "PHP-CS-Fixer config",
+      "confidence": 0.82
+    },
+    {
+      "path": "phpstan-baseline.neon",
+      "kind": "PHPStan config",
+      "confidence": 0.78
     }
   ],
   "docs": [

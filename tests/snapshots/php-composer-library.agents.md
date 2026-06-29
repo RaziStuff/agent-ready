@@ -3,53 +3,42 @@
 ## Purpose
 
 <!-- agent-ready:start purpose -->
-Reference Symfony application for support operations and moderation workflows.
+Log Tools is a small Composer library for routing application log records.
 <!-- agent-ready:end purpose -->
 
 ## Repo Map
 
 <!-- agent-ready:start repo-map -->
-- `bin/`: developer and framework command wrappers.
-- `config/`: configuration.
-- `public/`: static assets.
 - `src/`: application source.
-- `templates/`: server-rendered templates.
 - `tests/`: tests.
-- `translations/`: localization messages.
-- `bin/console`: Symfony console entrypoint.
-- `config/bundles.php`: Symfony bundle registry.
-- `config/routes.yaml`: Symfony routes config.
-- `public/index.php`: PHP web front controller.
 - `composer.json`: Composer package manifest.
-- `phpunit.dist.xml`: PHPUnit config.
-- `phpstan.dist.neon`: PHPStan config.
-- `.php-cs-fixer.dist.php`: PHP-CS-Fixer config.
+- `phpunit.xml.dist`: PHPUnit config.
+- `.php-cs-fixer.php`: PHP-CS-Fixer config.
+- `phpstan-baseline.neon`: PHPStan config.
 <!-- agent-ready:end repo-map -->
 
 ## Setup
 
 <!-- agent-ready:start setup -->
-- Package manager: composer.
+- Package manager (likely): composer.
 - Install dependencies with `composer install`.
 <!-- agent-ready:end setup -->
 
 ## Common Commands
 
 <!-- agent-ready:start commands -->
-- Console: `./bin/console`.
 - Install: `composer install`.
 - Lint: `vendor/bin/php-cs-fixer fix --dry-run --diff`.
-- Serve: `php -S localhost:8000 -t public/`.
-- Test: `./bin/phpunit`.
-- Typecheck: `vendor/bin/phpstan analyse`.
+- Test: `composer test`.
+- Typecheck: `composer phpstan`.
 <!-- agent-ready:end commands -->
 
 ## Validation
 
 <!-- agent-ready:start validation -->
-- Tests: `./bin/phpunit`.
+- Tests: `composer test`.
 - Lint: `vendor/bin/php-cs-fixer fix --dry-run --diff`.
-- Typecheck: `vendor/bin/phpstan analyse`.
+- Typecheck: `composer phpstan`.
 
 Before handing off, run the smallest validation command that covers your change and report what passed or failed.
 <!-- agent-ready:end validation -->
@@ -58,7 +47,7 @@ Before handing off, run the smallest validation command that covers your change 
 
 <!-- agent-ready:start conventions -->
 - Primary language appears to be PHP.
-- Detected frameworks: Symfony.
+- Detected frameworks: Composer library.
 - Read local docs before large changes: `README.md`.
 - Follow nearby code style and existing helper APIs before introducing new abstractions.
 - Keep generated outputs and lockfiles scoped to dependency or generator changes.
@@ -67,7 +56,7 @@ Before handing off, run the smallest validation command that covers your change 
 ## Risky Areas
 
 <!-- agent-ready:start risks -->
-- `composer.lock`: lockfiles should change only when dependencies change.
+_No high-confidence data detected yet._
 <!-- agent-ready:end risks -->
 
 ## Environment

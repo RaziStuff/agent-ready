@@ -20,6 +20,8 @@ Laravel application for support request intake, queueing, and account lookup.
 - `artisan`: Laravel Artisan command entrypoint.
 - `public/index.php`: PHP web front controller.
 - `routes/web.php`: Laravel web routes.
+- `composer.json`: Composer package manifest.
+- `phpunit.xml`: PHPUnit config.
 <!-- agent-ready:end repo-map -->
 
 ## Setup

@@ -11,6 +11,8 @@ Tiny Composer package for expressive Pest assertions and matcher helpers.
 <!-- agent-ready:start repo-map -->
 - `src/`: application source.
 - `tests/`: tests.
+- `composer.json`: Composer package manifest.
+- `phpstan.neon`: PHPStan config.
 <!-- agent-ready:end repo-map -->
 
 ## Setup
@@ -42,7 +44,7 @@ Before handing off, run the smallest validation command that covers your change 
 
 <!-- agent-ready:start conventions -->
 - Primary language appears to be PHP.
-- Detected frameworks: Pest.
+- Detected frameworks: Composer library, Pest.
 - Read local docs before large changes: `README.md`.
 - Follow nearby code style and existing helper APIs before introducing new abstractions.
 - Keep generated outputs and lockfiles scoped to dependency or generator changes.

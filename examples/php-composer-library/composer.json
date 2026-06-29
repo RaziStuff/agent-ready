@@ -1,0 +1,28 @@
+{
+  "name": "acme/log-tools",
+  "description": "Small Composer library for routing application log records.",
+  "type": "library",
+  "require": {
+    "php": "^8.3",
+    "psr/log": "^3.0"
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^3.0",
+    "phpstan/phpstan": "^2.0",
+    "phpunit/phpunit": "^11.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Acme\\LogTools\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Acme\\LogTools\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit",
+    "phpstan": "phpstan analyse"
+  }
+}

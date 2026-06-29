@@ -264,3 +264,46 @@ Follow-up candidates:
 - Test a gemspec-only Ruby gem without a Gemfile.
 - Parse extra Rake task files under `tasks/`.
 - Consider detecting Bake tasks in Ruby projects that use `bake`.
+
+## 2026-06-29: External generic Composer library repo check
+
+Package tested: `@ahmedshaikh/agent-ready@0.2.4`
+
+Target repo: shallow clone of `Seldaek/monolog` into `/private/tmp`, then ran
+the published CLI through `pnpm dlx`.
+
+Commands exercised:
+
+```bash
+agent-ready scan --json
+```
+
+What worked:
+
+- PHP and Composer were detected.
+- README purpose extraction found the real package summary.
+- `composer test` was detected from Composer scripts.
+- PHPStan was detected from project files.
+- GitHub Actions run commands were extracted, including `composer phpstan`.
+
+Friction found:
+
+- The project was not identified as a generic Composer library even though
+  `composer.json` has `"type": "library"`.
+- `composer phpstan` was not preferred over the raw PHPStan fallback.
+- `.php-cs-fixer.php` did not produce lint guidance.
+- `composer.json`, PHPUnit config, PHPStan baseline files, and PHP-CS-Fixer
+  config were not surfaced as entrypoints.
+
+Finding fixed:
+
+- Added Composer library classification, `phpstan`/`phpstan-baseline` Composer
+  script aliases, PHP-CS-Fixer script aliases, `.php-cs-fixer.php` detection,
+  broader `phpstan*.neon` handling, PHP tooling entrypoints, and a committed
+  generic Composer library fixture with AGENTS.md/repo-map/commands snapshots.
+
+Follow-up candidates:
+
+- Test Composer plugin packages.
+- Test Composer packages that use Psalm instead of PHPStan.
+- Detect Composer `bin` executables as package entrypoints.

@@ -131,8 +131,8 @@ freshness. For the complete maintainer path, read `docs/adoption-playbook.md`.
 
 ```bash
 agent-ready add-to-ci --root /absolute/path/to/repo --json
-agent-ready add-to-ci --root /absolute/path/to/repo --uses RaziStuff/agent-ready@v0.2.4 --mode required --strict --json
-agent-ready add-to-ci --root /absolute/path/to/repo --write --uses RaziStuff/agent-ready@v0.2.4 --mode required --strict
+agent-ready add-to-ci --root /absolute/path/to/repo --uses RaziStuff/agent-ready@v0.2.5 --mode required --strict --json
+agent-ready add-to-ci --root /absolute/path/to/repo --write --uses RaziStuff/agent-ready@v0.2.5 --mode required --strict
 agent-ready validate --root /absolute/path/to/repo --strict
 agent-ready ci-status --status-file agent-ready-status.json --contract-file agent-ready-contract.json
 ```

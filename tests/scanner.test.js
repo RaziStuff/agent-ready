@@ -557,6 +557,61 @@ test("detects generic Composer packages that use Pest", async () => {
   assert.ok(scan.directories.some((item) => item.path === "tests" && item.role === "tests"));
 });
 
+test("detects generic Composer libraries without a PHP framework", async () => {
+  const root = await makeFixture({
+    "README.md": "# Log Tools\n\nLog Tools is a small Composer library for routing application log records.\n",
+    "composer.json": JSON.stringify({
+      name: "acme/log-tools",
+      description: "Small Composer library for routing application log records.",
+      type: "library",
+      require: {
+        php: "^8.3",
+        "psr/log": "^3.0"
+      },
+      "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^11.0"
+      },
+      autoload: {
+        "psr-4": {
+          "Acme\\LogTools\\": "src/"
+        }
+      },
+      "autoload-dev": {
+        "psr-4": {
+          "Acme\\LogTools\\Tests\\": "tests/"
+        }
+      },
+      scripts: {
+        test: "phpunit",
+        phpstan: "phpstan analyse"
+      }
+    }),
+    "src/Router.php": "<?php\nnamespace Acme\\LogTools;\nclass Router {}\n",
+    "tests/RouterTest.php": "<?php\nnamespace Acme\\LogTools\\Tests;\nuse PHPUnit\\Framework\\TestCase;\nclass RouterTest extends TestCase {}\n",
+    "phpunit.xml.dist": "<phpunit />\n",
+    "phpstan-baseline.neon": "parameters: {}\n",
+    ".php-cs-fixer.php": "<?php\nreturn (new PhpCsFixer\\Config())->setRules([]);\n"
+  });
+
+  const scan = await scanRepo({ root });
+
+  assert.equal(scan.summary.purpose, "Log Tools is a small Composer library for routing application log records.");
+  assert.ok(scan.languages.some((item) => item.name === "PHP"));
+  assert.ok(scan.packageManagers.some((item) => item.name === "composer"));
+  assert.ok(scan.frameworks.some((item) => item.name === "Composer library"));
+  assert.ok(!scan.frameworks.some((item) => ["Laravel", "Symfony", "Pest"].includes(item.name)));
+  assert.ok(scan.entrypoints.some((item) => item.path === "composer.json" && item.kind === "Composer package manifest"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "phpunit.xml.dist" && item.kind === "PHPUnit config"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "phpstan-baseline.neon" && item.kind === "PHPStan config"));
+  assert.ok(scan.entrypoints.some((item) => item.path === ".php-cs-fixer.php" && item.kind === "PHP-CS-Fixer config"));
+  assert.ok(scan.commands.some((item) => item.name === "install" && item.command === "composer install"));
+  assert.ok(scan.commands.some((item) => item.name === "test" && item.command === "composer test"));
+  assert.ok(scan.commands.some((item) => item.name === "typecheck" && item.command === "composer phpstan"));
+  assert.ok(scan.commands.some((item) => item.name === "lint" && item.command === "vendor/bin/php-cs-fixer fix --dry-run --diff"));
+});
+
 test("detects Django projects and manage.py test command", async () => {
   const root = await makeFixture({
     "README.md": "# Support Desk\n\nDjango service for support ticket workflows.\n",

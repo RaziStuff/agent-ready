@@ -121,6 +121,26 @@
       "path": "public/index.php",
       "kind": "PHP web front controller",
       "confidence": 0.82
+    },
+    {
+      "path": "composer.json",
+      "kind": "Composer package manifest",
+      "confidence": 0.82
+    },
+    {
+      "path": "phpunit.dist.xml",
+      "kind": "PHPUnit config",
+      "confidence": 0.82
+    },
+    {
+      "path": "phpstan.dist.neon",
+      "kind": "PHPStan config",
+      "confidence": 0.82
+    },
+    {
+      "path": ".php-cs-fixer.dist.php",
+      "kind": "PHP-CS-Fixer config",
+      "confidence": 0.82
     }
   ],
   "docs": [

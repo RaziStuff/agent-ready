@@ -252,6 +252,14 @@ function detectEntrypoints(files) {
     ["public/index.php", "PHP web front controller"],
     ["routes/web.php", "Laravel web routes"],
     ["routes/api.php", "Laravel API routes"],
+    ["composer.json", "Composer package manifest"],
+    ["phpunit.xml", "PHPUnit config"],
+    ["phpunit.dist.xml", "PHPUnit config"],
+    ["phpunit.xml.dist", "PHPUnit config"],
+    ["phpstan.neon", "PHPStan config"],
+    ["phpstan.dist.neon", "PHPStan config"],
+    [".php-cs-fixer.php", "PHP-CS-Fixer config"],
+    [".php-cs-fixer.dist.php", "PHP-CS-Fixer config"],
     ["Program.cs", ".NET application entrypoint"]
   ];
 
@@ -265,6 +273,9 @@ function detectEntrypoints(files) {
   for (const file of files) {
     if (!file.includes("/") && file.endsWith(".gemspec")) {
       entrypoints.push({ path: file, kind: "Ruby gem specification", confidence: 0.84 });
+    }
+    if (/^phpstan[^/]*\.neon$/.test(file) && file !== "phpstan.neon" && file !== "phpstan.dist.neon") {
+      entrypoints.push({ path: file, kind: "PHPStan config", confidence: 0.78 });
     }
     if (/^exe\/[^/]+$/.test(file)) {
       entrypoints.push({ path: file, kind: "Ruby executable entrypoint", confidence: 0.84 });
@@ -849,6 +860,15 @@ async function detectPhp(root, files, evidence) {
     commands.push(command("install", "composer install", files.has("composer.lock") ? "composer.lock" : "composer.json", files.has("composer.lock") ? 0.9 : 0.82));
   }
 
+  const isComposerLibrary = composerJson?.type === "library";
+  if (isComposerLibrary) {
+    frameworks.push({
+      name: "Composer library",
+      confidence: 0.76,
+      evidence: [addEvidence(evidence, "Detected Composer library from composer.json type.")]
+    });
+  }
+
   const hasLaravel = hasComposerDependency(deps, "laravel/framework")
     || files.has("artisan")
     || files.has("bootstrap/app.php")
@@ -915,7 +935,13 @@ async function detectPhp(root, files, evidence) {
     ["test:type:check", "typecheck"],
     ["test:types", "typecheck"],
     ["test:static", "typecheck"],
+    ["phpstan", "typecheck"],
+    ["phpstan-baseline", "typecheck"],
     ["lint", "lint"],
+    ["cs", "lint"],
+    ["cs-fix", "lint"],
+    ["cs-fixer", "lint"],
+    ["php-cs-fixer", "lint"],
     ["format", "format"],
     ["analyse", "typecheck"],
     ["analyze", "typecheck"],
@@ -948,13 +974,13 @@ async function detectPhp(root, files, evidence) {
     }
     addEvidence(evidence, "Detected Laravel Pint from composer.json.");
   }
-  if (hasComposerDependency(deps, "friendsofphp/php-cs-fixer") || files.has(".php-cs-fixer.dist.php")) {
+  if (hasComposerDependency(deps, "friendsofphp/php-cs-fixer") || files.has(".php-cs-fixer.dist.php") || files.has(".php-cs-fixer.php")) {
     if (!commands.some((item) => item.name === "lint")) {
       commands.push(command("lint", "vendor/bin/php-cs-fixer fix --dry-run --diff", "PHP-CS-Fixer detection", 0.78));
     }
     addEvidence(evidence, "Detected PHP-CS-Fixer from PHP project files.");
   }
-  if (hasComposerDependency(deps, "phpstan/phpstan") || [...files].some((file) => /^phpstan(\.dist)?\.neon$/.test(file))) {
+  if (hasComposerDependency(deps, "phpstan/phpstan") || [...files].some((file) => /^phpstan[^/]*\.neon$/.test(file))) {
     if (!commands.some((item) => item.name === "typecheck")) {
       commands.push(command("typecheck", "vendor/bin/phpstan analyse", "PHPStan detection", 0.78));
     }
