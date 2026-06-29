@@ -340,6 +340,62 @@ test("detects Rails projects and Ruby commands", async () => {
   assert.ok(scan.risks.some((item) => item.path.startsWith("db/migrate") && item.category === "database_migration"));
 });
 
+test("detects Laravel Composer projects and sanitizes HTML-heavy README purpose", async () => {
+  const root = await makeFixture({
+    "README.md": "<p align=\"center\"><a href=\"https://laravel.com\"><img src=\"logo.svg\" alt=\"Laravel Logo\"></a></p>\n\n## About Laravel\n\nLaravel is a web application framework with expressive, elegant syntax.\n",
+    "composer.json": JSON.stringify({
+      type: "project",
+      description: "The skeleton application for the Laravel framework.",
+      require: {
+        php: "^8.3",
+        "laravel/framework": "^13.0"
+      },
+      "require-dev": {
+        "laravel/pint": "^1.0",
+        "phpunit/phpunit": "^12.0"
+      },
+      scripts: {
+        test: ["@php artisan test"]
+      }
+    }),
+    "package.json": JSON.stringify({
+      scripts: {
+        dev: "vite",
+        build: "vite build"
+      },
+      devDependencies: {
+        vite: "^7.0.0"
+      }
+    }),
+    "artisan": "#!/usr/bin/env php\n<?php\n",
+    "bootstrap/app.php": "<?php\nreturn Illuminate\\Foundation\\Application::configure(basePath: dirname(__DIR__))->create();\n",
+    "public/index.php": "<?php\nrequire __DIR__.'/../vendor/autoload.php';\n",
+    "routes/web.php": "<?php\nuse Illuminate\\Support\\Facades\\Route;\nRoute::get('/', fn () => view('welcome'));\n",
+    "app/Models/User.php": "<?php\nnamespace App\\Models;\nclass User {}\n",
+    "database/migrations/20260101000000_create_users_table.php": "<?php\nreturn new class extends Migration {};\n",
+    "tests/Feature/ExampleTest.php": "<?php\ntest('ok', fn () => expect(true)->toBeTrue());\n",
+    "phpunit.xml": "<phpunit />\n"
+  });
+
+  const scan = await scanRepo({ root });
+
+  assert.equal(scan.summary.purpose, "Laravel is a web application framework with expressive, elegant syntax.");
+  assert.ok(scan.languages.some((item) => item.name === "PHP"));
+  assert.ok(scan.packageManagers.some((item) => item.name === "composer"));
+  assert.ok(scan.packageManagers.some((item) => item.name === "npm"));
+  assert.ok(scan.frameworks.some((item) => item.name === "Laravel"));
+  assert.ok(scan.frameworks.some((item) => item.name === "Vite"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "artisan"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "public/index.php"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "routes/web.php"));
+  assert.ok(scan.commands.some((item) => item.name === "install" && item.command === "composer install"));
+  assert.ok(scan.commands.some((item) => item.name === "test" && item.command === "php artisan test"));
+  assert.ok(scan.commands.some((item) => item.name === "serve" && item.command === "php artisan serve"));
+  assert.ok(scan.commands.some((item) => item.name === "migrate" && item.command === "php artisan migrate" && item.risk === "high"));
+  assert.ok(scan.commands.some((item) => item.name === "lint" && item.command === "vendor/bin/pint --test"));
+  assert.ok(scan.risks.some((item) => item.path.startsWith("database/migrations") && item.category === "database_migration"));
+});
+
 test("detects Django projects and manage.py test command", async () => {
   const root = await makeFixture({
     "README.md": "# Support Desk\n\nDjango service for support ticket workflows.\n",

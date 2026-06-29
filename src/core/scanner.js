@@ -116,7 +116,7 @@ function detectPackageManagers(files, evidence) {
   if (files.has("go.mod")) add("go modules", "go.mod", 0.98);
   if (files.has("Cargo.lock") || files.has("Cargo.toml")) add("cargo", files.has("Cargo.lock") ? "Cargo.lock" : "Cargo.toml", 0.96);
   if (files.has("Gemfile.lock") || files.has("Gemfile")) add("bundler", files.has("Gemfile.lock") ? "Gemfile.lock" : "Gemfile", files.has("Gemfile.lock") ? 0.92 : 0.82);
-  if (files.has("composer.lock")) add("composer", "composer.lock", 0.92);
+  if (files.has("composer.lock") || files.has("composer.json")) add("composer", files.has("composer.lock") ? "composer.lock" : "composer.json", files.has("composer.lock") ? 0.92 : 0.82);
   if (files.has("pom.xml") || files.has("mvnw")) add("maven", files.has("mvnw") ? "mvnw" : "pom.xml", files.has("mvnw") ? 0.96 : 0.88);
   if (files.has("build.gradle") || files.has("build.gradle.kts") || files.has("gradlew")) add("gradle", files.has("gradlew") ? "gradlew" : (files.has("build.gradle.kts") ? "build.gradle.kts" : "build.gradle"), files.has("gradlew") ? 0.96 : 0.88);
   if ([...files].some((file) => file.endsWith(".sln") || file.endsWith(".csproj"))) add("dotnet", ".sln/.csproj", 0.9);
@@ -237,6 +237,10 @@ function detectEntrypoints(files) {
     ["Cargo.toml", "Rust package manifest"],
     ["config/application.rb", "Rails application config"],
     ["bin/rails", "Rails command entrypoint"],
+    ["artisan", "Laravel Artisan command entrypoint"],
+    ["public/index.php", "PHP web front controller"],
+    ["routes/web.php", "Laravel web routes"],
+    ["routes/api.php", "Laravel API routes"],
     ["Program.cs", ".NET application entrypoint"]
   ];
 
@@ -719,6 +723,90 @@ async function detectRuby(root, files, evidence) {
   return { commands, frameworks };
 }
 
+function composerDependencies(composerJson) {
+  return {
+    ...(composerJson?.require ?? {}),
+    ...(composerJson?.["require-dev"] ?? {})
+  };
+}
+
+function hasComposerDependency(deps, name) {
+  return Object.prototype.hasOwnProperty.call(deps, name);
+}
+
+async function detectPhp(root, files, evidence) {
+  const commands = [];
+  const frameworks = [];
+  const composerJson = files.has("composer.json") ? await readJsonFile(path.join(root, "composer.json")) : null;
+  const deps = composerDependencies(composerJson);
+  const purpose = typeof composerJson?.description === "string" && composerJson.description.trim()
+    ? composerJson.description.trim()
+    : null;
+
+  if (!composerJson && !files.has("artisan") && !files.has("public/index.php")) {
+    return { commands, frameworks, purpose };
+  }
+
+  if (composerJson) {
+    commands.push(command("install", "composer install", files.has("composer.lock") ? "composer.lock" : "composer.json", files.has("composer.lock") ? 0.9 : 0.82));
+  }
+
+  const hasLaravel = hasComposerDependency(deps, "laravel/framework")
+    || files.has("artisan")
+    || files.has("bootstrap/app.php")
+    || files.has("routes/web.php");
+  if (hasLaravel) {
+    frameworks.push({
+      name: "Laravel",
+      confidence: 0.92,
+      evidence: [addEvidence(evidence, "Detected Laravel from Composer dependencies or Laravel project files.")]
+    });
+    commands.push(command("test", "php artisan test", "Laravel detection", 0.86));
+    commands.push(command("serve", "php artisan serve", "Laravel detection", 0.78));
+    commands.push(command("migrate", "php artisan migrate", "Laravel detection", 0.72, {
+      requiresNetwork: false,
+      writesFiles: true,
+      risk: "high"
+    }));
+  }
+
+  const hasPhpUnit = hasComposerDependency(deps, "phpunit/phpunit")
+    || files.has("phpunit.xml")
+    || files.has("phpunit.xml.dist")
+    || [...files].some((file) => /^tests\/.+Test\.php$/.test(file));
+  if (hasPhpUnit && !commands.some((item) => item.name === "test")) {
+    commands.push(command("test", "vendor/bin/phpunit", "PHPUnit detection", 0.84));
+    addEvidence(evidence, "Detected PHPUnit from PHP project files.");
+  }
+
+  if (hasComposerDependency(deps, "laravel/pint")) {
+    commands.push(command("lint", "vendor/bin/pint --test", "composer.json:laravel/pint", 0.78));
+    addEvidence(evidence, "Detected Laravel Pint from composer.json.");
+  }
+
+  const composerScripts = composerJson?.scripts ?? {};
+  const composerScriptLabels = [
+    ["test", "test"],
+    ["lint", "lint"],
+    ["format", "format"],
+    ["analyse", "typecheck"],
+    ["analyze", "typecheck"],
+    ["stan", "typecheck"]
+  ];
+  for (const [scriptName, label] of composerScriptLabels) {
+    if (!Object.prototype.hasOwnProperty.call(composerScripts, scriptName)) {
+      continue;
+    }
+    if (commands.some((item) => item.name === label)) {
+      continue;
+    }
+    commands.push(command(label, `composer ${scriptName}`, `composer.json:scripts.${scriptName}`, 0.82));
+    addEvidence(evidence, `Detected script "${scriptName}" in composer.json.`);
+  }
+
+  return { commands, frameworks, purpose };
+}
+
 async function detectJava(root, files, evidence) {
   const commands = [];
   const frameworks = [];
@@ -1163,9 +1251,21 @@ function extractPurposeFromMarkdown(content) {
     return null;
   }
 
+  const cleanMarkdownLine = (line) => line
+    .trim()
+    .replace(/!\[[^\]]*]\([^)]*\)/g, "")
+    .replace(/\[([^\]]+)]\([^)]*\)/g, "$1")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/\s+/g, " ")
+    .trim();
+
   const lines = content.split(/\r?\n/);
   const nonEmpty = lines
-    .map((line) => line.trim())
+    .map(cleanMarkdownLine)
     .filter(Boolean)
     .filter((line) => !line.startsWith("#"))
     .filter((line) => !line.startsWith("```"));
@@ -1240,6 +1340,7 @@ export async function scanRepo(options = {}) {
   const node = await detectNode(root, files, packageManagers, evidence);
   const python = await detectPython(root, files, evidence);
   const ruby = await detectRuby(root, files, evidence);
+  const php = await detectPhp(root, files, evidence);
   const java = await detectJava(root, files, evidence);
   const dotnet = await detectDotnet(root, files, evidence);
   const go = detectGo(files, evidence);
@@ -1258,6 +1359,7 @@ export async function scanRepo(options = {}) {
       ...node.commands,
       ...python.commands,
       ...ruby.commands,
+      ...php.commands,
       ...java.commands,
       ...dotnet.commands,
       ...go.commands,
@@ -1272,11 +1374,11 @@ export async function scanRepo(options = {}) {
   const commands = applyCommandOverrides(detectedCommands, config, evidence, configSourceLabel);
 
   const frameworks = uniqueBy(
-    [...node.frameworks, ...python.frameworks, ...ruby.frameworks, ...java.frameworks, ...dotnet.frameworks, ...go.frameworks, ...rust.frameworks],
+    [...node.frameworks, ...python.frameworks, ...ruby.frameworks, ...php.frameworks, ...java.frameworks, ...dotnet.frameworks, ...go.frameworks, ...rust.frameworks],
     (item) => item.name
   ).sort((a, b) => a.name.localeCompare(b.name));
 
-  const purpose = config.sections?.purpose ?? docsResult.purpose ?? node.purpose ?? "Repository purpose was not confidently detected.";
+  const purpose = config.sections?.purpose ?? docsResult.purpose ?? php.purpose ?? node.purpose ?? "Repository purpose was not confidently detected.";
   const primaryLanguage = [...languages].sort((a, b) => b.confidence - a.confidence || b.fileCount - a.fileCount)[0]?.name ?? null;
 
   return {

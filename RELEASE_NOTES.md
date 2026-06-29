@@ -1,4 +1,4 @@
-# @ahmedshaikh/agent-ready v0.1.2
+# @ahmedshaikh/agent-ready v0.2.0
 
 Generate AGENTS.md, repo metadata, and MCP context so AI coding agents can onboard quickly.
 
@@ -29,8 +29,9 @@ Generate AGENTS.md, repo metadata, and MCP context so AI coding agents can onboa
 - Includes copy-paste and machine-readable adoption recipes for Codex, Claude, Cursor, MCP-capable hosts, and terminal agents.
 - Provides deterministic scanners for common repo facts without requiring network access or an API key.
 - Detects npm, pnpm, and Yarn workspaces, plus Turborepo and Nx monorepo signals.
+- Detects Composer and Laravel projects, including Artisan, Pint, PHPUnit, Laravel directory roles, and migration risk areas.
 - Detects Makefile, justfile, Taskfile, and common CI provider commands.
-- Covers Rails, Django, Spring Boot, and ASP.NET Core fixture repos with snapshots.
+- Covers Laravel, Rails, Django, Spring Boot, and ASP.NET Core fixture repos with snapshots.
 - Snapshot-tests `AGENTS.md`, `repo-map.json`, and `commands.json` for every fixture.
 - Warns when `AGENTS.md` references stale local files, with strict mode support for CI.
 - Supports strict validation, metadata and runtime report schemas, fixture snapshots, MCP compatibility checks, package smoke checks, and a GitHub Action.
@@ -71,6 +72,7 @@ Generate AGENTS.md, repo metadata, and MCP context so AI coding agents can onboa
 - `django-service`: Django service for support ticket workflows and account lookup.
 - `dotnet-web-api`: ASP.NET Core service for order intake and status APIs.
 - `go-service`: Go service that consumes queue events and writes normalized audit records.
+- `laravel-app`: Laravel application for support request intake, queueing, and account lookup.
 - `node-next-pnpm`: Customer portal built with Next.js for account and billing workflows.
 - `python-fastapi-uv`: FastAPI service for support ticket triage and account lookup.
 - `rails-api`: Rails API for billing operations and account lifecycle workflows.

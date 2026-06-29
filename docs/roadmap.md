@@ -48,13 +48,17 @@ Status: complete for initial release.
 
 ## v0.2
 
+Status: in progress.
+
 Focus: broader repo coverage and better update ergonomics.
 
 - Add first-class workspace package summaries through `agent-ready workspaces`, `.agents/workspaces.json`, JSON Schema, and MCP.
 - Map `impact` and `preflight` paths back to affected workspace packages with scoped validation suggestions.
 - Add direct affected package lookup through `agent-ready affected`, `agent-ready workspaces --changed`, JSON Schema, and MCP.
+- Add first external-repo dogfood pass with `laravel/laravel`.
+- Add Composer and Laravel detection, Artisan commands, Pint/PHPUnit hints, Laravel directory roles, and Laravel fixture snapshots.
 - Continue improving monorepo update ergonomics around affected package detection.
-- Add more fixture repos for PHP/Laravel, Ruby/RSpec variants, mobile apps, and polyglot monorepos.
+- Add more fixture repos for generic PHP/Composer, Symfony, Ruby/RSpec variants, mobile apps, and polyglot monorepos.
 
 ## v0.3
 

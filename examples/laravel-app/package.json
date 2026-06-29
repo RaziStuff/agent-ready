@@ -1,0 +1,12 @@
+{
+  "name": "support-portal-assets",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "vite": "^7.0.0",
+    "laravel-vite-plugin": "^2.0.0"
+  }
+}

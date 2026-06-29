@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "commands": [
+    {
+      "name": "build",
+      "command": "npm run build",
+      "source": "package.json:scripts.build",
+      "confidence": 0.92,
+      "requiresNetwork": false,
+      "writesFiles": true,
+      "risk": "low"
+    },
+    {
+      "name": "dev server",
+      "command": "npm run dev",
+      "source": "package.json:scripts.dev",
+      "confidence": 0.92,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "format",
+      "command": "composer format",
+      "source": "composer.json:scripts.format",
+      "confidence": 0.82,
+      "requiresNetwork": false,
+      "writesFiles": true,
+      "risk": "low"
+    },
+    {
+      "name": "install",
+      "command": "composer install",
+      "source": "composer.json",
+      "confidence": 0.82,
+      "requiresNetwork": true,
+      "writesFiles": true,
+      "risk": "medium"
+    },
+    {
+      "name": "lint",
+      "command": "vendor/bin/pint --test",
+      "source": "composer.json:laravel/pint",
+      "confidence": 0.78,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "migrate",
+      "command": "php artisan migrate",
+      "source": "Laravel detection",
+      "confidence": 0.72,
+      "requiresNetwork": false,
+      "writesFiles": true,
+      "risk": "high"
+    },
+    {
+      "name": "serve",
+      "command": "php artisan serve",
+      "source": "Laravel detection",
+      "confidence": 0.78,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "test",
+      "command": "php artisan test",
+      "source": "Laravel detection",
+      "confidence": 0.86,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    }
+  ]
+}

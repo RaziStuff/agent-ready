@@ -2,6 +2,26 @@
 
 All notable changes to `agent-ready` will be documented here.
 
+## 0.2.0 - Laravel Coverage
+
+### Added
+
+- Added Composer detection from `composer.json`, including Composer install and
+  common script commands.
+- Added Laravel framework detection with Artisan command guidance for tests,
+  serving, and migrations.
+- Added Laravel Pint and PHPUnit hints for lint/test guidance.
+- Added Laravel-oriented directory roles, entrypoints, and a Laravel fixture
+  with AGENTS.md, repo-map, and commands snapshots.
+- Added an external dogfood report for the published CLI against
+  `laravel/laravel`.
+
+### Fixed
+
+- Clean HTML-heavy README lines before choosing the detected repository
+  purpose so logo and badge markup is not used as the summary.
+- Mark `composer.lock` as a lockfile risk path.
+
 ## 0.1.2 - Public CI Default
 
 ### Fixed

@@ -12,6 +12,7 @@ export const SNAPSHOT_CASES = [
   "go-service",
   "rust-cli",
   "rails-api",
+  "laravel-app",
   "django-service",
   "spring-boot-api",
   "dotnet-web-api"

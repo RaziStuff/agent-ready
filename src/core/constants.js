@@ -79,7 +79,7 @@ export const RISK_PATH_RULES = [
   { pattern: /^\.github\/workflows(\/|$)/, category: "ci", severity: "medium", reason: "CI changes can affect validation and release behavior" },
   { pattern: /(^|\/)Dockerfile$/, category: "container", severity: "medium", reason: "container changes can affect runtime behavior" },
   { pattern: /(^|\/)docker-compose\.ya?ml$/, category: "container", severity: "medium", reason: "compose changes can affect local services" },
-  { pattern: /(^|\/)(package-lock\.json|pnpm-lock\.yaml|yarn\.lock|Cargo\.lock|go\.sum|Gemfile\.lock|packages\.lock\.json)$/, category: "lockfile", severity: "medium", reason: "lockfiles should change only when dependencies change" },
+  { pattern: /(^|\/)(package-lock\.json|pnpm-lock\.yaml|yarn\.lock|Cargo\.lock|go\.sum|Gemfile\.lock|composer\.lock|packages\.lock\.json)$/, category: "lockfile", severity: "medium", reason: "lockfiles should change only when dependencies change" },
   { pattern: /(^|\/)(generated|gen|dist|build)(\/|$)/, category: "generated", severity: "medium", reason: "generated outputs should usually be changed through their source inputs" }
 ];
 
@@ -99,13 +99,18 @@ export const TOP_LEVEL_DIR_ROLES = [
   { pattern: /^examples?$/, role: "example projects and fixtures" },
   { pattern: /^scripts?$/, role: "developer scripts" },
   { pattern: /^schemas?$/, role: "JSON schemas and structured contracts" },
+  { pattern: /^bootstrap$/, role: "framework bootstrapping" },
   { pattern: /^config$/, role: "configuration" },
+  { pattern: /^database$/, role: "database schema, factories, seeders, and migrations" },
   { pattern: /^db$/, role: "database schema and migrations" },
   { pattern: /^cmd$/, role: "command entrypoints" },
   { pattern: /^internal$/, role: "internal application packages" },
   { pattern: /^alembic$/, role: "database migrations" },
   { pattern: /^prisma$/, role: "Prisma schema and database migrations" },
   { pattern: /^public$/, role: "static assets" },
+  { pattern: /^resources$/, role: "views, frontend assets, and localization resources" },
+  { pattern: /^routes$/, role: "application route definitions" },
+  { pattern: /^storage$/, role: "runtime storage, logs, and framework cache placeholders" },
   { pattern: /^assets$/, role: "assets" },
   { pattern: /^infra$/, role: "infrastructure" },
   { pattern: /^terraform$/, role: "infrastructure" }

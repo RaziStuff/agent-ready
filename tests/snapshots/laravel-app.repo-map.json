@@ -1,0 +1,158 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "root": ".",
+  "summary": {
+    "purpose": "Laravel application for support request intake, queueing, and account lookup.",
+    "primaryLanguage": "PHP",
+    "packageManagers": [
+      "composer",
+      "npm"
+    ],
+    "frameworks": [
+      "Laravel",
+      "Vite"
+    ],
+    "monorepo": false
+  },
+  "inventory": {
+    "fileCount": 14,
+    "directoryCount": 12,
+    "symlinkCount": 0,
+    "limitHit": false,
+    "gitignoreRuleCount": 0,
+    "configIgnoreRuleCount": 0
+  },
+  "config": {
+    "path": "agent-ready.config.json",
+    "loaded": false,
+    "profiles": [],
+    "warnings": []
+  },
+  "languages": [
+    {
+      "name": "JavaScript",
+      "fileCount": 0,
+      "confidence": 0.78,
+      "evidence": [
+        "Detected JavaScript manifest signal."
+      ]
+    },
+    {
+      "name": "PHP",
+      "fileCount": 9,
+      "confidence": 0.95,
+      "evidence": [
+        "Detected 9 PHP files.",
+        "Detected PHP manifest signal."
+      ]
+    }
+  ],
+  "packageManagers": [
+    {
+      "name": "composer",
+      "confidence": 0.82,
+      "evidence": [
+        "Detected composer from composer.json."
+      ]
+    },
+    {
+      "name": "npm",
+      "confidence": 0.62,
+      "evidence": [
+        "Detected npm from package.json fallback."
+      ]
+    }
+  ],
+  "monorepo": {
+    "detected": false,
+    "kind": "single-package",
+    "tools": [],
+    "workspaceGlobs": [],
+    "packages": [],
+    "packageCount": 0
+  },
+  "frameworks": [
+    {
+      "name": "Laravel",
+      "confidence": 0.92,
+      "evidence": [
+        "Detected Laravel from Composer dependencies or Laravel project files."
+      ]
+    },
+    {
+      "name": "Vite",
+      "confidence": 0.92,
+      "evidence": [
+        "Detected Vite from package.json dependency vite."
+      ]
+    }
+  ],
+  "directories": [
+    {
+      "path": "app",
+      "role": "application routes or app source",
+      "confidence": 0.85
+    },
+    {
+      "path": "bootstrap",
+      "role": "framework bootstrapping",
+      "confidence": 0.85
+    },
+    {
+      "path": "config",
+      "role": "configuration",
+      "confidence": 0.85
+    },
+    {
+      "path": "database",
+      "role": "database schema, factories, seeders, and migrations",
+      "confidence": 0.85
+    },
+    {
+      "path": "public",
+      "role": "static assets",
+      "confidence": 0.85
+    },
+    {
+      "path": "resources",
+      "role": "views, frontend assets, and localization resources",
+      "confidence": 0.85
+    },
+    {
+      "path": "routes",
+      "role": "application route definitions",
+      "confidence": 0.85
+    },
+    {
+      "path": "tests",
+      "role": "tests",
+      "confidence": 0.85
+    }
+  ],
+  "entrypoints": [
+    {
+      "path": "artisan",
+      "kind": "Laravel Artisan command entrypoint",
+      "confidence": 0.82
+    },
+    {
+      "path": "public/index.php",
+      "kind": "PHP web front controller",
+      "confidence": 0.82
+    },
+    {
+      "path": "routes/web.php",
+      "kind": "Laravel web routes",
+      "confidence": 0.82
+    }
+  ],
+  "docs": [
+    {
+      "path": "README.md",
+      "role": "readme"
+    }
+  ],
+  "ci": [],
+  "generatedHints": []
+}

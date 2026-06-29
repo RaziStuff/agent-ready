@@ -45,4 +45,47 @@ Follow-up candidates:
   path commands when no `.git` directory exists.
 - Add a first-class `agent-ready published-smoke` command or documented release
   recipe around the existing smoke script.
-- Test the published CLI against one real external repository before `0.2.0`.
+
+## 2026-06-29: External Laravel repo check
+
+Package tested: `@ahmedshaikh/agent-ready@0.1.2`
+
+Target repo: shallow clone of `laravel/laravel` into `/private/tmp`, then ran
+the published CLI through `pnpm dlx`.
+
+Commands exercised:
+
+```bash
+agent-ready scan --json
+```
+
+What worked:
+
+- PHP was detected as the primary language.
+- GitHub Actions run commands were extracted, including `composer install` and
+  `php artisan test`.
+- Database migrations were correctly marked as high-risk paths.
+
+Friction found:
+
+- `composer.json` alone did not register Composer unless `composer.lock` existed.
+- Laravel was not identified as a framework.
+- Artisan commands such as `php artisan test` and `php artisan serve` were not
+  surfaced as first-class commands.
+- Laravel Pint and PHPUnit signals were not converted into lint/test guidance.
+- HTML-heavy README hero markup could become the detected repo purpose.
+- Laravel directories such as `bootstrap`, `database`, `resources`, `routes`,
+  and `storage` were labeled as generic project directories.
+
+Finding fixed:
+
+- Added Composer detection from `composer.json`, Laravel framework detection,
+  Artisan command guidance, Pint/PHPUnit hints, safer README purpose cleanup,
+  Laravel-oriented directory roles, `composer.lock` risk handling, and a
+  committed Laravel fixture with AGENTS.md/repo-map/commands snapshots.
+
+Follow-up candidates:
+
+- Test a non-Laravel Composer package to tune generic PHP library behavior.
+- Add Symfony fixture coverage.
+- Add a Laravel monorepo or app-with-packages fixture if real users surface one.
