@@ -13,6 +13,7 @@ export const SNAPSHOT_CASES = [
   "rust-cli",
   "rails-api",
   "ruby-gem-rspec",
+  "ruby-gem-minitest",
   "laravel-app",
   "symfony-app",
   "php-pest-package",

@@ -2,6 +2,20 @@
 
 All notable changes to `agent-ready` will be documented here.
 
+## 0.2.4 - Minitest Ruby Gem Coverage
+
+### Added
+
+- Added Minitest detection from Ruby gem dependencies and `test/` project files.
+- Added Rake `test` and `ci` command guidance for Ruby gems.
+- Added a Minitest/RuboCop Ruby gem fixture with AGENTS.md, repo-map, and
+  command snapshots.
+- Added an external dogfood report for the published CLI against `rack/rack`.
+
+### Fixed
+
+- Recognize `Rake::TestTask.new(:test)` when inferring available Rake tasks.
+
 ## 0.2.3 - Ruby Gem Coverage
 
 ### Added

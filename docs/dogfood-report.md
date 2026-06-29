@@ -224,3 +224,43 @@ Follow-up candidates:
 - Test a gemspec-only Ruby gem without a Gemfile.
 - Test a Ruby CLI gem that uses Minitest instead of RSpec.
 - Parse more Rake task files under `tasks/` instead of only the root Rakefile.
+
+## 2026-06-29: External Minitest Ruby gem repo check
+
+Package tested: `@ahmedshaikh/agent-ready@0.2.3`
+
+Target repo: shallow clone of `rack/rack` into `/private/tmp`, then ran the
+published CLI through `pnpm dlx`.
+
+Commands exercised:
+
+```bash
+agent-ready scan --json
+```
+
+What worked:
+
+- Ruby, Bundler, RuboCop, the root gemspec, gem build, and default Rake
+  verification were detected.
+- README purpose extraction skipped badges and found the real project summary.
+- GitHub Actions run commands were extracted, including `bundle exec rake`.
+
+Friction found:
+
+- Minitest was not identified even though the gemspec declares `minitest`.
+- `test/` files did not produce a first-class test framework signal.
+- The command catalog missed the direct `bundle exec rake test` command.
+- The command catalog missed the `bundle exec rake ci` task.
+- `Rake::TestTask.new(:test)` was not recognized as a Rake task declaration.
+
+Finding fixed:
+
+- Added Minitest detection from Ruby dependencies and `test/` files, Rake
+  `test` and `ci` command guidance, `Rake::TestTask` parsing, and a committed
+  Minitest/RuboCop Ruby gem fixture with AGENTS.md/repo-map/commands snapshots.
+
+Follow-up candidates:
+
+- Test a gemspec-only Ruby gem without a Gemfile.
+- Parse extra Rake task files under `tasks/`.
+- Consider detecting Bake tasks in Ruby projects that use `bake`.

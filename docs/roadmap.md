@@ -63,6 +63,8 @@ Focus: broader repo coverage and better update ergonomics.
 - Add Pest detection, richer Composer script aliases, safer README purpose extraction for blockquoted announcements, and generic Composer/Pest fixture snapshots.
 - Add external Ruby gem dogfood with `rubocop/rubocop`.
 - Add Ruby gem detection for gemspecs, RSpec, RuboCop, Rake tasks, executable entrypoints, and Ruby gem fixture snapshots.
+- Add external Minitest Ruby gem dogfood with `rack/rack`.
+- Add Minitest detection, Rake `test`/`ci` command guidance, and Minitest Ruby gem fixture snapshots.
 - Continue improving monorepo update ergonomics around affected package detection.
 - Add more fixture repos for generic Composer libraries without frameworks, Pest plugin variants, mobile apps, and polyglot monorepos.
 

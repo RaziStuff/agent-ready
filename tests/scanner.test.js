@@ -373,6 +373,33 @@ test("detects Ruby gem packages with RSpec and RuboCop", async () => {
   assert.ok(scan.commands.some((item) => item.name === "verify" && item.command === "bundle exec rake"));
 });
 
+test("detects Ruby gem packages that use Minitest", async () => {
+  const root = await makeFixture({
+    "README.md": "# Header Tools\n\nHeader Tools is a Ruby gem for validating HTTP header names.\n",
+    "Gemfile": "source 'https://rubygems.org'\n\ngemspec\n\ngem 'rubocop', require: false\n",
+    "header_tools.gemspec": "Gem::Specification.new do |spec|\n  spec.name = 'header_tools'\n  spec.summary = 'Ruby gem for validating HTTP header names.'\n  spec.add_development_dependency 'minitest'\n  spec.add_development_dependency 'rake'\nend\n",
+    "Rakefile": "require 'rake/testtask'\nRake::TestTask.new(:test) do |task|\n  task.libs << 'test'\nend\ntask default: :test\ntask ci: :test\n",
+    ".rubocop.yml": "AllCops:\n  NewCops: enable\n",
+    "lib/header_tools.rb": "module HeaderTools\n  def self.valid?(name)\n    name.match?(/\\A[A-Za-z-]+\\z/)\n  end\nend\n",
+    "test/header_tools_test.rb": "require 'minitest/autorun'\nrequire 'header_tools'\nclass HeaderToolsTest < Minitest::Test\n  def test_valid_header\n    assert HeaderTools.valid?('Content-Type')\n  end\nend\n"
+  });
+
+  const scan = await scanRepo({ root });
+
+  assert.equal(scan.summary.purpose, "Header Tools is a Ruby gem for validating HTTP header names.");
+  assert.ok(scan.languages.some((item) => item.name === "Ruby"));
+  assert.ok(scan.packageManagers.some((item) => item.name === "bundler"));
+  assert.ok(scan.frameworks.some((item) => item.name === "Minitest"));
+  assert.ok(scan.frameworks.some((item) => item.name === "RuboCop"));
+  assert.ok(!scan.frameworks.some((item) => item.name === "RSpec"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "header_tools.gemspec" && item.kind === "Ruby gem specification"));
+  assert.ok(scan.commands.some((item) => item.name === "build" && item.command === "gem build header_tools.gemspec"));
+  assert.ok(scan.commands.some((item) => item.name === "test" && item.command === "bundle exec rake test"));
+  assert.ok(scan.commands.some((item) => item.name === "ci" && item.command === "bundle exec rake ci"));
+  assert.ok(scan.commands.some((item) => item.name === "lint" && item.command === "bundle exec rubocop"));
+  assert.ok(scan.commands.some((item) => item.name === "verify" && item.command === "bundle exec rake"));
+});
+
 test("detects Laravel Composer projects and sanitizes HTML-heavy README purpose", async () => {
   const root = await makeFixture({
     "README.md": "<p align=\"center\"><a href=\"https://laravel.com\"><img src=\"logo.svg\" alt=\"Laravel Logo\"></a></p>\n\n## About Laravel\n\nLaravel is a web application framework with expressive, elegant syntax.\n",

@@ -162,7 +162,7 @@ Only pass those flags when the user or maintainer approved the side effects.
 Preview the workflow before writing anything:
 
 ```bash
-agent-ready add-to-ci --json --uses RaziStuff/agent-ready@v0.2.3
+agent-ready add-to-ci --json --uses RaziStuff/agent-ready@v0.2.4
 ```
 
 Confirm:
@@ -177,7 +177,7 @@ Confirm:
 Early adoption can be advisory:
 
 ```bash
-agent-ready add-to-ci --json --mode advisory --no-strict --uses RaziStuff/agent-ready@v0.2.3
+agent-ready add-to-ci --json --mode advisory --no-strict --uses RaziStuff/agent-ready@v0.2.4
 ```
 
 Use `--no-artifacts` only when the repo does not want readiness receipts
@@ -188,13 +188,13 @@ uploaded.
 After review, write the workflow:
 
 ```bash
-agent-ready add-to-ci --write --uses RaziStuff/agent-ready@v0.2.3
+agent-ready add-to-ci --write --uses RaziStuff/agent-ready@v0.2.4
 ```
 
 If replacing an existing workflow is intentional:
 
 ```bash
-agent-ready add-to-ci --write --force --uses RaziStuff/agent-ready@v0.2.3
+agent-ready add-to-ci --write --force --uses RaziStuff/agent-ready@v0.2.4
 ```
 
 The generated workflow:
@@ -265,8 +265,8 @@ Refresh CI when action references, strictness, artifact policy, or workflow path
 changes:
 
 ```bash
-agent-ready add-to-ci --json --uses RaziStuff/agent-ready@v0.2.3
-agent-ready add-to-ci --write --force --uses RaziStuff/agent-ready@v0.2.3
+agent-ready add-to-ci --json --uses RaziStuff/agent-ready@v0.2.4
+agent-ready add-to-ci --write --force --uses RaziStuff/agent-ready@v0.2.4
 ```
 
 Before publishing a package change to `agent-ready` itself:
@@ -313,7 +313,7 @@ pnpm pack --dry-run
 To pause enforcement without deleting agent docs:
 
 ```bash
-agent-ready add-to-ci --write --force --mode advisory --no-strict --uses RaziStuff/agent-ready@v0.2.3
+agent-ready add-to-ci --write --force --mode advisory --no-strict --uses RaziStuff/agent-ready@v0.2.4
 ```
 
 To stop CI adoption, remove `.github/workflows/agent-ready.yml`. Keep

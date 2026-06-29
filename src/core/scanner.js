@@ -735,6 +735,8 @@ async function detectRuby(root, files, evidence) {
   }
 
   const hasRspec = hasRubyGemSignal(rubyText, "rspec") || [...files].some((file) => /^spec\/.+_spec\.rb$/.test(file));
+  const hasMinitest = hasRubyGemSignal(rubyText, "minitest")
+    || [...files].some((file) => /^test\/.+(?:_test|test_.*|spec_.*)\.rb$/.test(file));
   if (hasRspec) {
     frameworks.push({
       name: "RSpec",
@@ -745,6 +747,13 @@ async function detectRuby(root, files, evidence) {
     if (hasRakeTask(rakefile, "spec")) {
       commands.push(command("spec task", `${bundlePrefix}rake spec`, "Rakefile:spec", 0.78));
     }
+  } else if (hasMinitest) {
+    frameworks.push({
+      name: "Minitest",
+      confidence: 0.84,
+      evidence: [addEvidence(evidence, "Detected Minitest from Ruby project files.")]
+    });
+    commands.push(command("test", hasRakeTask(rakefile, "test") ? `${bundlePrefix}rake test` : `${bundlePrefix}ruby -Itest`, "Minitest detection", 0.82));
   } else if (hasRails) {
     commands.push(command("test", files.has("bin/rails") ? "bin/rails test" : `${bundlePrefix}rails test`, "Rails detection", 0.82));
   }
@@ -762,6 +771,10 @@ async function detectRuby(root, files, evidence) {
   if (hasRakeTask(rakefile, "default")) {
     commands.push(command("verify", `${bundlePrefix}rake`, "Rakefile:default", 0.72));
     addEvidence(evidence, "Detected default Rake task from Rakefile.");
+  }
+  if (hasRakeTask(rakefile, "ci")) {
+    commands.push(command("ci", `${bundlePrefix}rake ci`, "Rakefile:ci", 0.72));
+    addEvidence(evidence, "Detected CI Rake task from Rakefile.");
   }
 
   return { commands, frameworks, purpose };
@@ -786,7 +799,7 @@ function hasRakeTask(content, taskName) {
   }
   const escaped = taskName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   return new RegExp(`(^|\\n)\\s*task\\s+(?::${escaped}\\b|["']${escaped}["']|${escaped}\\s*:)`).test(content)
-    || new RegExp(`RakeTask\\.new\\(?\\s*:?${escaped}\\b`).test(content);
+    || new RegExp(`(?:RakeTask|TestTask)\\.new\\(?\\s*:?${escaped}\\b`).test(content);
 }
 
 function extractRubyGemspecPurpose(content) {

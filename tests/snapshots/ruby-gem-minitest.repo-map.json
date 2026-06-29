@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "root": ".",
+  "summary": {
+    "purpose": "Header Tools is a Ruby gem for validating HTTP header names.",
+    "primaryLanguage": "Ruby",
+    "packageManagers": [
+      "bundler"
+    ],
+    "frameworks": [
+      "Minitest",
+      "RuboCop"
+    ],
+    "monorepo": false
+  },
+  "inventory": {
+    "fileCount": 7,
+    "directoryCount": 2,
+    "symlinkCount": 0,
+    "limitHit": false,
+    "gitignoreRuleCount": 0,
+    "configIgnoreRuleCount": 0
+  },
+  "config": {
+    "path": "agent-ready.config.json",
+    "loaded": false,
+    "profiles": [],
+    "warnings": []
+  },
+  "languages": [
+    {
+      "name": "Ruby",
+      "fileCount": 2,
+      "confidence": 0.95,
+      "evidence": [
+        "Detected 2 Ruby files.",
+        "Detected Ruby manifest signal."
+      ]
+    }
+  ],
+  "packageManagers": [
+    {
+      "name": "bundler",
+      "confidence": 0.82,
+      "evidence": [
+        "Detected bundler from Gemfile."
+      ]
+    }
+  ],
+  "monorepo": {
+    "detected": false,
+    "kind": "single-package",
+    "tools": [],
+    "workspaceGlobs": [],
+    "packages": [],
+    "packageCount": 0
+  },
+  "frameworks": [
+    {
+      "name": "Minitest",
+      "confidence": 0.84,
+      "evidence": [
+        "Detected Minitest from Ruby project files."
+      ]
+    },
+    {
+      "name": "RuboCop",
+      "confidence": 0.82,
+      "evidence": [
+        "Detected RuboCop from Ruby project files."
+      ]
+    }
+  ],
+  "directories": [
+    {
+      "path": "lib",
+      "role": "shared libraries or utilities",
+      "confidence": 0.85
+    },
+    {
+      "path": "test",
+      "role": "tests",
+      "confidence": 0.85
+    }
+  ],
+  "entrypoints": [
+    {
+      "path": "header_tools.gemspec",
+      "kind": "Ruby gem specification",
+      "confidence": 0.84
+    }
+  ],
+  "docs": [
+    {
+      "path": "README.md",
+      "role": "readme"
+    }
+  ],
+  "ci": [],
+  "generatedHints": []
+}
