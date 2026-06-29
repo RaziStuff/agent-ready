@@ -340,6 +340,39 @@ test("detects Rails projects and Ruby commands", async () => {
   assert.ok(scan.risks.some((item) => item.path.startsWith("db/migrate") && item.category === "database_migration"));
 });
 
+test("detects Ruby gem packages with RSpec and RuboCop", async () => {
+  const root = await makeFixture({
+    "README.md": "<p align=\"center\"><img src=\"logo.svg\" alt=\"String Tools\"></p>\n\n[![CI](https://example.test/ci.svg)](https://example.test/ci)\n\n> Fast strings, calm strings.\n\n**String Tools** is a Ruby gem for normalizing customer-facing strings.\n",
+    "Gemfile": "source 'https://rubygems.org'\n\ngemspec\n\ngem 'rspec', '~> 3.13'\ngem 'rubocop', '~> 1.80', require: false\n",
+    "string_tools.gemspec": "Gem::Specification.new do |spec|\n  spec.name = 'string_tools'\n  spec.summary = 'Ruby gem for normalizing customer-facing strings.'\n  spec.bindir = 'exe'\n  spec.executables = ['string-tools']\n  spec.add_development_dependency 'rspec'\n  spec.add_development_dependency 'rubocop'\nend\n",
+    "Rakefile": "require 'rspec/core/rake_task'\nRSpec::Core::RakeTask.new(:spec)\ntask default: :spec\n",
+    ".rubocop.yml": "AllCops:\n  NewCops: enable\n",
+    "exe/string-tools": "#!/usr/bin/env ruby\nputs 'string tools'\n",
+    "lib/string_tools.rb": "module StringTools\n  def self.normalize(value)\n    value.strip.downcase\n  end\nend\n",
+    "spec/string_tools_spec.rb": "RSpec.describe StringTools do\n  it 'normalizes strings' do\n    expect(described_class.normalize(' Hello ')).to eq('hello')\n  end\nend\n",
+    "tasks/release.rake": "task :release\n"
+  });
+
+  const scan = await scanRepo({ root });
+
+  assert.equal(scan.summary.purpose, "String Tools is a Ruby gem for normalizing customer-facing strings.");
+  assert.ok(scan.languages.some((item) => item.name === "Ruby"));
+  assert.ok(scan.packageManagers.some((item) => item.name === "bundler"));
+  assert.ok(scan.frameworks.some((item) => item.name === "RSpec"));
+  assert.ok(scan.frameworks.some((item) => item.name === "RuboCop"));
+  assert.ok(!scan.frameworks.some((item) => item.name === "Rails"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "string_tools.gemspec" && item.kind === "Ruby gem specification"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "exe/string-tools" && item.kind === "Ruby executable entrypoint"));
+  assert.ok(scan.directories.some((item) => item.path === "exe" && item.role === "published executable entrypoints"));
+  assert.ok(scan.directories.some((item) => item.path === "tasks" && item.role === "Rake tasks and developer automation"));
+  assert.ok(scan.commands.some((item) => item.name === "install" && item.command === "bundle install"));
+  assert.ok(scan.commands.some((item) => item.name === "build" && item.command === "gem build string_tools.gemspec"));
+  assert.ok(scan.commands.some((item) => item.name === "test" && item.command === "bundle exec rspec"));
+  assert.ok(scan.commands.some((item) => item.name === "spec task" && item.command === "bundle exec rake spec"));
+  assert.ok(scan.commands.some((item) => item.name === "lint" && item.command === "bundle exec rubocop"));
+  assert.ok(scan.commands.some((item) => item.name === "verify" && item.command === "bundle exec rake"));
+});
+
 test("detects Laravel Composer projects and sanitizes HTML-heavy README purpose", async () => {
   const root = await makeFixture({
     "README.md": "<p align=\"center\"><a href=\"https://laravel.com\"><img src=\"logo.svg\" alt=\"Laravel Logo\"></a></p>\n\n## About Laravel\n\nLaravel is a web application framework with expressive, elegant syntax.\n",

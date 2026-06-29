@@ -61,8 +61,10 @@ Focus: broader repo coverage and better update ergonomics.
 - Add Symfony detection, console/PHPUnit/PHP-CS-Fixer/PHPStan command guidance, Symfony directory roles, and Symfony fixture snapshots.
 - Add external Pest dogfood with `pestphp/pest`.
 - Add Pest detection, richer Composer script aliases, safer README purpose extraction for blockquoted announcements, and generic Composer/Pest fixture snapshots.
+- Add external Ruby gem dogfood with `rubocop/rubocop`.
+- Add Ruby gem detection for gemspecs, RSpec, RuboCop, Rake tasks, executable entrypoints, and Ruby gem fixture snapshots.
 - Continue improving monorepo update ergonomics around affected package detection.
-- Add more fixture repos for generic Composer libraries without frameworks, Pest plugin variants, Ruby/RSpec variants, mobile apps, and polyglot monorepos.
+- Add more fixture repos for generic Composer libraries without frameworks, Pest plugin variants, mobile apps, and polyglot monorepos.
 
 ## v0.3
 

@@ -3,21 +3,20 @@
   "generatedAt": "2026-01-01T00:00:00.000Z",
   "root": ".",
   "summary": {
-    "purpose": "Rails API for billing operations and account lifecycle workflows.",
+    "purpose": "String Tools is a Ruby gem for normalizing customer-facing strings.",
     "primaryLanguage": "Ruby",
     "packageManagers": [
       "bundler"
     ],
     "frameworks": [
-      "Rails",
       "RSpec",
       "RuboCop"
     ],
     "monorepo": false
   },
   "inventory": {
-    "fileCount": 11,
-    "directoryCount": 9,
+    "fileCount": 9,
+    "directoryCount": 4,
     "symlinkCount": 0,
     "limitHit": false,
     "gitignoreRuleCount": 0,
@@ -32,10 +31,10 @@
   "languages": [
     {
       "name": "Ruby",
-      "fileCount": 7,
+      "fileCount": 2,
       "confidence": 0.95,
       "evidence": [
-        "Detected 7 Ruby files.",
+        "Detected 2 Ruby files.",
         "Detected Ruby manifest signal."
       ]
     }
@@ -43,9 +42,9 @@
   "packageManagers": [
     {
       "name": "bundler",
-      "confidence": 0.92,
+      "confidence": 0.82,
       "evidence": [
-        "Detected bundler from Gemfile.lock."
+        "Detected bundler from Gemfile."
       ]
     }
   ],
@@ -58,13 +57,6 @@
     "packageCount": 0
   },
   "frameworks": [
-    {
-      "name": "Rails",
-      "confidence": 0.92,
-      "evidence": [
-        "Detected Rails from Gemfile or Rails config files."
-      ]
-    },
     {
       "name": "RSpec",
       "confidence": 0.84,
@@ -82,41 +74,36 @@
   ],
   "directories": [
     {
-      "path": "app",
-      "role": "application routes or app source",
+      "path": "exe",
+      "role": "published executable entrypoints",
       "confidence": 0.85
     },
     {
-      "path": "bin",
-      "role": "developer and framework command wrappers",
-      "confidence": 0.85
-    },
-    {
-      "path": "config",
-      "role": "configuration",
-      "confidence": 0.85
-    },
-    {
-      "path": "db",
-      "role": "database schema and migrations",
+      "path": "lib",
+      "role": "shared libraries or utilities",
       "confidence": 0.85
     },
     {
       "path": "spec",
       "role": "tests",
       "confidence": 0.85
+    },
+    {
+      "path": "tasks",
+      "role": "Rake tasks and developer automation",
+      "confidence": 0.85
     }
   ],
   "entrypoints": [
     {
-      "path": "config/application.rb",
-      "kind": "Rails application config",
-      "confidence": 0.82
+      "path": "exe/string-tools",
+      "kind": "Ruby executable entrypoint",
+      "confidence": 0.84
     },
     {
-      "path": "bin/rails",
-      "kind": "Rails command entrypoint",
-      "confidence": 0.82
+      "path": "string_tools.gemspec",
+      "kind": "Ruby gem specification",
+      "confidence": 0.84
     }
   ],
   "docs": [

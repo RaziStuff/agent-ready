@@ -2,6 +2,27 @@
 
 All notable changes to `agent-ready` will be documented here.
 
+## 0.2.3 - Ruby Gem Coverage
+
+### Added
+
+- Added Ruby gem detection from root `.gemspec` files and Rakefiles.
+- Added RSpec and RuboCop tool detection for Ruby gems and Rails apps.
+- Added Ruby gem commands for `gem build`, `bundle exec rspec`,
+  `bundle exec rake spec`, `bundle exec rubocop`, and default Rake verification.
+- Added Ruby gem entrypoints for root gemspecs and `exe/*` executables.
+- Added directory roles for `exe/` executable entrypoints and `tasks/` Rake
+  automation.
+- Added a Ruby gem/RSpec/RuboCop fixture with AGENTS.md, repo-map, and command
+  snapshots.
+- Added an external dogfood report for the published CLI against
+  `rubocop/rubocop`.
+
+### Fixed
+
+- Ignore empty badge links and line-wrapped Markdown links when extracting README
+  purpose summaries.
+
 ## 0.2.2 - Pest Coverage
 
 ### Added

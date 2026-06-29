@@ -14,7 +14,7 @@
     {
       "name": "lint",
       "command": "bundle exec rubocop",
-      "source": "Gemfile:rubocop",
+      "source": "Ruby dependency detection",
       "confidence": 0.78,
       "requiresNetwork": false,
       "writesFiles": false,

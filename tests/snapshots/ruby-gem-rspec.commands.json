@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "commands": [
+    {
+      "name": "build",
+      "command": "gem build string_tools.gemspec",
+      "source": "string_tools.gemspec",
+      "confidence": 0.72,
+      "requiresNetwork": false,
+      "writesFiles": true,
+      "risk": "low"
+    },
+    {
+      "name": "install",
+      "command": "bundle install",
+      "source": "Gemfile",
+      "confidence": 0.88,
+      "requiresNetwork": true,
+      "writesFiles": true,
+      "risk": "medium"
+    },
+    {
+      "name": "lint",
+      "command": "bundle exec rubocop",
+      "source": ".rubocop.yml",
+      "confidence": 0.78,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "spec task",
+      "command": "bundle exec rake spec",
+      "source": "Rakefile:spec",
+      "confidence": 0.78,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "test",
+      "command": "bundle exec rspec",
+      "source": "RSpec detection",
+      "confidence": 0.84,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "verify",
+      "command": "bundle exec rake",
+      "source": "Rakefile:default",
+      "confidence": 0.72,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    }
+  ]
+}

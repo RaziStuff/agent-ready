@@ -116,6 +116,10 @@ function detectPackageManagers(files, evidence) {
   if (files.has("go.mod")) add("go modules", "go.mod", 0.98);
   if (files.has("Cargo.lock") || files.has("Cargo.toml")) add("cargo", files.has("Cargo.lock") ? "Cargo.lock" : "Cargo.toml", 0.96);
   if (files.has("Gemfile.lock") || files.has("Gemfile")) add("bundler", files.has("Gemfile.lock") ? "Gemfile.lock" : "Gemfile", files.has("Gemfile.lock") ? 0.92 : 0.82);
+  if (!files.has("Gemfile") && !files.has("Gemfile.lock")) {
+    const gemspec = rootGemspecs(files)[0];
+    if (gemspec) add("rubygems", gemspec, 0.74);
+  }
   if (files.has("composer.lock") || files.has("composer.json")) add("composer", files.has("composer.lock") ? "composer.lock" : "composer.json", files.has("composer.lock") ? 0.92 : 0.82);
   if (files.has("pom.xml") || files.has("mvnw")) add("maven", files.has("mvnw") ? "mvnw" : "pom.xml", files.has("mvnw") ? 0.96 : 0.88);
   if (files.has("build.gradle") || files.has("build.gradle.kts") || files.has("gradlew")) add("gradle", files.has("gradlew") ? "gradlew" : (files.has("build.gradle.kts") ? "build.gradle.kts" : "build.gradle"), files.has("gradlew") ? 0.96 : 0.88);
@@ -149,6 +153,7 @@ function detectLanguages(files, entries, evidence) {
     ["build.gradle", "Java", 0.75],
     ["build.gradle.kts", "Java", 0.75],
     ["Gemfile", "Ruby", 0.8],
+    ["Rakefile", "Ruby", 0.74],
     ["composer.json", "PHP", 0.8]
   ];
 
@@ -161,6 +166,9 @@ function detectLanguages(files, entries, evidence) {
 
   if ([...files].some((file) => file.endsWith(".csproj") || file.endsWith(".sln"))) {
     manifestScores.set("C#", Math.max(manifestScores.get("C#") ?? 0, 0.88));
+  }
+  if (rootGemspecs(files).length > 0) {
+    manifestScores.set("Ruby", Math.max(manifestScores.get("Ruby") ?? 0, 0.86));
   }
 
   const totalCount = [...counts.values()].reduce((sum, count) => sum + count, 0);
@@ -255,6 +263,12 @@ function detectEntrypoints(files) {
   }
 
   for (const file of files) {
+    if (!file.includes("/") && file.endsWith(".gemspec")) {
+      entrypoints.push({ path: file, kind: "Ruby gem specification", confidence: 0.84 });
+    }
+    if (/^exe\/[^/]+$/.test(file)) {
+      entrypoints.push({ path: file, kind: "Ruby executable entrypoint", confidence: 0.84 });
+    }
     if (/^cmd\/[^/]+\/main\.go$/.test(file)) {
       entrypoints.push({ path: file, kind: "Go command entrypoint", confidence: 0.88 });
     }
@@ -690,15 +704,25 @@ async function detectPython(root, files, evidence) {
 async function detectRuby(root, files, evidence) {
   const commands = [];
   const frameworks = [];
+  const gemspecs = rootGemspecs(files);
+  const gemspecPath = gemspecs[0] ?? null;
   const gemfile = files.has("Gemfile") ? await readTextFileIfSafe(root, "Gemfile") : null;
-  const rubyText = gemfile ?? "";
+  const gemspec = gemspecPath ? await readTextFileIfSafe(root, gemspecPath) : null;
+  const rakefile = files.has("Rakefile") ? await readTextFileIfSafe(root, "Rakefile") : null;
+  const hasRubocopConfig = files.has(".rubocop.yml") || [...files].some((file) => /^\.rubocop(_todo)?\.ya?ml$/.test(file));
+  const rubyText = `${gemfile ?? ""}\n${gemspec ?? ""}\n${rakefile ?? ""}`;
+  const bundlePrefix = files.has("Gemfile") ? "bundle exec " : "";
+  const purpose = extractRubyGemspecPurpose(gemspec);
 
-  if (!files.has("Gemfile") && !files.has("config/application.rb") && !files.has("bin/rails")) {
-    return { commands, frameworks };
+  if (!files.has("Gemfile") && gemspecs.length === 0 && !files.has("Rakefile") && !files.has("config/application.rb") && !files.has("bin/rails")) {
+    return { commands, frameworks, purpose: null };
   }
 
   if (files.has("Gemfile")) {
     commands.push(command("install", "bundle install", "Gemfile", 0.88));
+  }
+  if (gemspecPath) {
+    commands.push(command("build", `gem build ${gemspecPath}`, gemspecPath, 0.72));
   }
 
   const hasRails = /gem\s+["']rails["']/.test(rubyText) || files.has("config/application.rb") || files.has("bin/rails");
@@ -710,20 +734,74 @@ async function detectRuby(root, files, evidence) {
     });
   }
 
-  const hasRspec = /gem\s+["']rspec/.test(rubyText) || [...files].some((file) => /^spec\/.+_spec\.rb$/.test(file));
+  const hasRspec = hasRubyGemSignal(rubyText, "rspec") || [...files].some((file) => /^spec\/.+_spec\.rb$/.test(file));
   if (hasRspec) {
-    commands.push(command("test", "bundle exec rspec", "RSpec detection", 0.84));
-    addEvidence(evidence, "Detected RSpec from Ruby project files.");
+    frameworks.push({
+      name: "RSpec",
+      confidence: 0.84,
+      evidence: [addEvidence(evidence, "Detected RSpec from Ruby project files.")]
+    });
+    commands.push(command("test", `${bundlePrefix}rspec`, "RSpec detection", 0.84));
+    if (hasRakeTask(rakefile, "spec")) {
+      commands.push(command("spec task", `${bundlePrefix}rake spec`, "Rakefile:spec", 0.78));
+    }
   } else if (hasRails) {
-    commands.push(command("test", files.has("bin/rails") ? "bin/rails test" : "bundle exec rails test", "Rails detection", 0.82));
+    commands.push(command("test", files.has("bin/rails") ? "bin/rails test" : `${bundlePrefix}rails test`, "Rails detection", 0.82));
   }
 
-  if (/gem\s+["']rubocop["']/.test(rubyText)) {
-    commands.push(command("lint", "bundle exec rubocop", "Gemfile:rubocop", 0.78));
-    addEvidence(evidence, "Detected RuboCop from Gemfile.");
+  const hasRubocop = hasRubyGemSignal(rubyText, "rubocop") || hasRubocopConfig;
+  if (hasRubocop) {
+    frameworks.push({
+      name: "RuboCop",
+      confidence: 0.82,
+      evidence: [addEvidence(evidence, "Detected RuboCop from Ruby project files.")]
+    });
+    commands.push(command("lint", `${bundlePrefix}rubocop`, hasRubocopConfig ? ".rubocop.yml" : "Ruby dependency detection", 0.78));
   }
 
-  return { commands, frameworks };
+  if (hasRakeTask(rakefile, "default")) {
+    commands.push(command("verify", `${bundlePrefix}rake`, "Rakefile:default", 0.72));
+    addEvidence(evidence, "Detected default Rake task from Rakefile.");
+  }
+
+  return { commands, frameworks, purpose };
+}
+
+function rootGemspecs(files) {
+  return [...files].filter((file) => !file.includes("/") && file.endsWith(".gemspec")).sort();
+}
+
+function hasRubyGemSignal(content, gemName) {
+  if (!content) {
+    return false;
+  }
+  const escaped = gemName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`\\bgem\\s+["']${escaped}(?:["'-]|\\b)`).test(content)
+    || new RegExp(`\\badd_(?:development_)?dependency\\(?\\s*["']${escaped}(?:["'-]|\\b)`).test(content);
+}
+
+function hasRakeTask(content, taskName) {
+  if (!content) {
+    return false;
+  }
+  const escaped = taskName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(^|\\n)\\s*task\\s+(?::${escaped}\\b|["']${escaped}["']|${escaped}\\s*:)`).test(content)
+    || new RegExp(`RakeTask\\.new\\(?\\s*:?${escaped}\\b`).test(content);
+}
+
+function extractRubyGemspecPurpose(content) {
+  if (!content) {
+    return null;
+  }
+  const inline = content.match(/\b(?:s|spec)\.(?:summary|description)\s*=\s*["']([^"']{20,})["']/);
+  if (inline) {
+    return inline[1].replace(/\s+/g, " ").trim();
+  }
+  const heredoc = content.match(/\b(?:s|spec)\.description\s*=\s*<<~?["']?([A-Z_]+)["']?\n([\s\S]*?)\n\s*\1\b/);
+  if (heredoc) {
+    return heredoc[2].replace(/\s+/g, " ").trim();
+  }
+  return null;
 }
 
 function composerDependencies(composerJson) {
@@ -1320,6 +1398,7 @@ function extractPurposeFromMarkdown(content) {
   const cleanMarkdownLine = (line) => line
     .trim()
     .replace(/!\[[^\]]*]\([^)]*\)/g, "")
+    .replace(/\[\]\([^)]*\)/g, "")
     .replace(/\[([^\]]+)]\([^)]*\)/g, "$1")
     .replace(/<[^>]+>/g, "")
     .replace(/&nbsp;/g, " ")
@@ -1335,7 +1414,12 @@ function extractPurposeFromMarkdown(content) {
   let current = [];
   let inFence = false;
   const flush = () => {
-    const paragraphText = current.join(" ").replace(/\s+/g, " ").trim();
+    const paragraphText = current
+      .join(" ")
+      .replace(/\[\]\([^)]*\)/g, "")
+      .replace(/\[([^\]]+)]\([^)]*\)/g, "$1")
+      .replace(/\s+/g, " ")
+      .trim();
     if (paragraphText) {
       paragraphs.push(paragraphText);
     }
@@ -1479,7 +1563,7 @@ export async function scanRepo(options = {}) {
     (item) => item.name
   ).sort((a, b) => a.name.localeCompare(b.name));
 
-  const purpose = config.sections?.purpose ?? docsResult.purpose ?? php.purpose ?? node.purpose ?? "Repository purpose was not confidently detected.";
+  const purpose = config.sections?.purpose ?? docsResult.purpose ?? php.purpose ?? ruby.purpose ?? node.purpose ?? "Repository purpose was not confidently detected.";
   const primaryLanguage = [...languages].sort((a, b) => b.confidence - a.confidence || b.fileCount - a.fileCount)[0]?.name ?? null;
 
   return {

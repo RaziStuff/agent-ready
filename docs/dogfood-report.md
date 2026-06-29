@@ -180,3 +180,47 @@ Follow-up candidates:
   guidance.
 - Consider parsing Composer script arrays into more exact command text while
   keeping the simpler `composer <script>` command as the default agent action.
+
+## 2026-06-29: External Ruby gem repo check
+
+Package tested: `@ahmedshaikh/agent-ready@0.2.2`
+
+Target repo: shallow clone of `rubocop/rubocop` into `/private/tmp`, then ran
+the published CLI through `pnpm dlx`.
+
+Commands exercised:
+
+```bash
+agent-ready scan --json
+```
+
+What worked:
+
+- Ruby and Bundler were detected from the Gemfile.
+- RSpec was detected from Ruby project files and surfaced as `bundle exec rspec`.
+- GitHub Actions workflow files and their run commands were extracted.
+- `lib/` and `spec/` received useful generic directory roles.
+
+Friction found:
+
+- Badge-only README links became the detected project purpose.
+- RSpec and RuboCop were not surfaced as detected Ruby tools/frameworks.
+- RuboCop's root `.gemspec` and `exe/rubocop` executable were not surfaced as
+  entrypoints.
+- The command catalog missed `gem build`, RuboCop linting, and default Rake
+  verification guidance.
+- `exe/` and `tasks/` directories were labeled as generic project directories.
+
+Finding fixed:
+
+- Added root gemspec detection, RubyGems manifest language/package signals,
+  RSpec and RuboCop tool detection, gem build guidance, Rake spec/default task
+  guidance, `exe/*` and gemspec entrypoints, `exe/` and `tasks/` directory
+  roles, badge-link README cleanup, and a committed Ruby gem/RSpec/RuboCop
+  fixture with AGENTS.md/repo-map/commands snapshots.
+
+Follow-up candidates:
+
+- Test a gemspec-only Ruby gem without a Gemfile.
+- Test a Ruby CLI gem that uses Minitest instead of RSpec.
+- Parse more Rake task files under `tasks/` instead of only the root Rakefile.

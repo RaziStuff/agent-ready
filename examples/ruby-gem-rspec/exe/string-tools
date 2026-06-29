@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require "string_tools"
+
+puts StringTools.normalize(ARGV.join(" "))

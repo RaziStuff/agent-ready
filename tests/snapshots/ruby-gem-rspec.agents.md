@@ -3,34 +3,36 @@
 ## Purpose
 
 <!-- agent-ready:start purpose -->
-Rails API for billing operations and account lifecycle workflows.
+String Tools is a Ruby gem for normalizing customer-facing strings.
 <!-- agent-ready:end purpose -->
 
 ## Repo Map
 
 <!-- agent-ready:start repo-map -->
-- `app/`: application routes or app source.
-- `bin/`: developer and framework command wrappers.
-- `config/`: configuration.
-- `db/`: database schema and migrations.
+- `exe/`: published executable entrypoints.
+- `lib/`: shared libraries or utilities.
 - `spec/`: tests.
-- `config/application.rb`: Rails application config.
-- `bin/rails`: Rails command entrypoint.
+- `tasks/`: Rake tasks and developer automation.
+- `exe/string-tools`: Ruby executable entrypoint.
+- `string_tools.gemspec`: Ruby gem specification.
 <!-- agent-ready:end repo-map -->
 
 ## Setup
 
 <!-- agent-ready:start setup -->
-- Package manager: bundler.
+- Package manager (likely): bundler.
 - Install dependencies with `bundle install`.
 <!-- agent-ready:end setup -->
 
 ## Common Commands
 
 <!-- agent-ready:start commands -->
+- Build: `gem build string_tools.gemspec`.
 - Install: `bundle install`.
 - Lint: `bundle exec rubocop`.
+- Spec task: `bundle exec rake spec`.
 - Test: `bundle exec rspec`.
+- Verify: `bundle exec rake`.
 <!-- agent-ready:end commands -->
 
 ## Validation
@@ -38,6 +40,7 @@ Rails API for billing operations and account lifecycle workflows.
 <!-- agent-ready:start validation -->
 - Tests: `bundle exec rspec`.
 - Lint: `bundle exec rubocop`.
+- Build: `gem build string_tools.gemspec`.
 
 Before handing off, run the smallest validation command that covers your change and report what passed or failed.
 <!-- agent-ready:end validation -->
@@ -46,7 +49,7 @@ Before handing off, run the smallest validation command that covers your change 
 
 <!-- agent-ready:start conventions -->
 - Primary language appears to be Ruby.
-- Detected frameworks: Rails, RSpec, RuboCop.
+- Detected frameworks: RSpec, RuboCop.
 - Read local docs before large changes: `README.md`.
 - Follow nearby code style and existing helper APIs before introducing new abstractions.
 - Keep generated outputs and lockfiles scoped to dependency or generator changes.
@@ -55,8 +58,7 @@ Before handing off, run the smallest validation command that covers your change 
 ## Risky Areas
 
 <!-- agent-ready:start risks -->
-- `db/migrate`: database migrations can affect persisted data.
-- `Gemfile.lock`: lockfiles should change only when dependencies change.
+_No high-confidence data detected yet._
 <!-- agent-ready:end risks -->
 
 ## Environment
