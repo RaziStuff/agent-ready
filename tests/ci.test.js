@@ -4,7 +4,12 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 import test from "node:test";
 import assert from "node:assert/strict";
-import { buildCiWorkflow, generateGithubActionsWorkflow, writeCiWorkflow } from "../src/ci/github-actions.js";
+import {
+  DEFAULT_ACTION_REF,
+  buildCiWorkflow,
+  generateGithubActionsWorkflow,
+  writeCiWorkflow
+} from "../src/ci/github-actions.js";
 import { pathExists } from "../src/core/inventory.js";
 
 async function makeTempRoot() {
@@ -73,6 +78,7 @@ test("buildCiWorkflow previews a repo-local workflow path", async () => {
 
   assert.equal(workflow.provider, "github-actions");
   assert.equal(workflow.path, ".github/workflows/agent-ready.yml");
+  assert.equal(workflow.actionRef, DEFAULT_ACTION_REF);
   assert.equal(workflow.mode, "advisory");
   assert.equal(workflow.strict, false);
   assert.equal(workflow.artifacts, true);
@@ -119,6 +125,12 @@ test("writeCiWorkflow refuses to overwrite different workflow without force", as
 
 test("add-to-ci CLI previews JSON and writes workflow", async () => {
   const root = await makeTempRoot();
+
+  const defaultPreviewResult = await runCli(["add-to-ci", "--root", root, "--json"]);
+  const defaultPreview = JSON.parse(defaultPreviewResult.stdout);
+  assert.equal(defaultPreviewResult.status, 0);
+  assert.equal(defaultPreview.actionRef, DEFAULT_ACTION_REF);
+  assert.ok(defaultPreview.content.includes(`uses: ${DEFAULT_ACTION_REF}`));
 
   const previewResult = await runCli(["add-to-ci", "--root", root, "--json", "--uses", "acme/agent-ready@v1"]);
   const preview = JSON.parse(previewResult.stdout);

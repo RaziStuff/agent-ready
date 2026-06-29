@@ -2,6 +2,19 @@
 
 All notable changes to `agent-ready` will be documented here.
 
+## 0.1.2 - Public CI Default
+
+### Fixed
+
+- Default generated GitHub Actions workflows to the public
+  `RaziStuff/agent-ready@v0.1.2` action ref so `agent-ready add-to-ci --json`
+  is immediately usable after install.
+
+### Added
+
+- Added a dogfood report documenting the published-package first-use check and
+  the friction it uncovered.
+
 ## 0.1.1 - Npm Metadata Patch
 
 ### Fixed

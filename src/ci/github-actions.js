@@ -3,7 +3,7 @@ import path from "node:path";
 import { pathExists, toPosixPath } from "../core/inventory.js";
 
 const DEFAULT_WORKFLOW_PATH = ".github/workflows/agent-ready.yml";
-const DEFAULT_ACTION_REF = "your-org/agent-ready@v1";
+export const DEFAULT_ACTION_REF = "RaziStuff/agent-ready@v0.1.2";
 const VALID_MODES = new Set(["required", "advisory"]);
 
 function yamlString(value) {

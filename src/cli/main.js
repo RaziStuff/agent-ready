@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import path from "node:path";
 import process from "node:process";
-import { formatCiWorkflowResult, writeCiWorkflow } from "../ci/github-actions.js";
+import { DEFAULT_ACTION_REF, formatCiWorkflowResult, writeCiWorkflow } from "../ci/github-actions.js";
 import { buildCiStatusReport, ciStatusOutput, DEFAULT_CONTRACT_FILE, DEFAULT_STATUS_FILE } from "../ci/status.js";
 import { buildContextPacket, formatContextPacket } from "../context/packet.js";
 import { writeStarterConfig } from "../core/config.js";
@@ -47,7 +47,7 @@ function parseArgs(argv) {
     write: false,
     mode: "required",
     workflowPath: null,
-    actionRef: "your-org/agent-ready@v1",
+    actionRef: DEFAULT_ACTION_REF,
     schemaId: null,
     artifacts: true,
     statusFile: DEFAULT_STATUS_FILE,
@@ -264,7 +264,7 @@ async function main() {
   const { command, options, positionals } = parseArgs(process.argv.slice(2));
 
   if (options.version) {
-    console.log("0.1.1");
+    console.log("0.1.2");
     return;
   }
 

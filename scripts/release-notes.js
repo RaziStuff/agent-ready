@@ -162,6 +162,7 @@ export async function generateReleaseNotes() {
     "- Validates saved JSON reports with `agent-ready verify-contract <report-file> --schema <schema-id>`.",
     "- Summarizes downloaded CI receipt artifacts with `agent-ready ci-status`.",
     "- Generates GitHub Actions validation workflows with `agent-ready add-to-ci`, including safe preview, explicit write mode, and receipt artifacts for status plus contract verification.",
+    "- Defaults generated GitHub Actions workflows to the public `RaziStuff/agent-ready` release ref while still allowing `--uses` overrides.",
     "- Exposes `AGENTS.md`, `.agents` metadata, workspace catalogs, schema contracts, status dashboards, context packets, doctor readiness, explicit-path and git-changed impact guidance, handoff packets, preflight guidance, resource templates, prompts, summaries, and validation through a read-only stdio MCP server.",
     "- Exposes built-in adoption recipes through `agent-ready://recipes` and `agent-ready://recipes-json` MCP resources.",
     "- Exposes JSON Schema contracts through `agent-ready://schemas` and `agent-ready://schema/{id}` MCP resources.",
