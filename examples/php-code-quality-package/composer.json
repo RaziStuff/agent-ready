@@ -20,6 +20,7 @@
     "bin/quality-fix"
   ],
   "scripts": {
+    "build": "php bin/quality-check --build",
     "phpcs": "phpcs",
     "phpcbf": "phpcbf",
     "check-all": [
@@ -27,5 +28,12 @@
       "@test"
     ],
     "test": "phpunit"
+  },
+  "scripts-descriptions": {
+    "build": "Build local PHPCS helper artifacts.",
+    "phpcs": "Check coding standard violations.",
+    "phpcbf": "Fix coding standard violations.",
+    "check-all": "Run all quality checks.",
+    "test": "Run the unit test suite."
   }
 }

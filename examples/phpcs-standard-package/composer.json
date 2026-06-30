@@ -24,5 +24,11 @@
     "fixcs": "phpcbf",
     "check-complete": "phpcs-check-feature-completeness",
     "test": "phpunit"
+  },
+  "scripts-descriptions": {
+    "checkcs": "Check the standard with PHP_CodeSniffer.",
+    "fixcs": "Fix auto-correctable sniff violations.",
+    "check-complete": "Verify feature completeness metadata.",
+    "test": "Run standard sniff tests."
   }
 }

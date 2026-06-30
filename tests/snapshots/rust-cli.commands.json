@@ -10,7 +10,7 @@
       "role": "format",
       "executionMode": "one-shot",
       "requiresNetwork": false,
-      "writesFiles": true,
+      "writesFiles": false,
       "risk": "low"
     },
     {

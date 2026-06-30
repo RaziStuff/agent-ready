@@ -457,3 +457,54 @@ Follow-up candidates:
 - Consider surfacing `scripts-descriptions` from Composer manifests.
 - Add richer role hints for destructive custom CLI commands beyond filename
   heuristics.
+
+## 2026-06-30: External Composer descriptions and PHPCS directory-role repo check
+
+Package tested: `@ahmedshaikh/agent-ready@0.2.8`
+
+Target repos: shallow clones of `PHPCompatibility/PHPCompatibility` and
+`PHPCSStandards/PHP_CodeSniffer` into `/private/tmp`, then ran the published CLI
+through `pnpm dlx`.
+
+Commands exercised:
+
+```bash
+agent-ready scan --json
+```
+
+What worked:
+
+- PHPCS standards, PHP_CodeSniffer tooling, Composer install/test/lint/format
+  commands, and Composer `allow-plugins` guidance were detected.
+- `PHPCompatibility/PHPCompatibility` surfaced `composer checkcs`,
+  `composer fixcs`, and `composer check-complete`.
+- `PHPCSStandards/PHP_CodeSniffer` surfaced its local `bin/phpcs` and
+  `bin/phpcbf` executables.
+
+Friction found:
+
+- PHPCS standard namespace directories such as `PHPCompatibility/` were still
+  labeled as generic project directories even when they contained `Sniffs/`.
+- Nested `Sniffs/` directories were not visible in the repo map.
+- Composer `scripts-descriptions` did not reach command metadata or generated
+  AGENTS.md command lists.
+- The PHPCS `composer build` script was not surfaced as a first-class build
+  command.
+- General check/fix-style Composer bins such as `phpcs` and `phpcbf` had weak
+  command roles outside the special PHPCS script aliases.
+
+Finding fixed:
+
+- Added PHPCS standard namespace and nested `Sniffs/` directory roles with
+  fixture/test-directory filtering, Composer `scripts-descriptions` command
+  metadata, Composer build/coverage script aliases, richer command role/risk
+  inference, schema documentation for command descriptions/roles/execution
+  modes, and fixture snapshots for the updated command catalog and repo map.
+
+Follow-up candidates:
+
+- Test WordPress Coding Standards or another large PHPCS standards collection.
+- Consider a compact repo-map grouping for projects with many standard
+  directories.
+- Explore Composer event scripts and script aliases beyond the common validation
+  path.

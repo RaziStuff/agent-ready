@@ -75,8 +75,8 @@
   "directories": [
     {
       "path": "Compatibility",
-      "role": "project directory",
-      "confidence": 0.55
+      "role": "PHP_CodeSniffer standard namespace",
+      "confidence": 0.86
     },
     {
       "path": "tests",
@@ -87,6 +87,11 @@
       "path": "tools",
       "role": "project directory",
       "confidence": 0.55
+    },
+    {
+      "path": "Compatibility/Sniffs",
+      "role": "PHP_CodeSniffer sniff source",
+      "confidence": 0.9
     }
   ],
   "entrypoints": [

@@ -36,10 +36,20 @@
           "source": {
             "type": "string"
           },
+          "description": {
+            "type": "string"
+          },
           "confidence": {
             "type": "number",
             "minimum": 0,
             "maximum": 1
+          },
+          "role": {
+            "type": "string"
+          },
+          "executionMode": {
+            "type": "string",
+            "enum": ["one-shot", "long-running"]
           },
           "requiresNetwork": {
             "type": "boolean"

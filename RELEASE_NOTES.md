@@ -1,4 +1,4 @@
-# @ahmedshaikh/agent-ready v0.2.8
+# @ahmedshaikh/agent-ready v0.2.9
 
 Generate AGENTS.md, repo metadata, and MCP context so AI coding agents can onboard quickly.
 
@@ -29,7 +29,7 @@ Generate AGENTS.md, repo metadata, and MCP context so AI coding agents can onboa
 - Includes copy-paste and machine-readable adoption recipes for Codex, Claude, Cursor, MCP-capable hosts, and terminal agents.
 - Provides deterministic scanners for common repo facts without requiring network access or an API key.
 - Detects npm, pnpm, and Yarn workspaces, plus Turborepo and Nx monorepo signals.
-- Detects Composer libraries, Composer plugins, PHPCS standards, Laravel, Symfony, Pest, PHP_CodeSniffer, and Psalm/PHPStan PHP projects, including Composer script aliases, Composer `bin` executable entrypoints and shebang-aware commands, command role metadata, Composer `allow-plugins` guidance, plugin classes, Artisan, Symfony console, Pint, PHPUnit, PHP-CS-Fixer, framework directory roles, and migration risk areas.
+- Detects Composer libraries, Composer plugins, PHPCS standards, Laravel, Symfony, Pest, PHP_CodeSniffer, and Psalm/PHPStan PHP projects, including Composer script aliases and descriptions, Composer build/coverage aliases, Composer `bin` executable entrypoints and shebang-aware commands, command role/execution metadata, Composer `allow-plugins` guidance, plugin classes, PHPCS standard/Sniffs directory roles, Artisan, Symfony console, Pint, PHPUnit, PHP-CS-Fixer, framework directory roles, and migration risk areas.
 - Detects Ruby gems and Rails apps, including RSpec, Minitest, RuboCop, gemspecs, Rake tasks, executable entrypoints, and Ruby directory roles.
 - Detects Makefile, justfile, Taskfile, and common CI provider commands.
 - Covers Laravel, Symfony, Pest Composer package, generic Composer library, Composer plugin, PHP_CodeSniffer code-quality package, PHPCS standard package, Rails, RSpec Ruby gem, Minitest Ruby gem, Django, Spring Boot, and ASP.NET Core fixture repos with snapshots.

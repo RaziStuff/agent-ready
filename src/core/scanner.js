@@ -46,12 +46,33 @@ function uniqueStrings(items) {
   return [...new Set(items.filter(Boolean))];
 }
 
-function commandRisk(name) {
-  if (name === "install") {
+function commandTokenPattern(tokens) {
+  const escaped = tokens.map((token) => token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+  return new RegExp(`(^|[\\s:_./-])(?:${escaped})(?=$|[\\s:_./-])`, "i");
+}
+
+function commandRisk(name, commandText = "") {
+  const lowerName = name.toLowerCase();
+  const lowerCommand = commandText.toLowerCase();
+  const haystack = `${lowerName} ${lowerCommand}`;
+  const isDryRun = /(?:^|\s)(?:--dry-run|--check|--diff|--test)(?:$|\s)/.test(lowerCommand);
+  if (lowerName === "install") {
     return { requiresNetwork: true, writesFiles: true, risk: "medium" };
   }
-  if (name === "build" || name === "dev" || name === "format") {
+  if (commandTokenPattern(["deploy", "release", "publish"]).test(haystack)) {
+    return { requiresNetwork: true, writesFiles: true, risk: "high" };
+  }
+  if (commandTokenPattern(["migrate", "migration", "seed"]).test(haystack)) {
+    return { requiresNetwork: false, writesFiles: true, risk: "high" };
+  }
+  if (commandTokenPattern(["coverage"]).test(haystack)) {
     return { requiresNetwork: false, writesFiles: true, risk: "low" };
+  }
+  if (commandTokenPattern(["build", "compile", "generate", "phar"]).test(haystack)) {
+    return { requiresNetwork: false, writesFiles: true, risk: "low" };
+  }
+  if (commandTokenPattern(["format", "fix", "fixcs", "cbf", "phpcbf", "refactor", "psalter"]).test(haystack)) {
+    return { requiresNetwork: false, writesFiles: !isDryRun, risk: "low" };
   }
   return { requiresNetwork: false, writesFiles: false, risk: "low" };
 }
@@ -72,22 +93,34 @@ function commandExecutionMode(name, commandText) {
 }
 
 function commandRole(name, commandText) {
+  const lowerName = name.toLowerCase();
+  const lowerCommand = commandText.toLowerCase();
+  const haystack = `${lowerName} ${lowerCommand}`;
   if (commandExecutionMode(name, commandText) === "long-running") {
     return "service";
   }
   if (name === "install") {
     return "setup";
   }
-  if (name === "migrate") {
+  if (commandTokenPattern(["migrate", "migration"]).test(haystack)) {
     return "migration";
   }
-  if (["test", "unit tests", "integration tests", "parallel tests", "end-to-end tests", "lint", "typecheck", "verify", "check", "ci", "workspace test", "workspace lint", "workspace typecheck"].includes(name)) {
+  if (commandTokenPattern(["deploy"]).test(haystack)) {
+    return "deployment";
+  }
+  if (commandTokenPattern(["release", "publish"]).test(haystack)) {
+    return "release";
+  }
+  if (
+    ["test", "unit tests", "integration tests", "parallel tests", "end-to-end tests", "lint", "typecheck", "verify", "check", "ci", "coverage", "workspace test", "workspace lint", "workspace typecheck"].includes(name)
+    || commandTokenPattern(["test", "tests", "lint", "check", "verify", "qa", "cs", "phpcs", "analyse", "analyze", "stan"]).test(lowerName)
+  ) {
     return "validation";
   }
-  if (name === "format") {
+  if (name === "format" || commandTokenPattern(["format", "fix", "fixcs", "cbf", "phpcbf", "refactor", "psalter"]).test(haystack)) {
     return "format";
   }
-  if (name === "build" || name === "workspace build") {
+  if (name === "build" || name === "workspace build" || commandTokenPattern(["build", "compile", "generate", "phar"]).test(haystack)) {
     return "build";
   }
   return "tool";
@@ -101,7 +134,7 @@ function command(name, commandText, source, confidenceValue, overrides = {}) {
     confidence: confidence(confidenceValue),
     role: commandRole(name, commandText),
     executionMode: commandExecutionMode(name, commandText),
-    ...commandRisk(name),
+    ...commandRisk(name, commandText),
     ...overrides
   };
 }
@@ -241,28 +274,69 @@ function detectLanguages(files, entries, evidence) {
   return sortByName([...languages.values()]);
 }
 
+function hasChildDirectory(entries, dir, child) {
+  const childPath = dir ? `${dir}/${child}` : child;
+  return entries.some((entry) => entry.kind === "directory" && (entry.path === childPath || entry.path.startsWith(`${childPath}/`)));
+}
+
+function directoryRoleFor(dir, entries, config) {
+  const configuredRole = config.directoryRoles?.[dir];
+  if (configuredRole) {
+    return {
+      role: configuredRole,
+      confidence: 1
+    };
+  }
+
+  if (dir === "Sniffs" || dir.endsWith("/Sniffs")) {
+    return {
+      role: "PHP_CodeSniffer sniff source",
+      confidence: 0.9
+    };
+  }
+
+  const match = TOP_LEVEL_DIR_ROLES.find((rule) => rule.pattern.test(dir));
+  if (match) {
+    return {
+      role: match.role,
+      confidence: 0.85
+    };
+  }
+
+  if (!dir.includes("/") && hasChildDirectory(entries, dir, "Sniffs")) {
+    return {
+      role: "PHP_CodeSniffer standard namespace",
+      confidence: 0.86
+    };
+  }
+
+  return {
+    role: "project directory",
+    confidence: 0.55
+  };
+}
+
+function isFixtureDirectory(dir) {
+  return /(^|\/)(fixtures?|testdata|__fixtures__)(\/|$)/i.test(dir) || /^(tests?|spec)\//.test(dir);
+}
+
 function detectDirectories(entries, config) {
   const topLevelDirs = entries
     .filter((entry) => entry.kind === "directory" && !entry.path.includes("/"))
     .map((entry) => entry.path);
 
-  return topLevelDirs.map((dir) => {
-    const configuredRole = config.directoryRoles?.[dir];
-    if (configuredRole) {
-      return {
-        path: dir,
-        role: configuredRole,
-        confidence: 1
-      };
-    }
+  const nestedPhpCodesnifferDirs = entries
+    .filter((entry) => entry.kind === "directory" && entry.path.endsWith("/Sniffs") && !isFixtureDirectory(entry.path))
+    .map((entry) => entry.path);
 
-    const match = TOP_LEVEL_DIR_ROLES.find((rule) => rule.pattern.test(dir));
+  return uniqueBy([...topLevelDirs, ...nestedPhpCodesnifferDirs].map((dir) => {
+    const match = directoryRoleFor(dir, entries, config);
     return {
       path: dir,
-      role: match?.role ?? "project directory",
-      confidence: match ? 0.85 : 0.55
+      role: match.role,
+      confidence: match.confidence
     };
-  });
+  }), (item) => item.path);
 }
 
 function detectEntrypoints(files) {
@@ -905,6 +979,30 @@ function composerStringList(value) {
   return [];
 }
 
+function normalizeComposerScriptDescription(value) {
+  if (typeof value !== "string") {
+    return null;
+  }
+  const description = value.replace(/\s+/g, " ").trim();
+  if (!description) {
+    return null;
+  }
+  return description.length > 180 ? `${description.slice(0, 177)}...` : description;
+}
+
+function composerScriptDescription(composerJson, scriptName) {
+  const descriptions = composerJson?.["scripts-descriptions"];
+  if (!descriptions || typeof descriptions !== "object" || Array.isArray(descriptions)) {
+    return null;
+  }
+  return normalizeComposerScriptDescription(descriptions[scriptName]);
+}
+
+function composerScriptCommandOverrides(composerJson, scriptName) {
+  const description = composerScriptDescription(composerJson, scriptName);
+  return description ? { description } : {};
+}
+
 function isSafeComposerRelativePath(value) {
   return Boolean(value)
     && !path.posix.isAbsolute(value)
@@ -1181,6 +1279,8 @@ async function detectPhp(root, files, evidence) {
     ["test:integration", "integration tests"],
     ["test:parallel", "parallel tests"],
     ["test:e2e", "end-to-end tests"],
+    ["coverage", "coverage"],
+    ["coverage-local", "coverage"],
     ["test:lint", "lint"],
     ["test:type:check", "typecheck"],
     ["test:types", "typecheck"],
@@ -1209,7 +1309,9 @@ async function detectPhp(root, files, evidence) {
     ["qa", "verify"],
     ["analyse", "typecheck"],
     ["analyze", "typecheck"],
-    ["stan", "typecheck"]
+    ["stan", "typecheck"],
+    ["build", "build"],
+    ["build-phar", "build"]
   ];
   for (const [scriptName, label] of composerScriptLabels) {
     if (!Object.prototype.hasOwnProperty.call(composerScripts, scriptName)) {
@@ -1218,7 +1320,7 @@ async function detectPhp(root, files, evidence) {
     if (commands.some((item) => item.name === label)) {
       continue;
     }
-    commands.push(command(label, `composer ${scriptName}`, `composer.json:scripts.${scriptName}`, 0.82));
+    commands.push(command(label, `composer ${scriptName}`, `composer.json:scripts.${scriptName}`, 0.82, composerScriptCommandOverrides(composerJson, scriptName)));
     addEvidence(evidence, `Detected script "${scriptName}" in composer.json.`);
   }
 

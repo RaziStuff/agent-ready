@@ -700,6 +700,7 @@ test("detects PHP_CodeSniffer, allow-plugins guidance, and CLI bin commands", as
         "bin/quality-fix"
       ],
       scripts: {
+        build: "php bin/quality-check --build",
         phpcs: "phpcs",
         phpcbf: "phpcbf",
         "check-all": [
@@ -707,6 +708,13 @@ test("detects PHP_CodeSniffer, allow-plugins guidance, and CLI bin commands", as
           "@test"
         ],
         test: "phpunit"
+      },
+      "scripts-descriptions": {
+        build: "Build local PHPCS helper artifacts.",
+        phpcs: "Check coding standard violations.",
+        phpcbf: "Fix coding standard violations.",
+        "check-all": "Run all quality checks.",
+        test: "Run the unit test suite."
       }
     }),
     "bin/quality-check": "#!/usr/bin/env php\n<?php\n",
@@ -729,10 +737,12 @@ test("detects PHP_CodeSniffer, allow-plugins guidance, and CLI bin commands", as
   assert.ok(scan.entrypoints.some((item) => item.path === "bin/quality-fix" && item.kind === "Composer bin executable"));
   assert.ok(scan.guidance.some((item) => item.source === "composer.json:config.allow-plugins" && item.message.includes("dealerdirect/phpcodesniffer-composer-installer")));
   assert.ok(scan.commands.some((item) => item.name === "quality-check" && item.command === "php bin/quality-check"));
-  assert.ok(scan.commands.some((item) => item.name === "quality-fix" && item.command === "php bin/quality-fix" && item.writesFiles === true));
-  assert.ok(scan.commands.some((item) => item.name === "lint" && item.command === "composer phpcs"));
-  assert.ok(scan.commands.some((item) => item.name === "format" && item.command === "composer phpcbf" && item.writesFiles === true));
-  assert.ok(scan.commands.some((item) => item.name === "verify" && item.command === "composer check-all"));
+  assert.ok(scan.commands.some((item) => item.name === "quality-check" && item.command === "php bin/quality-check" && item.role === "validation"));
+  assert.ok(scan.commands.some((item) => item.name === "quality-fix" && item.command === "php bin/quality-fix" && item.writesFiles === true && item.role === "format"));
+  assert.ok(scan.commands.some((item) => item.name === "build" && item.command === "composer build" && item.description === "Build local PHPCS helper artifacts." && item.writesFiles === true));
+  assert.ok(scan.commands.some((item) => item.name === "lint" && item.command === "composer phpcs" && item.description === "Check coding standard violations."));
+  assert.ok(scan.commands.some((item) => item.name === "format" && item.command === "composer phpcbf" && item.writesFiles === true && item.description === "Fix coding standard violations."));
+  assert.ok(scan.commands.some((item) => item.name === "verify" && item.command === "composer check-all" && item.description === "Run all quality checks."));
 });
 
 test("detects PHP_CodeSniffer standards and command role metadata", async () => {
@@ -764,6 +774,12 @@ test("detects PHP_CodeSniffer standards and command role metadata", async () => 
         fixcs: "phpcbf",
         "check-complete": "phpcs-check-feature-completeness",
         test: "phpunit"
+      },
+      "scripts-descriptions": {
+        checkcs: "Check the standard with PHP_CodeSniffer.",
+        fixcs: "Fix auto-correctable sniff violations.",
+        "check-complete": "Verify feature completeness metadata.",
+        test: "Run standard sniff tests."
       }
     }),
     "Compatibility/Sniffs/Arrays/ArraySniff.php": "<?php\nnamespace Acme\\Compatibility\\Sniffs\\Arrays;\nclass ArraySniff {}\n",
@@ -779,13 +795,15 @@ test("detects PHP_CodeSniffer standards and command role metadata", async () => 
   assert.equal(scan.summary.purpose, "Compatibility Standard provides PHP_CodeSniffer sniffs for cross-version PHP compatibility checks.");
   assert.ok(scan.frameworks.some((item) => item.name === "PHP_CodeSniffer standard"));
   assert.ok(scan.frameworks.some((item) => item.name === "PHP_CodeSniffer"));
+  assert.ok(scan.directories.some((item) => item.path === "Compatibility" && item.role === "PHP_CodeSniffer standard namespace"));
+  assert.ok(scan.directories.some((item) => item.path === "Compatibility/Sniffs" && item.role === "PHP_CodeSniffer sniff source"));
   assert.ok(scan.entrypoints.some((item) => item.path === "phpcs.xml.dist" && item.kind === "PHP_CodeSniffer config"));
   assert.ok(scan.entrypoints.some((item) => item.path === "tools/standard-check" && item.kind === "Composer bin executable"));
   assert.ok(scan.entrypoints.some((item) => item.path === "tools/standard-language-server" && item.kind === "Composer bin executable"));
-  assert.ok(scan.commands.some((item) => item.name === "lint" && item.command === "composer checkcs" && item.role === "validation"));
-  assert.ok(scan.commands.some((item) => item.name === "format" && item.command === "composer fixcs" && item.writesFiles === true && item.role === "format"));
-  assert.ok(scan.commands.some((item) => item.name === "verify" && item.command === "composer check-complete" && item.role === "validation"));
-  assert.ok(scan.commands.some((item) => item.name === "standard-check" && item.command === "bash tools/standard-check" && item.executionMode === "one-shot"));
+  assert.ok(scan.commands.some((item) => item.name === "lint" && item.command === "composer checkcs" && item.role === "validation" && item.description === "Check the standard with PHP_CodeSniffer."));
+  assert.ok(scan.commands.some((item) => item.name === "format" && item.command === "composer fixcs" && item.writesFiles === true && item.role === "format" && item.description === "Fix auto-correctable sniff violations."));
+  assert.ok(scan.commands.some((item) => item.name === "verify" && item.command === "composer check-complete" && item.role === "validation" && item.description === "Verify feature completeness metadata."));
+  assert.ok(scan.commands.some((item) => item.name === "standard-check" && item.command === "bash tools/standard-check" && item.role === "validation" && item.executionMode === "one-shot"));
   assert.ok(scan.commands.some((item) => item.name === "standard-language-server" && item.command === "node tools/standard-language-server" && item.role === "service" && item.executionMode === "long-running"));
 });
 

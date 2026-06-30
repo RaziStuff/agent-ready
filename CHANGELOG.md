@@ -2,6 +2,31 @@
 
 All notable changes to `agent-ready` will be documented here.
 
+## 0.2.9 - Composer Descriptions and PHPCS Directory Roles
+
+### Added
+
+- Added PHPCS standard namespace and nested `Sniffs/` directory roles so
+  agents can find standard source quickly.
+- Added Composer `scripts-descriptions` support on command catalog entries and
+  generated AGENTS.md command lists.
+- Added Composer `build`, `build-phar`, `coverage`, and `coverage-local`
+  script aliases with role and side-effect metadata.
+- Added richer command role/risk inference for check, fix, format, build,
+  coverage, migration, deploy, release, and publish-like custom commands.
+- Documented `description`, `role`, and `executionMode` in the published
+  command catalog JSON Schema.
+- Added external dogfood notes for the published CLI against
+  `PHPCompatibility/PHPCompatibility` and
+  `PHPCSStandards/PHP_CodeSniffer`.
+
+### Fixed
+
+- Keep dry-run/check-only format commands such as `cargo fmt --check` from
+  being marked as file-writing commands.
+- Avoid surfacing PHPCS fixture/test `Sniffs/` directories as primary repo-map
+  source directories.
+
 ## 0.2.8 - PHPCS Standards and Command Roles
 
 ### Added

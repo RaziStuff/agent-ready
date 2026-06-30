@@ -73,6 +73,8 @@ Focus: broader repo coverage and better update ergonomics.
 - Add PHP_CodeSniffer detection, PHPCS ruleset entrypoints, Composer `allow-plugins` guidance, Composer `bin` command catalog entries, and PHP code-quality fixture snapshots.
 - Add external PHPCS standard and command-role dogfood with `PHPCompatibility/PHPCompatibility`, `composer/composer`, and `vimeo/psalm`.
 - Add PHPCS standard detection, shebang-aware Composer `bin` commands, command role/execution-mode metadata, and PHPCS standard fixture snapshots.
+- Add external Composer descriptions and PHPCS directory-role dogfood with `PHPCompatibility/PHPCompatibility` and `PHPCSStandards/PHP_CodeSniffer`.
+- Add PHPCS standard namespace and nested `Sniffs/` directory roles, Composer `scripts-descriptions`, Composer build/coverage aliases, richer command role/risk inference, and command schema metadata for descriptions/roles/execution modes.
 - Continue improving monorepo update ergonomics around affected package detection.
 - Add more fixture repos for Pest plugin variants, mobile apps, and polyglot monorepos.
 

@@ -9,9 +9,10 @@ Compatibility Standard provides PHP_CodeSniffer sniffs for cross-version PHP com
 ## Repo Map
 
 <!-- agent-ready:start repo-map -->
-- `Compatibility/`: project directory.
+- `Compatibility/`: PHP_CodeSniffer standard namespace.
 - `tests/`: tests.
 - `tools/`: project directory.
+- `Compatibility/Sniffs/`: PHP_CodeSniffer sniff source.
 - `composer.json`: Composer package manifest.
 - `phpunit.xml.dist`: PHPUnit config.
 - `phpcs.xml.dist`: PHP_CodeSniffer config.
@@ -29,13 +30,13 @@ Compatibility Standard provides PHP_CodeSniffer sniffs for cross-version PHP com
 ## Common Commands
 
 <!-- agent-ready:start commands -->
-- Format: `composer fixcs`.
+- Format: `composer fixcs`. Fix auto-correctable sniff violations.
 - Install: `composer install`.
-- Lint: `composer checkcs`.
+- Lint: `composer checkcs`. Check the standard with PHP_CodeSniffer.
 - Standard-check: `bash tools/standard-check`.
 - Standard-language-server: `node tools/standard-language-server` (long-running).
-- Test: `composer test`.
-- Verify: `composer check-complete`.
+- Test: `composer test`. Run standard sniff tests.
+- Verify: `composer check-complete`. Verify feature completeness metadata.
 <!-- agent-ready:end commands -->
 
 ## Validation

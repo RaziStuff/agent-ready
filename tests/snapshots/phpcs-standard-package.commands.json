@@ -11,7 +11,8 @@
       "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": true,
-      "risk": "low"
+      "risk": "low",
+      "description": "Fix auto-correctable sniff violations."
     },
     {
       "name": "install",
@@ -33,14 +34,15 @@
       "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
-      "risk": "low"
+      "risk": "low",
+      "description": "Check the standard with PHP_CodeSniffer."
     },
     {
       "name": "standard-check",
       "command": "bash tools/standard-check",
       "source": "composer.json:bin",
       "confidence": 0.74,
-      "role": "tool",
+      "role": "validation",
       "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
@@ -66,7 +68,8 @@
       "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
-      "risk": "low"
+      "risk": "low",
+      "description": "Run standard sniff tests."
     },
     {
       "name": "verify",
@@ -77,7 +80,8 @@
       "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
-      "risk": "low"
+      "risk": "low",
+      "description": "Verify feature completeness metadata."
     }
   ]
 }

@@ -30,13 +30,14 @@ Quality Kit provides Composer-ready PHP_CodeSniffer rules and local QA commands.
 ## Common Commands
 
 <!-- agent-ready:start commands -->
-- Format: `composer phpcbf`.
+- Build: `composer build`. Build local PHPCS helper artifacts.
+- Format: `composer phpcbf`. Fix coding standard violations.
 - Install: `composer install`.
-- Lint: `composer phpcs`.
+- Lint: `composer phpcs`. Check coding standard violations.
 - Quality-check: `php bin/quality-check`.
 - Quality-fix: `php bin/quality-fix`.
-- Test: `composer test`.
-- Verify: `composer check-all`.
+- Test: `composer test`. Run the unit test suite.
+- Verify: `composer check-all`. Run all quality checks.
 <!-- agent-ready:end commands -->
 
 ## Validation
@@ -44,6 +45,7 @@ Quality Kit provides Composer-ready PHP_CodeSniffer rules and local QA commands.
 <!-- agent-ready:start validation -->
 - Tests: `composer test`.
 - Lint: `composer phpcs`.
+- Build: `composer build`.
 
 Before handing off, run the smallest validation command that covers your change and report what passed or failed.
 <!-- agent-ready:end validation -->

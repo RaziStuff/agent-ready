@@ -3,6 +3,18 @@
   "generatedAt": "2026-01-01T00:00:00.000Z",
   "commands": [
     {
+      "name": "build",
+      "command": "composer build",
+      "source": "composer.json:scripts.build",
+      "confidence": 0.82,
+      "role": "build",
+      "executionMode": "one-shot",
+      "requiresNetwork": false,
+      "writesFiles": true,
+      "risk": "low",
+      "description": "Build local PHPCS helper artifacts."
+    },
+    {
       "name": "format",
       "command": "composer phpcbf",
       "source": "composer.json:scripts.phpcbf",
@@ -11,7 +23,8 @@
       "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": true,
-      "risk": "low"
+      "risk": "low",
+      "description": "Fix coding standard violations."
     },
     {
       "name": "install",
@@ -33,14 +46,15 @@
       "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
-      "risk": "low"
+      "risk": "low",
+      "description": "Check coding standard violations."
     },
     {
       "name": "quality-check",
       "command": "php bin/quality-check",
       "source": "composer.json:bin",
       "confidence": 0.74,
-      "role": "tool",
+      "role": "validation",
       "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
@@ -51,7 +65,7 @@
       "command": "php bin/quality-fix",
       "source": "composer.json:bin",
       "confidence": 0.74,
-      "role": "tool",
+      "role": "format",
       "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": true,
@@ -66,7 +80,8 @@
       "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
-      "risk": "low"
+      "risk": "low",
+      "description": "Run the unit test suite."
     },
     {
       "name": "verify",
@@ -77,7 +92,8 @@
       "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
-      "risk": "low"
+      "risk": "low",
+      "description": "Run all quality checks."
     }
   ]
 }
