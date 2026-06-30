@@ -2,6 +2,28 @@
 
 All notable changes to `agent-ready` will be documented here.
 
+## 0.2.10 - WordPressCS and Compact PHPCS Maps
+
+### Added
+
+- Added WordPress Coding Standards-style Composer aliases for `check-cs`,
+  `fix-cs`, and `run-tests`.
+- Added PHPCS ruleset-only directory roles for standards such as
+  `WordPress-Core`, `WordPress-Docs`, and `WordPress-Extra`.
+- Added compact grouping for large bundled PHPCS standards trees such as
+  `src/Standards` so generated repo maps do not list every nested
+  `*/Sniffs` directory.
+- Added case-insensitive common directory role matching, including `Tests/`.
+- Added external dogfood notes for the published CLI against
+  `WordPress/WordPress-Coding-Standards` and
+  `PHPCSStandards/PHP_CodeSniffer`.
+
+### Fixed
+
+- Skip Markdown table-of-contents list items and broken multi-line badge
+  fragments when extracting README purpose summaries.
+- Prefer project-declared WPCS Composer scripts over raw PHPUnit fallbacks.
+
 ## 0.2.9 - Composer Descriptions and PHPCS Directory Roles
 
 ### Added

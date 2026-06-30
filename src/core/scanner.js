@@ -279,6 +279,28 @@ function hasChildDirectory(entries, dir, child) {
   return entries.some((entry) => entry.kind === "directory" && (entry.path === childPath || entry.path.startsWith(`${childPath}/`)));
 }
 
+function hasChildFile(entries, dir, child) {
+  const childPath = dir ? `${dir}/${child}` : child;
+  return entries.some((entry) => entry.kind === "file" && entry.path === childPath);
+}
+
+function isFixtureDirectory(dir) {
+  return /(^|\/)(fixtures?|testdata|__fixtures__)(\/|$)/i.test(dir) || /^(tests?|spec)\//i.test(dir);
+}
+
+function childSniffDirectoryCount(entries, dir) {
+  const baseDepth = dir.split("/").length;
+  return entries.filter((entry) => {
+    if (entry.kind !== "directory" || isFixtureDirectory(entry.path) || !entry.path.endsWith("/Sniffs")) {
+      return false;
+    }
+    if (!entry.path.startsWith(`${dir}/`)) {
+      return false;
+    }
+    return entry.path.split("/").length === baseDepth + 2;
+  }).length;
+}
+
 function directoryRoleFor(dir, entries, config) {
   const configuredRole = config.directoryRoles?.[dir];
   if (configuredRole) {
@@ -295,7 +317,15 @@ function directoryRoleFor(dir, entries, config) {
     };
   }
 
-  const match = TOP_LEVEL_DIR_ROLES.find((rule) => rule.pattern.test(dir));
+  if (childSniffDirectoryCount(entries, dir) >= 3) {
+    return {
+      role: "PHP_CodeSniffer bundled standards",
+      confidence: 0.88
+    };
+  }
+
+  const lowerDir = dir.toLowerCase();
+  const match = TOP_LEVEL_DIR_ROLES.find((rule) => rule.pattern.test(dir) || rule.pattern.test(lowerDir));
   if (match) {
     return {
       role: match.role,
@@ -310,14 +340,49 @@ function directoryRoleFor(dir, entries, config) {
     };
   }
 
+  if (!dir.includes("/") && hasChildFile(entries, dir, "ruleset.xml")) {
+    return {
+      role: "PHP_CodeSniffer ruleset standard",
+      confidence: 0.84
+    };
+  }
+
   return {
     role: "project directory",
     confidence: 0.55
   };
 }
 
-function isFixtureDirectory(dir) {
-  return /(^|\/)(fixtures?|testdata|__fixtures__)(\/|$)/i.test(dir) || /^(tests?|spec)\//.test(dir);
+function phpcsDirectoryCandidates(entries) {
+  const sniffDirs = entries
+    .filter((entry) => entry.kind === "directory" && entry.path.endsWith("/Sniffs") && !isFixtureDirectory(entry.path))
+    .map((entry) => entry.path);
+
+  const grouped = new Map();
+  for (const sniffDir of sniffDirs) {
+    const match = sniffDir.match(/^(.+)\/[^/]+\/Sniffs$/);
+    if (!match) {
+      continue;
+    }
+    const parent = match[1];
+    const dirs = grouped.get(parent) ?? [];
+    dirs.push(sniffDir);
+    grouped.set(parent, dirs);
+  }
+
+  const collapsed = new Set();
+  const groupDirs = [];
+  for (const [parent, dirs] of [...grouped.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
+    if (dirs.length < 3) {
+      continue;
+    }
+    groupDirs.push(parent);
+    for (const dir of dirs) {
+      collapsed.add(dir);
+    }
+  }
+
+  return [...groupDirs, ...sniffDirs.filter((dir) => !collapsed.has(dir))];
 }
 
 function detectDirectories(entries, config) {
@@ -325,11 +390,7 @@ function detectDirectories(entries, config) {
     .filter((entry) => entry.kind === "directory" && !entry.path.includes("/"))
     .map((entry) => entry.path);
 
-  const nestedPhpCodesnifferDirs = entries
-    .filter((entry) => entry.kind === "directory" && entry.path.endsWith("/Sniffs") && !isFixtureDirectory(entry.path))
-    .map((entry) => entry.path);
-
-  return uniqueBy([...topLevelDirs, ...nestedPhpCodesnifferDirs].map((dir) => {
+  return uniqueBy([...topLevelDirs, ...phpcsDirectoryCandidates(entries)].map((dir) => {
     const match = directoryRoleFor(dir, entries, config);
     return {
       path: dir,
@@ -1273,6 +1334,7 @@ async function detectPhp(root, files, evidence) {
   const composerScriptLabels = [
     ["test", "test"],
     ["tests", "test"],
+    ["run-tests", "test"],
     ["phpunit", "test"],
     ["phpunit-std", "test"],
     ["test:unit", "unit tests"],
@@ -1297,9 +1359,11 @@ async function detectPhp(root, files, evidence) {
     ["php-cs-fixer", "lint"],
     ["phpcs", "lint"],
     ["phpcs:check", "lint"],
+    ["check-cs", "lint"],
     ["checkcs", "lint"],
     ["phpcbf", "format"],
     ["cbf", "format"],
+    ["fix-cs", "format"],
     ["fixcs", "format"],
     ["format", "format"],
     ["check", "verify"],
@@ -1847,6 +1911,7 @@ function extractPurposeFromMarkdown(content) {
     .replace(/\[\]\[[^\]]*]/g, "")
     .replace(/\[([^\]]+)]\([^)]*\)/g, "$1")
     .replace(/\[([^\]]+)]\[[^\]]*]/g, "$1")
+    .replace(/\]\([^)]*\)/g, "")
     .replace(/<[^>]+>/g, "")
     .replace(/&nbsp;/g, " ")
     .replace(/&amp;/g, "&")
@@ -1856,7 +1921,7 @@ function extractPurposeFromMarkdown(content) {
     .replace(/\s+/g, " ")
     .trim();
 
-  const lines = content.split(/\r?\n/).map(cleanMarkdownLine);
+  const rawLines = content.split(/\r?\n/);
   const paragraphs = [];
   let current = [];
   let inFence = false;
@@ -1873,9 +1938,11 @@ function extractPurposeFromMarkdown(content) {
     current = [];
   };
 
-  for (let index = 0; index < lines.length; index += 1) {
-    const line = lines[index];
-    const nextLine = lines[index + 1] ?? "";
+  for (let index = 0; index < rawLines.length; index += 1) {
+    const rawLine = rawLines[index].trim();
+    const rawNextLine = rawLines[index + 1]?.trim() ?? "";
+    const line = cleanMarkdownLine(rawLine);
+    const nextLine = cleanMarkdownLine(rawNextLine);
 
     if (!line) {
       flush();
@@ -1889,7 +1956,14 @@ function extractPurposeFromMarkdown(content) {
     if (inFence) {
       continue;
     }
-    if (line.startsWith("#") || /^(=+|-+)$/.test(line) || /^(=+|-+)$/.test(nextLine)) {
+    if (
+      line.startsWith("#")
+      || /^(=+|-+)$/.test(line)
+      || /^(=+|-+)$/.test(nextLine)
+      || /^[-*+]\s+/.test(rawLine)
+      || /^\d+\.\s+/.test(rawLine)
+      || /^[()[\]\s:._-]+$/.test(line)
+    ) {
       flush();
       continue;
     }

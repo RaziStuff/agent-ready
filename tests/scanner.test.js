@@ -807,6 +807,97 @@ test("detects PHP_CodeSniffer standards and command role metadata", async () => 
   assert.ok(scan.commands.some((item) => item.name === "standard-language-server" && item.command === "node tools/standard-language-server" && item.role === "service" && item.executionMode === "long-running"));
 });
 
+test("detects WordPress Coding Standards-style rulesets and script aliases", async () => {
+  const root = await makeFixture({
+    "README.md": "<div aria-hidden=\"true\">\n\n[![Total Downloads](https://img.shields.io/packagist/dt/wp-coding-standards/wpcs\n)](https://packagist.org/packages/wp-coding-standards/wpcs/stats)\n\n</div>\n\n# WordPress Coding Standards for PHP_CodeSniffer\n\n* [Introduction](#introduction)\n* [Installation](#installation)\n\n---\n\n## Introduction\n\nThis project is a collection of [PHP_CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer) rules (sniffs) to validate code developed for WordPress.\n",
+    "composer.json": JSON.stringify({
+      name: "wp-coding-standards/wpcs",
+      description: "PHP_CodeSniffer rules for WordPress projects.",
+      type: "phpcodesniffer-standard",
+      require: {
+        php: "^8.2",
+        "squizlabs/php_codesniffer": "^4.0"
+      },
+      "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "phpunit/phpunit": "^11.0"
+      },
+      config: {
+        "allow-plugins": {
+          "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+      },
+      scripts: {
+        lint: "parallel-lint .",
+        "check-cs": "phpcs",
+        "fix-cs": "phpcbf",
+        "run-tests": "phpunit --filter WordPress",
+        "check-complete-strict": "phpcs-check-feature-completeness WordPress",
+        "check-all": [
+          "@lint",
+          "@check-cs",
+          "@run-tests",
+          "@check-complete-strict"
+        ]
+      },
+      "scripts-descriptions": {
+        lint: "Lint PHP files against parse errors.",
+        "check-cs": "Run the PHPCS script against the entire codebase.",
+        "fix-cs": "Run the PHPCBF script to fix all autofixable violations.",
+        "run-tests": "Run all WordPress Coding Standards sniff tests.",
+        "check-complete-strict": "Check if all sniffs have unit tests and XML documentation.",
+        "check-all": "Run all checks and tests."
+      }
+    }),
+    "WordPress/ruleset.xml": "<?xml version=\"1.0\"?><ruleset name=\"WordPress\" />\n",
+    "WordPress/Sniffs/Arrays/ArraySniff.php": "<?php\nnamespace WordPressCS\\WordPress\\Sniffs\\Arrays;\nclass ArraySniff {}\n",
+    "WordPress-Core/ruleset.xml": "<?xml version=\"1.0\"?><ruleset name=\"WordPress-Core\" />\n",
+    "WordPress-Docs/ruleset.xml": "<?xml version=\"1.0\"?><ruleset name=\"WordPress-Docs\" />\n",
+    "WordPress-Extra/ruleset.xml": "<?xml version=\"1.0\"?><ruleset name=\"WordPress-Extra\" />\n",
+    "Tests/ArraySniffTest.php": "<?php\nnamespace WordPressCS\\Tests;\nclass ArraySniffTest {}\n",
+    ".phpcs.xml.dist": "<?xml version=\"1.0\"?><ruleset name=\"WPCS Dev\" />\n",
+    "phpunit.xml.dist": "<phpunit />\n"
+  });
+
+  const scan = await scanRepo({ root });
+
+  assert.equal(scan.summary.purpose, "This project is a collection of PHP_CodeSniffer rules (sniffs) to validate code developed for WordPress.");
+  assert.ok(scan.directories.some((item) => item.path === "Tests" && item.role === "tests"));
+  assert.ok(scan.directories.some((item) => item.path === "WordPress" && item.role === "PHP_CodeSniffer standard namespace"));
+  assert.ok(scan.directories.some((item) => item.path === "WordPress-Core" && item.role === "PHP_CodeSniffer ruleset standard"));
+  assert.ok(scan.directories.some((item) => item.path === "WordPress-Docs" && item.role === "PHP_CodeSniffer ruleset standard"));
+  assert.ok(scan.directories.some((item) => item.path === "WordPress-Extra" && item.role === "PHP_CodeSniffer ruleset standard"));
+  assert.ok(scan.directories.some((item) => item.path === "WordPress/Sniffs" && item.role === "PHP_CodeSniffer sniff source"));
+  assert.ok(scan.commands.some((item) => item.name === "lint" && item.command === "composer lint" && item.description === "Lint PHP files against parse errors."));
+  assert.ok(scan.commands.some((item) => item.name === "format" && item.command === "composer fix-cs" && item.description === "Run the PHPCBF script to fix all autofixable violations."));
+  assert.ok(scan.commands.some((item) => item.name === "test" && item.command === "composer run-tests" && item.description === "Run all WordPress Coding Standards sniff tests."));
+  assert.ok(scan.commands.some((item) => item.name === "verify" && item.command === "composer check-all" && item.description === "Run all checks and tests."));
+});
+
+test("groups large PHP_CodeSniffer bundled standards trees", async () => {
+  const root = await makeFixture({
+    "composer.json": JSON.stringify({
+      name: "acme/multi-standard-kit",
+      description: "PHPCS bundle with multiple standards.",
+      require: {
+        php: "^8.2",
+        "squizlabs/php_codesniffer": "^4.0"
+      }
+    }),
+    "src/Standards/Generic/Sniffs/Arrays/ArraySniff.php": "<?php\nclass GenericArraySniff {}\n",
+    "src/Standards/PEAR/Sniffs/Files/FileSniff.php": "<?php\nclass PearFileSniff {}\n",
+    "src/Standards/PSR12/Sniffs/Classes/ClassSniff.php": "<?php\nclass PsrClassSniff {}\n",
+    "src/Standards/Generic/ruleset.xml": "<?xml version=\"1.0\"?><ruleset name=\"Generic\" />\n",
+    "tests/Fixtures/FakeStandard/Sniffs/FakeSniff.php": "<?php\nclass FakeSniff {}\n"
+  });
+
+  const scan = await scanRepo({ root });
+
+  assert.ok(scan.directories.some((item) => item.path === "src/Standards" && item.role === "PHP_CodeSniffer bundled standards"));
+  assert.ok(!scan.directories.some((item) => item.path === "src/Standards/Generic/Sniffs"));
+  assert.ok(!scan.directories.some((item) => item.path === "tests/Fixtures/FakeStandard/Sniffs"));
+});
+
 test("detects Django projects and manage.py test command", async () => {
   const root = await makeFixture({
     "README.md": "# Support Desk\n\nDjango service for support ticket workflows.\n",

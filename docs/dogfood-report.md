@@ -508,3 +508,56 @@ Follow-up candidates:
   directories.
 - Explore Composer event scripts and script aliases beyond the common validation
   path.
+
+## 2026-06-30: External WordPressCS and compact PHPCS repo-map check
+
+Package tested: `@ahmedshaikh/agent-ready@0.2.9`
+
+Target repos: shallow clones of `WordPress/WordPress-Coding-Standards` and
+`PHPCSStandards/PHP_CodeSniffer` into `/private/tmp`, then ran the published CLI
+through `pnpm dlx`.
+
+Commands exercised:
+
+```bash
+agent-ready scan --json
+```
+
+What worked:
+
+- Both repos were detected as PHP/Composer projects with PHP_CodeSniffer
+  tooling.
+- WordPressCS was identified as a PHPCS standard from Composer
+  `type: phpcodesniffer-standard`.
+- Composer `scripts-descriptions` reached command metadata for existing
+  detected scripts.
+- PHP_CodeSniffer's Composer `build`, `coverage`, `cs`, `cbf`, `test`, and
+  `check-all` scripts were surfaced with roles and descriptions.
+
+Friction found:
+
+- WordPressCS README purpose extraction selected a broken multi-line badge
+  fragment instead of the introduction paragraph.
+- WordPressCS `Tests/` was labeled as a generic project directory due to
+  case-sensitive directory role matching.
+- Ruleset-only standards such as `WordPress-Core/`, `WordPress-Docs/`, and
+  `WordPress-Extra/` were labeled as generic project directories.
+- WPCS scripts `check-cs`, `fix-cs`, and `run-tests` were not mapped to
+  lint/format/test commands, so the scanner fell back to raw PHPUnit.
+- PHP_CodeSniffer's bundled `src/Standards/*/Sniffs` directories were listed
+  individually, making the repo map noisier than needed.
+
+Finding fixed:
+
+- Added WPCS-style Composer aliases, ruleset-only PHPCS directory roles,
+  case-insensitive directory role matching, compact PHPCS standards grouping,
+  README table-of-contents/badge-fragment cleanup, and unit coverage for WPCS
+  and bundled standards layouts.
+
+Follow-up candidates:
+
+- Test another PHPCS standard package with multiple top-level standards and
+  custom helper directories.
+- Consider documenting PHPCS ruleset directory conventions in the README.
+- Explore Composer event scripts and package scripts that shell out to multiple
+  project-local tools.
