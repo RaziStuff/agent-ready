@@ -675,6 +675,66 @@ test("detects Composer plugins, Psalm, and Composer bin executables", async () =
   assert.ok(scan.commands.some((item) => item.name === "lint" && item.command === "composer cs"));
 });
 
+test("detects PHP_CodeSniffer, allow-plugins guidance, and CLI bin commands", async () => {
+  const root = await makeFixture({
+    "README.md": "# Quality Kit\n\n![Build][build-shield]\n[![Coverage](https://example.com/coverage.svg)][coverage]\n\n[build-shield]: https://example.com/build.svg\n[coverage]: https://example.com/coverage\n\nQuality Kit provides Composer-ready PHP_CodeSniffer rules and local QA commands.\n",
+    "composer.json": JSON.stringify({
+      name: "acme/quality-kit",
+      description: "Composer-ready PHP_CodeSniffer rules and local QA commands.",
+      type: "library",
+      require: {
+        php: "^8.2"
+      },
+      "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "phpunit/phpunit": "^11.0",
+        "squizlabs/php_codesniffer": "^4.0"
+      },
+      config: {
+        "allow-plugins": {
+          "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+      },
+      bin: [
+        "bin/quality-check",
+        "bin/quality-fix"
+      ],
+      scripts: {
+        phpcs: "phpcs",
+        phpcbf: "phpcbf",
+        "check-all": [
+          "@phpcs",
+          "@test"
+        ],
+        test: "phpunit"
+      }
+    }),
+    "bin/quality-check": "#!/usr/bin/env php\n<?php\n",
+    "bin/quality-fix": "#!/usr/bin/env php\n<?php\n",
+    "src/Rule.php": "<?php\nnamespace Acme\\QualityKit;\nclass Rule {}\n",
+    "tests/RuleTest.php": "<?php\nnamespace Acme\\QualityKit\\Tests;\nuse PHPUnit\\Framework\\TestCase;\nclass RuleTest extends TestCase {}\n",
+    "phpcs.xml.dist": "<?xml version=\"1.0\"?><ruleset name=\"Quality Kit\" />\n",
+    "ruleset.xml": "<?xml version=\"1.0\"?><ruleset name=\"Quality Kit Rules\" />\n",
+    "phpunit.xml.dist": "<phpunit />\n"
+  });
+
+  const scan = await scanRepo({ root });
+
+  assert.equal(scan.summary.purpose, "Quality Kit provides Composer-ready PHP_CodeSniffer rules and local QA commands.");
+  assert.ok(scan.frameworks.some((item) => item.name === "Composer library"));
+  assert.ok(scan.frameworks.some((item) => item.name === "PHP_CodeSniffer"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "phpcs.xml.dist" && item.kind === "PHP_CodeSniffer config"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "ruleset.xml" && item.kind === "PHP_CodeSniffer ruleset"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "bin/quality-check" && item.kind === "Composer bin executable"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "bin/quality-fix" && item.kind === "Composer bin executable"));
+  assert.ok(scan.guidance.some((item) => item.source === "composer.json:config.allow-plugins" && item.message.includes("dealerdirect/phpcodesniffer-composer-installer")));
+  assert.ok(scan.commands.some((item) => item.name === "quality-check" && item.command === "php bin/quality-check"));
+  assert.ok(scan.commands.some((item) => item.name === "quality-fix" && item.command === "php bin/quality-fix" && item.writesFiles === true));
+  assert.ok(scan.commands.some((item) => item.name === "lint" && item.command === "composer phpcs"));
+  assert.ok(scan.commands.some((item) => item.name === "format" && item.command === "composer phpcbf" && item.writesFiles === true));
+  assert.ok(scan.commands.some((item) => item.name === "verify" && item.command === "composer check-all"));
+});
+
 test("detects Django projects and manage.py test command", async () => {
   const root = await makeFixture({
     "README.md": "# Support Desk\n\nDjango service for support ticket workflows.\n",

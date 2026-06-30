@@ -69,6 +69,8 @@ Focus: broader repo coverage and better update ergonomics.
 - Add Composer library classification, Composer `phpstan` script guidance, PHP-CS-Fixer config handling, PHP tooling entrypoints, and generic Composer library fixture snapshots.
 - Add external Composer plugin/Psalm dogfood with `composer/installers` and `vimeo/psalm`.
 - Add Composer plugin classification, plugin class entrypoint resolution, Psalm config/baseline/script guidance, Composer `bin` executable entrypoints, and Composer plugin fixture snapshots.
+- Add external PHP_CodeSniffer and Composer CLI dogfood with `PHPCSStandards/PHP_CodeSniffer`, `Dealerdirect/phpcodesniffer-composer-installer`, and `vimeo/psalm`.
+- Add PHP_CodeSniffer detection, PHPCS ruleset entrypoints, Composer `allow-plugins` guidance, Composer `bin` command catalog entries, and PHP code-quality fixture snapshots.
 - Continue improving monorepo update ergonomics around affected package detection.
 - Add more fixture repos for Pest plugin variants, mobile apps, and polyglot monorepos.
 

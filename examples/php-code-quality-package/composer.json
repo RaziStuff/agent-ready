@@ -1,0 +1,31 @@
+{
+  "name": "acme/quality-kit",
+  "description": "Composer-ready PHP_CodeSniffer rules and local QA commands.",
+  "type": "library",
+  "require": {
+    "php": "^8.2"
+  },
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+    "phpunit/phpunit": "^11.0",
+    "squizlabs/php_codesniffer": "^4.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
+  "bin": [
+    "bin/quality-check",
+    "bin/quality-fix"
+  ],
+  "scripts": {
+    "phpcs": "phpcs",
+    "phpcbf": "phpcbf",
+    "check-all": [
+      "@phpcs",
+      "@test"
+    ],
+    "test": "phpunit"
+  }
+}

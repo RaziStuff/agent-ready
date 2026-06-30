@@ -2,6 +2,34 @@
 
 All notable changes to `agent-ready` will be documented here.
 
+## 0.2.7 - PHP_CodeSniffer and Composer CLI Coverage
+
+### Added
+
+- Added PHP_CodeSniffer detection from Composer dependencies, package names,
+  `phpcs`/`phpcbf` bins, and PHPCS config/ruleset files.
+- Added PHPCS entrypoints for `phpcs.xml`, `phpcs.xml.dist`,
+  `.phpcs.xml`, `.phpcs.xml.dist`, `phpcs.dist.xml`, and `ruleset.xml`.
+- Added Composer script aliases for `phpcs`, `phpcs:check`, `phpcbf`,
+  `cbf`, `check`, `check-all`, and `qa`.
+- Added command catalog entries for local Composer `bin` executables, including
+  write-aware handling for fixer/refactor-style bins.
+- Added generated Composer `allow-plugins` guidance in `AGENTS.md` and
+  repo-map metadata when `composer.json` explicitly allows plugins.
+- Added a PHP_CodeSniffer/code-quality fixture with Composer `allow-plugins`,
+  PHPCS rulesets, Composer `bin` commands, AGENTS.md, repo-map, and command
+  snapshots.
+- Added external dogfood notes for the published CLI against
+  `PHPCSStandards/PHP_CodeSniffer`,
+  `Dealerdirect/phpcodesniffer-composer-installer`, and `vimeo/psalm`.
+
+### Fixed
+
+- Skip reference-style badge images and Markdown link-definition lines when
+  extracting README purpose summaries.
+- Preserve underscores inside tool names such as `PHP_CodeSniffer` while
+  cleaning Markdown emphasis markers.
+
 ## 0.2.6 - Composer Plugin and Psalm Coverage
 
 ### Added

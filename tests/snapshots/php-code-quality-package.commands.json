@@ -3,6 +3,15 @@
   "generatedAt": "2026-01-01T00:00:00.000Z",
   "commands": [
     {
+      "name": "format",
+      "command": "composer phpcbf",
+      "source": "composer.json:scripts.phpcbf",
+      "confidence": 0.82,
+      "requiresNetwork": false,
+      "writesFiles": true,
+      "risk": "low"
+    },
+    {
       "name": "install",
       "command": "composer install",
       "source": "composer.json",
@@ -12,45 +21,45 @@
       "risk": "medium"
     },
     {
-      "name": "install-tools",
-      "command": "php bin/install-tools",
-      "source": "composer.json:bin",
-      "confidence": 0.74,
-      "requiresNetwork": false,
-      "writesFiles": false,
-      "risk": "low"
-    },
-    {
-      "name": "install-tools-doctor",
-      "command": "php install-tools-doctor",
-      "source": "composer.json:bin",
-      "confidence": 0.74,
-      "requiresNetwork": false,
-      "writesFiles": false,
-      "risk": "low"
-    },
-    {
       "name": "lint",
-      "command": "composer cs",
-      "source": "composer.json:scripts.cs",
+      "command": "composer phpcs",
+      "source": "composer.json:scripts.phpcs",
       "confidence": 0.82,
       "requiresNetwork": false,
       "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "quality-check",
+      "command": "php bin/quality-check",
+      "source": "composer.json:bin",
+      "confidence": 0.74,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "quality-fix",
+      "command": "php bin/quality-fix",
+      "source": "composer.json:bin",
+      "confidence": 0.74,
+      "requiresNetwork": false,
+      "writesFiles": true,
       "risk": "low"
     },
     {
       "name": "test",
-      "command": "composer tests",
-      "source": "composer.json:scripts.tests",
+      "command": "composer test",
+      "source": "composer.json:scripts.test",
       "confidence": 0.82,
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"
     },
     {
-      "name": "typecheck",
-      "command": "composer psalm",
-      "source": "composer.json:scripts.psalm",
+      "name": "verify",
+      "command": "composer check-all",
+      "source": "composer.json:scripts.check-all",
       "confidence": 0.82,
       "requiresNetwork": false,
       "writesFiles": false,

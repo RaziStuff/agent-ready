@@ -260,6 +260,12 @@ function detectEntrypoints(files) {
     ["phpstan.dist.neon", "PHPStan config"],
     [".php-cs-fixer.php", "PHP-CS-Fixer config"],
     [".php-cs-fixer.dist.php", "PHP-CS-Fixer config"],
+    ["phpcs.xml", "PHP_CodeSniffer config"],
+    ["phpcs.xml.dist", "PHP_CodeSniffer config"],
+    ["phpcs.dist.xml", "PHP_CodeSniffer config"],
+    [".phpcs.xml", "PHP_CodeSniffer config"],
+    [".phpcs.xml.dist", "PHP_CodeSniffer config"],
+    ["ruleset.xml", "PHP_CodeSniffer ruleset"],
     ["psalm.xml", "Psalm config"],
     ["psalm.xml.dist", "Psalm config"],
     ["psalm.dist.xml", "Psalm config"],
@@ -869,15 +875,33 @@ function isSafeComposerRelativePath(value) {
 }
 
 function composerBinEntrypoints(composerJson, files) {
-  return composerStringList(composerJson?.bin)
-    .filter(isSafeComposerRelativePath)
-    .filter((file) => files.has(file))
-    .sort((a, b) => a.localeCompare(b))
+  return composerBinFiles(composerJson, files)
     .map((file) => ({
       path: file,
       kind: "Composer bin executable",
       confidence: 0.86
     }));
+}
+
+function composerBinFiles(composerJson, files) {
+  return composerStringList(composerJson?.bin)
+    .filter(isSafeComposerRelativePath)
+    .filter((file) => files.has(file))
+    .sort((a, b) => a.localeCompare(b));
+}
+
+function composerBinCommands(composerJson, files) {
+  return composerBinFiles(composerJson, files)
+    .slice(0, 8)
+    .map((file) => {
+      const name = path.posix.basename(file);
+      const writesFiles = /(?:cbf|fix|format|refactor|psalter)$/i.test(name);
+      return command(name, `php ${file}`, "composer.json:bin", 0.74, {
+        requiresNetwork: false,
+        writesFiles,
+        risk: "low"
+      });
+    });
 }
 
 function composerAutoloadPrefixes(composerJson) {
@@ -943,10 +967,40 @@ function hasPsalmBaseline(files) {
   return [...files].some((file) => /^psalm-baseline[^/]*\.xml(?:\.dist)?$/.test(file));
 }
 
+function hasPhpCodesnifferConfig(files) {
+  return [...files].some((file) => /^(?:\.?phpcs(?:\.dist)?\.xml|\.?phpcs\.xml\.dist|ruleset\.xml)$/.test(file));
+}
+
+function composerAllowPluginsGuidance(composerJson, evidence) {
+  const allowPlugins = composerJson?.config?.["allow-plugins"];
+  if (!allowPlugins || typeof allowPlugins !== "object" || Array.isArray(allowPlugins)) {
+    return [];
+  }
+
+  const allowed = Object.entries(allowPlugins)
+    .filter(([, value]) => value === true)
+    .map(([name]) => name)
+    .sort((a, b) => a.localeCompare(b));
+  if (allowed.length === 0) {
+    return [];
+  }
+
+  addEvidence(evidence, "Detected Composer allow-plugins configuration.");
+  const displayed = allowed.slice(0, 6).map((name) => `\`${name}\``).join(", ");
+  const suffix = allowed.length > 6 ? `, and ${allowed.length - 6} more` : "";
+  return [{
+    category: "composer",
+    source: "composer.json:config.allow-plugins",
+    confidence: 0.86,
+    message: `Composer plugins are explicitly allowed for ${displayed}${suffix}; review this list before changing Composer plugin dependencies.`
+  }];
+}
+
 async function detectPhp(root, files, evidence) {
   const commands = [];
   const frameworks = [];
   const entrypoints = [];
+  const guidance = [];
   const composerJson = files.has("composer.json") ? await readJsonFile(path.join(root, "composer.json")) : null;
   const deps = composerDependencies(composerJson);
   const purpose = typeof composerJson?.description === "string" && composerJson.description.trim()
@@ -954,12 +1008,14 @@ async function detectPhp(root, files, evidence) {
     : null;
 
   if (!composerJson && !files.has("artisan") && !files.has("public/index.php")) {
-    return { commands, frameworks, purpose, entrypoints };
+    return { commands, frameworks, purpose, entrypoints, guidance };
   }
 
   if (composerJson) {
     commands.push(command("install", "composer install", files.has("composer.lock") ? "composer.lock" : "composer.json", files.has("composer.lock") ? 0.9 : 0.82));
     entrypoints.push(...composerBinEntrypoints(composerJson, files));
+    commands.push(...composerBinCommands(composerJson, files));
+    guidance.push(...composerAllowPluginsGuidance(composerJson, evidence));
   }
 
   const isComposerLibrary = composerJson?.type === "library";
@@ -1060,7 +1116,14 @@ async function detectPhp(root, files, evidence) {
     ["cs-fix", "lint"],
     ["cs-fixer", "lint"],
     ["php-cs-fixer", "lint"],
+    ["phpcs", "lint"],
+    ["phpcs:check", "lint"],
+    ["phpcbf", "format"],
+    ["cbf", "format"],
     ["format", "format"],
+    ["check", "verify"],
+    ["check-all", "verify"],
+    ["qa", "verify"],
     ["analyse", "typecheck"],
     ["analyze", "typecheck"],
     ["stan", "typecheck"]
@@ -1099,6 +1162,25 @@ async function detectPhp(root, files, evidence) {
     addEvidence(evidence, "Detected PHP-CS-Fixer from PHP project files.");
   }
 
+  const hasPhpCodesniffer = packageName === "squizlabs/php_codesniffer"
+    || hasComposerDependency(deps, "squizlabs/php_codesniffer")
+    || hasPhpCodesnifferConfig(files)
+    || files.has("bin/phpcs")
+    || files.has("bin/phpcbf");
+  if (hasPhpCodesniffer) {
+    frameworks.push({
+      name: "PHP_CodeSniffer",
+      confidence: 0.84,
+      evidence: [addEvidence(evidence, "Detected PHP_CodeSniffer from Composer dependencies, scripts, bins, or config files.")]
+    });
+    if (!commands.some((item) => item.name === "lint")) {
+      commands.push(command("lint", files.has("bin/phpcs") ? "php bin/phpcs" : "vendor/bin/phpcs", "PHP_CodeSniffer detection", 0.78));
+    }
+    if (!commands.some((item) => item.name === "format") && (hasComposerScript(composerJson, "cbf") || hasComposerScript(composerJson, "phpcbf") || files.has("bin/phpcbf"))) {
+      commands.push(command("format", files.has("bin/phpcbf") ? "php bin/phpcbf" : "vendor/bin/phpcbf", "PHP_CodeSniffer detection", 0.72));
+    }
+  }
+
   const hasPsalm = packageName === "vimeo/psalm"
     || hasComposerDependency(deps, "vimeo/psalm")
     || hasComposerDependency(deps, "psalm/psalm")
@@ -1124,7 +1206,7 @@ async function detectPhp(root, files, evidence) {
     addEvidence(evidence, "Detected PHPStan from PHP project files.");
   }
 
-  return { commands, frameworks, purpose, entrypoints };
+  return { commands, frameworks, purpose, entrypoints, guidance };
 }
 
 async function detectJava(root, files, evidence) {
@@ -1574,14 +1656,17 @@ function extractPurposeFromMarkdown(content) {
   const cleanMarkdownLine = (line) => line
     .trim()
     .replace(/!\[[^\]]*]\([^)]*\)/g, "")
+    .replace(/!\[[^\]]*]\[[^\]]*]/g, "")
     .replace(/\[\]\([^)]*\)/g, "")
+    .replace(/\[\]\[[^\]]*]/g, "")
     .replace(/\[([^\]]+)]\([^)]*\)/g, "$1")
+    .replace(/\[([^\]]+)]\[[^\]]*]/g, "$1")
     .replace(/<[^>]+>/g, "")
     .replace(/&nbsp;/g, " ")
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
-    .replace(/[*_`]+/g, "")
+    .replace(/[*`]+/g, "")
     .replace(/\s+/g, " ")
     .trim();
 
@@ -1622,7 +1707,7 @@ function extractPurposeFromMarkdown(content) {
       flush();
       continue;
     }
-    if (line.startsWith("[!") || line.startsWith("<!--") || line.startsWith(">")) {
+    if (line.startsWith("[!") || line.startsWith("<!--") || line.startsWith(">") || /^\[[^\]]+]:\s+\S+/.test(line)) {
       flush();
       continue;
     }
@@ -1742,6 +1827,10 @@ export async function scanRepo(options = {}) {
     [...staticEntrypoints, ...php.entrypoints],
     (item) => `${item.path}:${item.kind}`
   );
+  const guidance = uniqueBy(
+    [...php.guidance],
+    (item) => `${item.category}:${item.source}:${item.message}`
+  );
 
   const purpose = config.sections?.purpose ?? docsResult.purpose ?? php.purpose ?? ruby.purpose ?? node.purpose ?? "Repository purpose was not confidently detected.";
   const primaryLanguage = [...languages].sort((a, b) => b.confidence - a.confidence || b.fileCount - a.fileCount)[0]?.name ?? null;
@@ -1776,6 +1865,7 @@ export async function scanRepo(options = {}) {
     monorepo,
     frameworks,
     commands,
+    guidance,
     configuredConventions: config.sections?.conventions ?? [],
     directories,
     entrypoints,

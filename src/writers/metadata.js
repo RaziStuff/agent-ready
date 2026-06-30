@@ -16,6 +16,7 @@ export function repoMap(scan) {
     frameworks: scan.frameworks,
     directories: scan.directories,
     entrypoints: scan.entrypoints,
+    ...((scan.guidance ?? []).length > 0 ? { guidance: scan.guidance } : {}),
     docs: scan.docs,
     ci: scan.ci,
     generatedHints: scan.generatedHints

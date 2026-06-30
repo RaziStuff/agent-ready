@@ -135,6 +135,9 @@ function conventionLines(scan) {
   if (scan.monorepo?.detected) {
     lines.push(bullet("For workspace changes, identify the package owner first and prefer package-local commands unless a root orchestration command is already configured."));
   }
+  for (const guidance of scan.guidance ?? []) {
+    lines.push(bullet(guidance.message));
+  }
   if (scan.docs.length > 0) {
     lines.push(bullet(`Read local docs before large changes: ${scan.docs.map((doc) => inlineCode(doc.path)).join(", ")}.`));
   }

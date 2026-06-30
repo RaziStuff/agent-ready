@@ -3,7 +3,7 @@
 ## Purpose
 
 <!-- agent-ready:start purpose -->
-Install Tools is a Composer plugin for publishing package assets.
+Quality Kit provides Composer-ready PHP_CodeSniffer rules and local QA commands.
 <!-- agent-ready:end purpose -->
 
 ## Repo Map
@@ -14,11 +14,10 @@ Install Tools is a Composer plugin for publishing package assets.
 - `tests/`: tests.
 - `composer.json`: Composer package manifest.
 - `phpunit.xml.dist`: PHPUnit config.
-- `psalm.xml.dist`: Psalm config.
-- `psalm-baseline.xml`: Psalm baseline.
-- `bin/install-tools`: Composer bin executable.
-- `install-tools-doctor`: Composer bin executable.
-- `src/Plugin.php`: Composer plugin class.
+- `phpcs.xml.dist`: PHP_CodeSniffer config.
+- `ruleset.xml`: PHP_CodeSniffer ruleset.
+- `bin/quality-check`: Composer bin executable.
+- `bin/quality-fix`: Composer bin executable.
 <!-- agent-ready:end repo-map -->
 
 ## Setup
@@ -31,20 +30,20 @@ Install Tools is a Composer plugin for publishing package assets.
 ## Common Commands
 
 <!-- agent-ready:start commands -->
+- Format: `composer phpcbf`.
 - Install: `composer install`.
-- Install-tools: `php bin/install-tools`.
-- Install-tools-doctor: `php install-tools-doctor`.
-- Lint: `composer cs`.
-- Test: `composer tests`.
-- Typecheck: `composer psalm`.
+- Lint: `composer phpcs`.
+- Quality-check: `php bin/quality-check`.
+- Quality-fix: `php bin/quality-fix`.
+- Test: `composer test`.
+- Verify: `composer check-all`.
 <!-- agent-ready:end commands -->
 
 ## Validation
 
 <!-- agent-ready:start validation -->
-- Tests: `composer tests`.
-- Lint: `composer cs`.
-- Typecheck: `composer psalm`.
+- Tests: `composer test`.
+- Lint: `composer phpcs`.
 
 Before handing off, run the smallest validation command that covers your change and report what passed or failed.
 <!-- agent-ready:end validation -->
@@ -53,7 +52,8 @@ Before handing off, run the smallest validation command that covers your change 
 
 <!-- agent-ready:start conventions -->
 - Primary language appears to be PHP.
-- Detected frameworks: Composer plugin, Psalm.
+- Detected frameworks: Composer library, PHP_CodeSniffer.
+- Composer plugins are explicitly allowed for `dealerdirect/phpcodesniffer-composer-installer`; review this list before changing Composer plugin dependencies.
 - Read local docs before large changes: `README.md`.
 - Follow nearby code style and existing helper APIs before introducing new abstractions.
 - Keep generated outputs and lockfiles scoped to dependency or generator changes.

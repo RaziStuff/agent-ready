@@ -356,3 +356,56 @@ Follow-up candidates:
 - Detect Composer plugin activation notes from `config.allow-plugins`.
 - Consider separate command labels for packages that publish multiple CLI
   executables.
+
+## 2026-06-30: External PHP_CodeSniffer and Composer CLI repo check
+
+Package tested: `@ahmedshaikh/agent-ready@0.2.6`
+
+Target repos: shallow clones of `PHPCSStandards/PHP_CodeSniffer`,
+`Dealerdirect/phpcodesniffer-composer-installer`, and `vimeo/psalm` into
+`/private/tmp`, then ran the published CLI through `pnpm dlx`.
+
+Commands exercised:
+
+```bash
+agent-ready scan --json
+```
+
+What worked:
+
+- PHP, Composer, Composer libraries, Composer plugins, plugin classes, Psalm,
+  and Composer `bin` executable entrypoints were detected where applicable.
+- PHPCS packages surfaced Composer install, test, and lint commands when those
+  scripts were declared.
+- Psalm surfaced `composer tests`, `composer psalm`, and its published bin
+  entrypoints.
+
+Friction found:
+
+- PHPCS projects were not identified as PHP_CodeSniffer projects/tools.
+- PHPCS config and ruleset files were not surfaced as entrypoints.
+- Composer `bin` files were surfaced as entrypoints, but not as runnable
+  command catalog entries.
+- Composer `allow-plugins` configuration was not reflected in generated agent
+  guidance.
+- Reference-style badge images and link-definition lines could become bogus
+  README purpose summaries.
+- The Markdown cleaner stripped underscores from tool names such as
+  `PHP_CodeSniffer`.
+
+Finding fixed:
+
+- Added PHP_CodeSniffer detection, PHPCS config/ruleset entrypoints,
+  `phpcs`/`phpcbf`/`check-all` Composer script aliases, command catalog entries
+  for local Composer `bin` executables, `allow-plugins` guidance, reference
+  badge/link-definition README cleanup, underscore-preserving Markdown cleanup,
+  and a committed PHP_CodeSniffer/code-quality fixture with
+  AGENTS.md/repo-map/commands snapshots.
+
+Follow-up candidates:
+
+- Test packages that publish Composer bin files outside PHP scripts.
+- Detect PHPCS standard packages that declare `type:
+  phpcodesniffer-standard`.
+- Consider a richer command role model for long-running CLI tools such as
+  language servers.
