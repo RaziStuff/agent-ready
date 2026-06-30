@@ -2,6 +2,31 @@
 
 All notable changes to `agent-ready` will be documented here.
 
+## 0.2.8 - PHPCS Standards and Command Roles
+
+### Added
+
+- Added PHPCS standard package detection from Composer
+  `type: phpcodesniffer-standard`.
+- Added command `role` and `executionMode` metadata to discovered command
+  catalog entries.
+- Added long-running command annotation in generated AGENTS.md command lists.
+- Added shebang-aware Composer `bin` command generation for PHP, Node, Deno,
+  Bun, Python, Ruby, and shell scripts.
+- Added PHPCS standard Composer script aliases for `checkcs`, `fixcs`,
+  `check-complete`, and `check-complete-strict`.
+- Added a PHPCS standard fixture with shebang-aware Composer bins,
+  long-running language-server metadata, AGENTS.md, repo-map, and command
+  snapshots.
+- Added external dogfood notes for the published CLI against
+  `PHPCompatibility/PHPCompatibility`, `composer/composer`, and `vimeo/psalm`.
+
+### Fixed
+
+- Mark Composer `bin` commands such as `psalm-language-server` as
+  long-running service commands instead of ordinary one-shot tools.
+- Avoid assuming every Composer `bin` executable should be invoked with `php`.
+
 ## 0.2.7 - PHP_CodeSniffer and Composer CLI Coverage
 
 ### Added

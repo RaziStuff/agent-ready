@@ -7,6 +7,8 @@
       "command": "composer install",
       "source": "composer.json",
       "confidence": 0.82,
+      "role": "setup",
+      "executionMode": "one-shot",
       "requiresNetwork": true,
       "writesFiles": true,
       "risk": "medium"
@@ -16,6 +18,8 @@
       "command": "composer test",
       "source": "composer.json:scripts.test",
       "confidence": 0.82,
+      "role": "validation",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"
@@ -25,6 +29,8 @@
       "command": "composer test:type:check",
       "source": "composer.json:scripts.test:type:check",
       "confidence": 0.82,
+      "role": "validation",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"
@@ -34,6 +40,8 @@
       "command": "composer test:unit",
       "source": "composer.json:scripts.test:unit",
       "confidence": 0.82,
+      "role": "validation",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"

@@ -7,6 +7,8 @@
       "command": "uv sync",
       "source": "uv.lock",
       "confidence": 0.9,
+      "role": "setup",
+      "executionMode": "one-shot",
       "requiresNetwork": true,
       "writesFiles": true,
       "risk": "medium"
@@ -16,6 +18,8 @@
       "command": "ruff check .",
       "source": "pyproject.toml",
       "confidence": 0.82,
+      "role": "validation",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"
@@ -25,6 +29,8 @@
       "command": "python -m pytest",
       "source": "pytest detection",
       "confidence": 0.82,
+      "role": "validation",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"
@@ -34,6 +40,8 @@
       "command": "mypy .",
       "source": "pyproject.toml",
       "confidence": 0.78,
+      "role": "validation",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"

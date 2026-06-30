@@ -56,12 +56,51 @@ function commandRisk(name) {
   return { requiresNetwork: false, writesFiles: false, risk: "low" };
 }
 
+function commandExecutionMode(name, commandText) {
+  const lowerName = name.toLowerCase();
+  const lowerCommand = commandText.toLowerCase();
+  if (
+    ["dev", "serve"].includes(lowerName)
+    || lowerName.includes("language-server")
+    || lowerCommand.includes("language-server")
+    || /\bwatch\b/.test(lowerName)
+    || /\bwatch\b/.test(lowerCommand)
+  ) {
+    return "long-running";
+  }
+  return "one-shot";
+}
+
+function commandRole(name, commandText) {
+  if (commandExecutionMode(name, commandText) === "long-running") {
+    return "service";
+  }
+  if (name === "install") {
+    return "setup";
+  }
+  if (name === "migrate") {
+    return "migration";
+  }
+  if (["test", "unit tests", "integration tests", "parallel tests", "end-to-end tests", "lint", "typecheck", "verify", "check", "ci", "workspace test", "workspace lint", "workspace typecheck"].includes(name)) {
+    return "validation";
+  }
+  if (name === "format") {
+    return "format";
+  }
+  if (name === "build" || name === "workspace build") {
+    return "build";
+  }
+  return "tool";
+}
+
 function command(name, commandText, source, confidenceValue, overrides = {}) {
   return {
     name,
     command: commandText,
     source,
     confidence: confidence(confidenceValue),
+    role: commandRole(name, commandText),
+    executionMode: commandExecutionMode(name, commandText),
     ...commandRisk(name),
     ...overrides
   };
@@ -890,18 +929,49 @@ function composerBinFiles(composerJson, files) {
     .sort((a, b) => a.localeCompare(b));
 }
 
-function composerBinCommands(composerJson, files) {
-  return composerBinFiles(composerJson, files)
-    .slice(0, 8)
-    .map((file) => {
-      const name = path.posix.basename(file);
-      const writesFiles = /(?:cbf|fix|format|refactor|psalter)$/i.test(name);
-      return command(name, `php ${file}`, "composer.json:bin", 0.74, {
-        requiresNetwork: false,
-        writesFiles,
-        risk: "low"
-      });
-    });
+function runtimeFromShebang(content) {
+  const firstLine = content?.split(/\r?\n/, 1)[0] ?? "";
+  const match = firstLine.match(/^#!\s*(?:\/usr\/bin\/env\s+(?:-S\s+)?)?([^\s]+)/);
+  if (!match) {
+    return null;
+  }
+  return path.posix.basename(match[1]).toLowerCase();
+}
+
+function composerBinCommandText(file, content) {
+  const runtime = runtimeFromShebang(content);
+  if (runtime?.includes("php")) return `php ${file}`;
+  if (["node", "nodejs"].includes(runtime)) return `node ${file}`;
+  if (runtime === "deno") return `deno run ${file}`;
+  if (runtime === "bun") return `bun ${file}`;
+  if (runtime?.startsWith("python")) return `python ${file}`;
+  if (runtime === "ruby") return `ruby ${file}`;
+  if (["bash", "sh", "zsh"].includes(runtime)) return `${runtime} ${file}`;
+  if (runtime) return `./${file}`;
+
+  const extension = path.posix.extname(file).toLowerCase();
+  if (extension === ".php") return `php ${file}`;
+  if ([".js", ".mjs", ".cjs"].includes(extension)) return `node ${file}`;
+  if (extension === ".py") return `python ${file}`;
+  if (extension === ".rb") return `ruby ${file}`;
+  if (extension === ".sh") return `sh ${file}`;
+  return `php ${file}`;
+}
+
+async function composerBinCommands(root, composerJson, files) {
+  const commands = [];
+  for (const file of composerBinFiles(composerJson, files).slice(0, 8)) {
+    const name = path.posix.basename(file);
+    const content = await readTextFileIfSafe(root, file, { maxReadBytes: 4096 });
+    const commandText = composerBinCommandText(file, content);
+    const writesFiles = /(?:cbf|fix|format|refactor|psalter)$/i.test(name);
+    commands.push(command(name, commandText, "composer.json:bin", 0.74, {
+      requiresNetwork: false,
+      writesFiles,
+      risk: "low"
+    }));
+  }
+  return commands;
 }
 
 function composerAutoloadPrefixes(composerJson) {
@@ -1014,7 +1084,7 @@ async function detectPhp(root, files, evidence) {
   if (composerJson) {
     commands.push(command("install", "composer install", files.has("composer.lock") ? "composer.lock" : "composer.json", files.has("composer.lock") ? 0.9 : 0.82));
     entrypoints.push(...composerBinEntrypoints(composerJson, files));
-    commands.push(...composerBinCommands(composerJson, files));
+    commands.push(...await composerBinCommands(root, composerJson, files));
     guidance.push(...composerAllowPluginsGuidance(composerJson, evidence));
   }
 
@@ -1024,6 +1094,15 @@ async function detectPhp(root, files, evidence) {
       name: "Composer library",
       confidence: 0.76,
       evidence: [addEvidence(evidence, "Detected Composer library from composer.json type.")]
+    });
+  }
+
+  const isPhpCodesnifferStandard = composerJson?.type === "phpcodesniffer-standard";
+  if (isPhpCodesnifferStandard) {
+    frameworks.push({
+      name: "PHP_CodeSniffer standard",
+      confidence: 0.9,
+      evidence: [addEvidence(evidence, "Detected PHP_CodeSniffer standard from composer.json type.")]
     });
   }
 
@@ -1118,11 +1197,15 @@ async function detectPhp(root, files, evidence) {
     ["php-cs-fixer", "lint"],
     ["phpcs", "lint"],
     ["phpcs:check", "lint"],
+    ["checkcs", "lint"],
     ["phpcbf", "format"],
     ["cbf", "format"],
+    ["fixcs", "format"],
     ["format", "format"],
     ["check", "verify"],
     ["check-all", "verify"],
+    ["check-complete", "verify"],
+    ["check-complete-strict", "verify"],
     ["qa", "verify"],
     ["analyse", "typecheck"],
     ["analyze", "typecheck"],
@@ -1164,6 +1247,7 @@ async function detectPhp(root, files, evidence) {
 
   const hasPhpCodesniffer = packageName === "squizlabs/php_codesniffer"
     || hasComposerDependency(deps, "squizlabs/php_codesniffer")
+    || isPhpCodesnifferStandard
     || hasPhpCodesnifferConfig(files)
     || files.has("bin/phpcs")
     || files.has("bin/phpcbf");

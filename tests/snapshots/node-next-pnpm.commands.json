@@ -7,6 +7,8 @@
       "command": "pnpm build",
       "source": "package.json:scripts.build",
       "confidence": 0.92,
+      "role": "build",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": true,
       "risk": "low"
@@ -16,6 +18,8 @@
       "command": "pnpm dev",
       "source": "package.json:scripts.dev",
       "confidence": 0.92,
+      "role": "tool",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"
@@ -25,6 +29,8 @@
       "command": "pnpm install",
       "source": "package manager detection",
       "confidence": 0.9,
+      "role": "setup",
+      "executionMode": "one-shot",
       "requiresNetwork": true,
       "writesFiles": true,
       "risk": "medium"
@@ -34,6 +40,8 @@
       "command": "pnpm lint",
       "source": "package.json:scripts.lint",
       "confidence": 0.92,
+      "role": "validation",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"
@@ -43,6 +51,8 @@
       "command": "pnpm test",
       "source": "package.json:scripts.test",
       "confidence": 0.92,
+      "role": "validation",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"
@@ -52,6 +62,8 @@
       "command": "pnpm typecheck",
       "source": "package.json:scripts.typecheck",
       "confidence": 0.92,
+      "role": "validation",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"

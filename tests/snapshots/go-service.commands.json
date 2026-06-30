@@ -7,6 +7,8 @@
       "command": "go build ./...",
       "source": "go.mod",
       "confidence": 0.78,
+      "role": "build",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": true,
       "risk": "low"
@@ -16,6 +18,8 @@
       "command": "go vet ./...",
       "source": "go.mod",
       "confidence": 0.68,
+      "role": "validation",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"
@@ -25,6 +29,8 @@
       "command": "go test ./...",
       "source": "go.mod",
       "confidence": 0.9,
+      "role": "validation",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"

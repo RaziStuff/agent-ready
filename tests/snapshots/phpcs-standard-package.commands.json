@@ -4,8 +4,8 @@
   "commands": [
     {
       "name": "format",
-      "command": "composer phpcbf",
-      "source": "composer.json:scripts.phpcbf",
+      "command": "composer fixcs",
+      "source": "composer.json:scripts.fixcs",
       "confidence": 0.82,
       "role": "format",
       "executionMode": "one-shot",
@@ -26,8 +26,8 @@
     },
     {
       "name": "lint",
-      "command": "composer phpcs",
-      "source": "composer.json:scripts.phpcs",
+      "command": "composer checkcs",
+      "source": "composer.json:scripts.checkcs",
       "confidence": 0.82,
       "role": "validation",
       "executionMode": "one-shot",
@@ -36,8 +36,8 @@
       "risk": "low"
     },
     {
-      "name": "quality-check",
-      "command": "php bin/quality-check",
+      "name": "standard-check",
+      "command": "bash tools/standard-check",
       "source": "composer.json:bin",
       "confidence": 0.74,
       "role": "tool",
@@ -47,14 +47,14 @@
       "risk": "low"
     },
     {
-      "name": "quality-fix",
-      "command": "php bin/quality-fix",
+      "name": "standard-language-server",
+      "command": "node tools/standard-language-server",
       "source": "composer.json:bin",
       "confidence": 0.74,
-      "role": "tool",
-      "executionMode": "one-shot",
+      "role": "service",
+      "executionMode": "long-running",
       "requiresNetwork": false,
-      "writesFiles": true,
+      "writesFiles": false,
       "risk": "low"
     },
     {
@@ -70,8 +70,8 @@
     },
     {
       "name": "verify",
-      "command": "composer check-all",
-      "source": "composer.json:scripts.check-all",
+      "command": "composer check-complete",
+      "source": "composer.json:scripts.check-complete",
       "confidence": 0.82,
       "role": "validation",
       "executionMode": "one-shot",

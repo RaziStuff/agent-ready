@@ -125,7 +125,7 @@ Common flags:
 - `--profile <name>`: write thin pointer files for agent-specific tools.
 - `--write`: write generated CI workflow files for `agent-ready add-to-ci`.
 - `--mode <required|advisory>`: set whether the generated CI workflow fails or reports.
-- `--uses <action-ref>`: set the generated GitHub Action reference. Defaults to `RaziStuff/agent-ready@v0.2.7`.
+- `--uses <action-ref>`: set the generated GitHub Action reference. Defaults to `RaziStuff/agent-ready@v0.2.8`.
 - `--workflow <path>`: set the generated workflow path inside the repo.
 - `--no-artifacts`: omit CI receipt artifact steps from `agent-ready add-to-ci`.
 - `--allow-network`: allow `agent-ready run` to execute a command marked as requiring network.
@@ -322,8 +322,8 @@ back to deterministic scanner output without executing project commands.
 Use the bundled composite action to keep agent docs current in CI:
 
 ```bash
-agent-ready add-to-ci --uses RaziStuff/agent-ready@v0.2.7
-agent-ready add-to-ci --write --uses RaziStuff/agent-ready@v0.2.7
+agent-ready add-to-ci --uses RaziStuff/agent-ready@v0.2.8
+agent-ready add-to-ci --write --uses RaziStuff/agent-ready@v0.2.8
 ```
 
 `add-to-ci` previews by default. Pass `--write` to create
@@ -346,14 +346,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Validate agent metadata
-        uses: RaziStuff/agent-ready@v0.2.7
+        uses: RaziStuff/agent-ready@v0.2.8
         with:
           command: validate
           mode: required
           strict: "true"
       - name: Write agent-ready status receipt
         if: always()
-        uses: RaziStuff/agent-ready@v0.2.7
+        uses: RaziStuff/agent-ready@v0.2.8
         with:
           command: status
           mode: advisory
@@ -362,7 +362,7 @@ jobs:
           output-file: agent-ready-status.json
       - name: Verify status receipt contract
         if: always()
-        uses: RaziStuff/agent-ready@v0.2.7
+        uses: RaziStuff/agent-ready@v0.2.8
         with:
           command: verify-contract
           mode: required
@@ -392,7 +392,7 @@ Current detectors cover:
 - First-class workspace package summaries through `agent-ready workspaces`, `.agents/workspaces.json`, JSON Schema, and MCP.
 - Direct affected package lookup through `agent-ready affected`, `agent-ready workspaces --changed`, and `agent_ready_affected`.
 - Python, including uv, Poetry, pip, pytest, ruff, mypy, and black hints.
-- PHP, Composer libraries and plugins, Laravel, Symfony, Pest, Artisan, Symfony console, Pint, PHPUnit, PHP-CS-Fixer, PHP_CodeSniffer, PHPStan, Psalm, plugin classes, Composer `allow-plugins` guidance, and Composer `bin` executable entrypoints/commands.
+- PHP, Composer libraries and plugins, PHPCS standards, Laravel, Symfony, Pest, Artisan, Symfony console, Pint, PHPUnit, PHP-CS-Fixer, PHP_CodeSniffer, PHPStan, Psalm, plugin classes, Composer `allow-plugins` guidance, Composer `bin` executable entrypoints/commands, and command role metadata.
 - Go.
 - Rust.
 - Ruby, including Rails, gems, RSpec, Minitest, RuboCop, gemspecs, Rake tasks, and executable entrypoints.
@@ -434,6 +434,7 @@ Example repos live under `examples/`:
 - `examples/php-composer-library`: Composer library with PHPUnit, PHPStan, PHP-CS-Fixer, and no PHP framework.
 - `examples/php-composer-plugin`: Composer plugin with Psalm, plugin class resolution, and Composer `bin` executables.
 - `examples/php-code-quality-package`: Composer package with PHP_CodeSniffer, `allow-plugins`, PHPCS rulesets, and CLI bin commands.
+- `examples/phpcs-standard-package`: PHPCS standard package with Composer `bin` shebang handling and long-running command metadata.
 - `examples/django-service`: Django service with `manage.py` and pip requirements.
 - `examples/spring-boot-api`: Spring Boot service with Maven wrapper.
 - `examples/dotnet-web-api`: ASP.NET Core service with solution and test project.

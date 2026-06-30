@@ -1,0 +1,28 @@
+{
+  "name": "acme/compatibility-standard",
+  "description": "PHP_CodeSniffer standard for cross-version PHP compatibility checks.",
+  "type": "phpcodesniffer-standard",
+  "require": {
+    "php": "^8.2",
+    "squizlabs/php_codesniffer": "^4.0"
+  },
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+    "phpunit/phpunit": "^11.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
+  "bin": [
+    "tools/standard-check",
+    "tools/standard-language-server"
+  ],
+  "scripts": {
+    "checkcs": "phpcs",
+    "fixcs": "phpcbf",
+    "check-complete": "phpcs-check-feature-completeness",
+    "test": "phpunit"
+  }
+}

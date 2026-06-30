@@ -42,7 +42,7 @@ Laravel application for support request intake, queueing, and account lookup.
 - Install: `composer install`.
 - Lint: `vendor/bin/pint --test`.
 - Migrate: `php artisan migrate`.
-- Serve: `php artisan serve`.
+- Serve: `php artisan serve` (long-running).
 - Test: `php artisan test`.
 <!-- agent-ready:end commands -->
 

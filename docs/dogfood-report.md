@@ -409,3 +409,51 @@ Follow-up candidates:
   phpcodesniffer-standard`.
 - Consider a richer command role model for long-running CLI tools such as
   language servers.
+
+## 2026-06-30: External PHPCS standard and command role repo check
+
+Package tested: `@ahmedshaikh/agent-ready@0.2.7`
+
+Target repos: shallow clones of `PHPCompatibility/PHPCompatibility`,
+`composer/composer`, and `vimeo/psalm` into `/private/tmp`, then ran the
+published CLI through `pnpm dlx`.
+
+Commands exercised:
+
+```bash
+agent-ready scan --json
+```
+
+What worked:
+
+- PHPCS config files, PHP_CodeSniffer tooling, Composer `allow-plugins`, and
+  Composer `bin` entrypoints were detected.
+- `composer/composer` surfaced its root `bin/composer` executable and
+  Composer test/PHPStan scripts.
+- `vimeo/psalm` surfaced multiple Composer `bin` entrypoints including
+  `psalm-language-server`.
+
+Friction found:
+
+- Packages with Composer `type: phpcodesniffer-standard` were not identified as
+  PHPCS standards.
+- PHPCS standard scripts such as `checkcs`, `fixcs`, and `check-complete` were
+  not mapped to lint/format/verify commands.
+- Composer `bin` command generation assumed PHP for every executable instead
+  of inspecting shebangs.
+- Commands did not include role or execution-mode metadata, so long-running
+  tools such as language servers looked like ordinary one-shot commands.
+
+Finding fixed:
+
+- Added PHPCS standard detection, PHPCS standard script aliases, shebang-aware
+  Composer `bin` command generation, command `role` and `executionMode`
+  metadata, long-running annotations in generated AGENTS.md, and a committed
+  PHPCS standard fixture with AGENTS.md/repo-map/commands snapshots.
+
+Follow-up candidates:
+
+- Detect PHPCS standard package directories such as `Sniffs/` more explicitly.
+- Consider surfacing `scripts-descriptions` from Composer manifests.
+- Add richer role hints for destructive custom CLI commands beyond filename
+  heuristics.

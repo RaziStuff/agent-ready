@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "root": ".",
+  "summary": {
+    "purpose": "Compatibility Standard provides PHP_CodeSniffer sniffs for cross-version PHP compatibility checks.",
+    "primaryLanguage": "PHP",
+    "packageManagers": [
+      "composer"
+    ],
+    "frameworks": [
+      "PHP_CodeSniffer",
+      "PHP_CodeSniffer standard"
+    ],
+    "monorepo": false
+  },
+  "inventory": {
+    "fileCount": 8,
+    "directoryCount": 5,
+    "symlinkCount": 0,
+    "limitHit": false,
+    "gitignoreRuleCount": 0,
+    "configIgnoreRuleCount": 0
+  },
+  "config": {
+    "path": "agent-ready.config.json",
+    "loaded": false,
+    "profiles": [],
+    "warnings": []
+  },
+  "languages": [
+    {
+      "name": "PHP",
+      "fileCount": 2,
+      "confidence": 0.95,
+      "evidence": [
+        "Detected 2 PHP files.",
+        "Detected PHP manifest signal."
+      ]
+    }
+  ],
+  "packageManagers": [
+    {
+      "name": "composer",
+      "confidence": 0.82,
+      "evidence": [
+        "Detected composer from composer.json."
+      ]
+    }
+  ],
+  "monorepo": {
+    "detected": false,
+    "kind": "single-package",
+    "tools": [],
+    "workspaceGlobs": [],
+    "packages": [],
+    "packageCount": 0
+  },
+  "frameworks": [
+    {
+      "name": "PHP_CodeSniffer",
+      "confidence": 0.84,
+      "evidence": [
+        "Detected PHP_CodeSniffer from Composer dependencies, scripts, bins, or config files."
+      ]
+    },
+    {
+      "name": "PHP_CodeSniffer standard",
+      "confidence": 0.9,
+      "evidence": [
+        "Detected PHP_CodeSniffer standard from composer.json type."
+      ]
+    }
+  ],
+  "directories": [
+    {
+      "path": "Compatibility",
+      "role": "project directory",
+      "confidence": 0.55
+    },
+    {
+      "path": "tests",
+      "role": "tests",
+      "confidence": 0.85
+    },
+    {
+      "path": "tools",
+      "role": "project directory",
+      "confidence": 0.55
+    }
+  ],
+  "entrypoints": [
+    {
+      "path": "composer.json",
+      "kind": "Composer package manifest",
+      "confidence": 0.82
+    },
+    {
+      "path": "phpunit.xml.dist",
+      "kind": "PHPUnit config",
+      "confidence": 0.82
+    },
+    {
+      "path": "phpcs.xml.dist",
+      "kind": "PHP_CodeSniffer config",
+      "confidence": 0.82
+    },
+    {
+      "path": "tools/standard-check",
+      "kind": "Composer bin executable",
+      "confidence": 0.86
+    },
+    {
+      "path": "tools/standard-language-server",
+      "kind": "Composer bin executable",
+      "confidence": 0.86
+    }
+  ],
+  "guidance": [
+    {
+      "category": "composer",
+      "source": "composer.json:config.allow-plugins",
+      "confidence": 0.86,
+      "message": "Composer plugins are explicitly allowed for `dealerdirect/phpcodesniffer-composer-installer`; review this list before changing Composer plugin dependencies."
+    }
+  ],
+  "docs": [
+    {
+      "path": "README.md",
+      "role": "readme"
+    }
+  ],
+  "ci": [],
+  "generatedHints": []
+}

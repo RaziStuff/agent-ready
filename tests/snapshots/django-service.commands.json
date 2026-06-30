@@ -7,6 +7,8 @@
       "command": "python -m pip install -r requirements.txt",
       "source": "requirements.txt",
       "confidence": 0.78,
+      "role": "setup",
+      "executionMode": "one-shot",
       "requiresNetwork": true,
       "writesFiles": true,
       "risk": "medium"
@@ -16,6 +18,8 @@
       "command": "python manage.py test",
       "source": "manage.py",
       "confidence": 0.82,
+      "role": "validation",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"

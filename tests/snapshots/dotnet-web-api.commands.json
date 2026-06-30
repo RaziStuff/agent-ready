@@ -7,6 +7,8 @@
       "command": "dotnet build",
       "source": "Orders.Api.sln",
       "confidence": 0.86,
+      "role": "build",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": true,
       "risk": "low"
@@ -16,6 +18,8 @@
       "command": "dotnet restore",
       "source": "Orders.Api.sln",
       "confidence": 0.86,
+      "role": "setup",
+      "executionMode": "one-shot",
       "requiresNetwork": true,
       "writesFiles": true,
       "risk": "medium"
@@ -25,6 +29,8 @@
       "command": "dotnet test",
       "source": "Orders.Api.sln",
       "confidence": 0.82,
+      "role": "validation",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"

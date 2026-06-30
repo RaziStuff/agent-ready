@@ -735,6 +735,60 @@ test("detects PHP_CodeSniffer, allow-plugins guidance, and CLI bin commands", as
   assert.ok(scan.commands.some((item) => item.name === "verify" && item.command === "composer check-all"));
 });
 
+test("detects PHP_CodeSniffer standards and command role metadata", async () => {
+  const root = await makeFixture({
+    "README.md": "# Compatibility Standard\n\nCompatibility Standard provides PHP_CodeSniffer sniffs for cross-version PHP compatibility checks.\n",
+    "composer.json": JSON.stringify({
+      name: "acme/compatibility-standard",
+      description: "PHP_CodeSniffer standard for cross-version PHP compatibility checks.",
+      type: "phpcodesniffer-standard",
+      require: {
+        php: "^8.2",
+        "squizlabs/php_codesniffer": "^4.0"
+      },
+      "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "phpunit/phpunit": "^11.0"
+      },
+      config: {
+        "allow-plugins": {
+          "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+      },
+      bin: [
+        "tools/standard-check",
+        "tools/standard-language-server"
+      ],
+      scripts: {
+        checkcs: "phpcs",
+        fixcs: "phpcbf",
+        "check-complete": "phpcs-check-feature-completeness",
+        test: "phpunit"
+      }
+    }),
+    "Compatibility/Sniffs/Arrays/ArraySniff.php": "<?php\nnamespace Acme\\Compatibility\\Sniffs\\Arrays;\nclass ArraySniff {}\n",
+    "tests/ArraySniffTest.php": "<?php\nnamespace Acme\\Compatibility\\Tests;\nuse PHPUnit\\Framework\\TestCase;\nclass ArraySniffTest extends TestCase {}\n",
+    "tools/standard-check": "#!/usr/bin/env bash\nset -e\n",
+    "tools/standard-language-server": "#!/usr/bin/env node\nconsole.log('standard language server');\n",
+    "phpcs.xml.dist": "<?xml version=\"1.0\"?><ruleset name=\"Compatibility Standard\" />\n",
+    "phpunit.xml.dist": "<phpunit />\n"
+  });
+
+  const scan = await scanRepo({ root });
+
+  assert.equal(scan.summary.purpose, "Compatibility Standard provides PHP_CodeSniffer sniffs for cross-version PHP compatibility checks.");
+  assert.ok(scan.frameworks.some((item) => item.name === "PHP_CodeSniffer standard"));
+  assert.ok(scan.frameworks.some((item) => item.name === "PHP_CodeSniffer"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "phpcs.xml.dist" && item.kind === "PHP_CodeSniffer config"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "tools/standard-check" && item.kind === "Composer bin executable"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "tools/standard-language-server" && item.kind === "Composer bin executable"));
+  assert.ok(scan.commands.some((item) => item.name === "lint" && item.command === "composer checkcs" && item.role === "validation"));
+  assert.ok(scan.commands.some((item) => item.name === "format" && item.command === "composer fixcs" && item.writesFiles === true && item.role === "format"));
+  assert.ok(scan.commands.some((item) => item.name === "verify" && item.command === "composer check-complete" && item.role === "validation"));
+  assert.ok(scan.commands.some((item) => item.name === "standard-check" && item.command === "bash tools/standard-check" && item.executionMode === "one-shot"));
+  assert.ok(scan.commands.some((item) => item.name === "standard-language-server" && item.command === "node tools/standard-language-server" && item.role === "service" && item.executionMode === "long-running"));
+});
+
 test("detects Django projects and manage.py test command", async () => {
   const root = await makeFixture({
     "README.md": "# Support Desk\n\nDjango service for support ticket workflows.\n",

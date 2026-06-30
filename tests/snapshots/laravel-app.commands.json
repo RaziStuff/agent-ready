@@ -7,6 +7,8 @@
       "command": "npm run build",
       "source": "package.json:scripts.build",
       "confidence": 0.92,
+      "role": "build",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": true,
       "risk": "low"
@@ -16,6 +18,8 @@
       "command": "npm run dev",
       "source": "package.json:scripts.dev",
       "confidence": 0.92,
+      "role": "tool",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"
@@ -25,6 +29,8 @@
       "command": "composer format",
       "source": "composer.json:scripts.format",
       "confidence": 0.82,
+      "role": "format",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": true,
       "risk": "low"
@@ -34,6 +40,8 @@
       "command": "composer install",
       "source": "composer.json",
       "confidence": 0.82,
+      "role": "setup",
+      "executionMode": "one-shot",
       "requiresNetwork": true,
       "writesFiles": true,
       "risk": "medium"
@@ -43,6 +51,8 @@
       "command": "vendor/bin/pint --test",
       "source": "composer.json:laravel/pint",
       "confidence": 0.78,
+      "role": "validation",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"
@@ -52,6 +62,8 @@
       "command": "php artisan migrate",
       "source": "Laravel detection",
       "confidence": 0.72,
+      "role": "migration",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": true,
       "risk": "high"
@@ -61,6 +73,8 @@
       "command": "php artisan serve",
       "source": "Laravel detection",
       "confidence": 0.78,
+      "role": "service",
+      "executionMode": "long-running",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"
@@ -70,6 +84,8 @@
       "command": "php artisan test",
       "source": "Laravel detection",
       "confidence": 0.86,
+      "role": "validation",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"

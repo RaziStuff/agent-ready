@@ -7,6 +7,8 @@
       "command": "composer install",
       "source": "composer.json",
       "confidence": 0.82,
+      "role": "setup",
+      "executionMode": "one-shot",
       "requiresNetwork": true,
       "writesFiles": true,
       "risk": "medium"
@@ -16,6 +18,8 @@
       "command": "php bin/install-tools",
       "source": "composer.json:bin",
       "confidence": 0.74,
+      "role": "tool",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"
@@ -25,6 +29,8 @@
       "command": "php install-tools-doctor",
       "source": "composer.json:bin",
       "confidence": 0.74,
+      "role": "tool",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"
@@ -34,6 +40,8 @@
       "command": "composer cs",
       "source": "composer.json:scripts.cs",
       "confidence": 0.82,
+      "role": "validation",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"
@@ -43,6 +51,8 @@
       "command": "composer tests",
       "source": "composer.json:scripts.tests",
       "confidence": 0.82,
+      "role": "validation",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"
@@ -52,6 +62,8 @@
       "command": "composer psalm",
       "source": "composer.json:scripts.psalm",
       "confidence": 0.82,
+      "role": "validation",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"

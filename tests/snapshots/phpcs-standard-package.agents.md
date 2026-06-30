@@ -3,53 +3,46 @@
 ## Purpose
 
 <!-- agent-ready:start purpose -->
-Reference Symfony application for support operations and moderation workflows.
+Compatibility Standard provides PHP_CodeSniffer sniffs for cross-version PHP compatibility checks.
 <!-- agent-ready:end purpose -->
 
 ## Repo Map
 
 <!-- agent-ready:start repo-map -->
-- `bin/`: developer and framework command wrappers.
-- `config/`: configuration.
-- `public/`: static assets.
-- `src/`: application source.
-- `templates/`: server-rendered templates.
+- `Compatibility/`: project directory.
 - `tests/`: tests.
-- `translations/`: localization messages.
-- `bin/console`: Symfony console entrypoint.
-- `config/bundles.php`: Symfony bundle registry.
-- `config/routes.yaml`: Symfony routes config.
-- `public/index.php`: PHP web front controller.
+- `tools/`: project directory.
 - `composer.json`: Composer package manifest.
-- `phpunit.dist.xml`: PHPUnit config.
-- `phpstan.dist.neon`: PHPStan config.
-- `.php-cs-fixer.dist.php`: PHP-CS-Fixer config.
+- `phpunit.xml.dist`: PHPUnit config.
+- `phpcs.xml.dist`: PHP_CodeSniffer config.
+- `tools/standard-check`: Composer bin executable.
+- `tools/standard-language-server`: Composer bin executable.
 <!-- agent-ready:end repo-map -->
 
 ## Setup
 
 <!-- agent-ready:start setup -->
-- Package manager: composer.
+- Package manager (likely): composer.
 - Install dependencies with `composer install`.
 <!-- agent-ready:end setup -->
 
 ## Common Commands
 
 <!-- agent-ready:start commands -->
-- Console: `./bin/console`.
+- Format: `composer fixcs`.
 - Install: `composer install`.
-- Lint: `vendor/bin/php-cs-fixer fix --dry-run --diff`.
-- Serve: `php -S localhost:8000 -t public/` (long-running).
-- Test: `./bin/phpunit`.
-- Typecheck: `vendor/bin/phpstan analyse`.
+- Lint: `composer checkcs`.
+- Standard-check: `bash tools/standard-check`.
+- Standard-language-server: `node tools/standard-language-server` (long-running).
+- Test: `composer test`.
+- Verify: `composer check-complete`.
 <!-- agent-ready:end commands -->
 
 ## Validation
 
 <!-- agent-ready:start validation -->
-- Tests: `./bin/phpunit`.
-- Lint: `vendor/bin/php-cs-fixer fix --dry-run --diff`.
-- Typecheck: `vendor/bin/phpstan analyse`.
+- Tests: `composer test`.
+- Lint: `composer checkcs`.
 
 Before handing off, run the smallest validation command that covers your change and report what passed or failed.
 <!-- agent-ready:end validation -->
@@ -58,7 +51,8 @@ Before handing off, run the smallest validation command that covers your change 
 
 <!-- agent-ready:start conventions -->
 - Primary language appears to be PHP.
-- Detected frameworks: Symfony.
+- Detected frameworks: PHP_CodeSniffer, PHP_CodeSniffer standard.
+- Composer plugins are explicitly allowed for `dealerdirect/phpcodesniffer-composer-installer`; review this list before changing Composer plugin dependencies.
 - Read local docs before large changes: `README.md`.
 - Follow nearby code style and existing helper APIs before introducing new abstractions.
 - Keep generated outputs and lockfiles scoped to dependency or generator changes.
@@ -67,7 +61,7 @@ Before handing off, run the smallest validation command that covers your change 
 ## Risky Areas
 
 <!-- agent-ready:start risks -->
-- `composer.lock`: lockfiles should change only when dependencies change.
+_No high-confidence data detected yet._
 <!-- agent-ready:end risks -->
 
 ## Environment

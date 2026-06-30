@@ -7,6 +7,8 @@
       "command": "./mvnw package",
       "source": "mvnw",
       "confidence": 0.82,
+      "role": "build",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": true,
       "risk": "low"
@@ -16,6 +18,8 @@
       "command": "./mvnw test",
       "source": "mvnw",
       "confidence": 0.88,
+      "role": "validation",
+      "executionMode": "one-shot",
       "requiresNetwork": false,
       "writesFiles": false,
       "risk": "low"

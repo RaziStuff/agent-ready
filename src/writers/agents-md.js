@@ -74,7 +74,8 @@ function setupLines(scan) {
 function commandLines(scan) {
   return scan.commands.map((item) => {
     const label = item.name.charAt(0).toUpperCase() + item.name.slice(1);
-    return bullet(`${label}: ${inlineCode(item.command)}.`);
+    const mode = item.executionMode === "long-running" ? " (long-running)" : "";
+    return bullet(`${label}: ${inlineCode(item.command)}${mode}.`);
   });
 }
 
