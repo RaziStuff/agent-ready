@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "commands": [
+    {
+      "name": "install",
+      "command": "composer install",
+      "source": "composer.json",
+      "confidence": 0.82,
+      "requiresNetwork": true,
+      "writesFiles": true,
+      "risk": "medium"
+    },
+    {
+      "name": "lint",
+      "command": "composer cs",
+      "source": "composer.json:scripts.cs",
+      "confidence": 0.82,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "test",
+      "command": "composer tests",
+      "source": "composer.json:scripts.tests",
+      "confidence": 0.82,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    },
+    {
+      "name": "typecheck",
+      "command": "composer psalm",
+      "source": "composer.json:scripts.psalm",
+      "confidence": 0.82,
+      "requiresNetwork": false,
+      "writesFiles": false,
+      "risk": "low"
+    }
+  ]
+}

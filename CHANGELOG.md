@@ -2,6 +2,31 @@
 
 All notable changes to `agent-ready` will be documented here.
 
+## 0.2.6 - Composer Plugin and Psalm Coverage
+
+### Added
+
+- Added Composer plugin classification from `composer.json` type and
+  `composer-plugin-api` dependencies.
+- Added Composer plugin class entrypoints by resolving `extra.class` through
+  PSR-4 autoload paths.
+- Added Psalm detection from Composer dependencies, package names, scripts,
+  `psalm.xml*` config files, and Psalm baseline files.
+- Added Composer `bin` executable entrypoints from local files listed in
+  `composer.json`.
+- Added Composer script aliases for `tests`, `phpunit`, `phpunit-std`,
+  `psalm`, `psalm:check`, and `psalm-check`.
+- Added a Composer plugin fixture with Psalm, plugin class resolution, Composer
+  `bin` executables, AGENTS.md, repo-map, and command snapshots.
+- Added external dogfood notes for the published CLI against
+  `composer/installers` and `vimeo/psalm`.
+
+### Fixed
+
+- Prefer declared Composer test/static-analysis scripts such as
+  `composer tests` and `composer psalm` before falling back to raw PHPUnit or
+  tool binaries.
+
 ## 0.2.5 - Generic Composer Library Coverage
 
 ### Added

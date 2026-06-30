@@ -67,6 +67,8 @@ Focus: broader repo coverage and better update ergonomics.
 - Add Minitest detection, Rake `test`/`ci` command guidance, and Minitest Ruby gem fixture snapshots.
 - Add external generic Composer library dogfood with `Seldaek/monolog`.
 - Add Composer library classification, Composer `phpstan` script guidance, PHP-CS-Fixer config handling, PHP tooling entrypoints, and generic Composer library fixture snapshots.
+- Add external Composer plugin/Psalm dogfood with `composer/installers` and `vimeo/psalm`.
+- Add Composer plugin classification, plugin class entrypoint resolution, Psalm config/baseline/script guidance, Composer `bin` executable entrypoints, and Composer plugin fixture snapshots.
 - Continue improving monorepo update ergonomics around affected package detection.
 - Add more fixture repos for Pest plugin variants, mobile apps, and polyglot monorepos.
 

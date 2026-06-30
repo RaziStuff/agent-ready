@@ -1,0 +1,137 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "root": ".",
+  "summary": {
+    "purpose": "Install Tools is a Composer plugin for publishing package assets.",
+    "primaryLanguage": "PHP",
+    "packageManagers": [
+      "composer"
+    ],
+    "frameworks": [
+      "Composer plugin",
+      "Psalm"
+    ],
+    "monorepo": false
+  },
+  "inventory": {
+    "fileCount": 9,
+    "directoryCount": 3,
+    "symlinkCount": 0,
+    "limitHit": false,
+    "gitignoreRuleCount": 0,
+    "configIgnoreRuleCount": 0
+  },
+  "config": {
+    "path": "agent-ready.config.json",
+    "loaded": false,
+    "profiles": [],
+    "warnings": []
+  },
+  "languages": [
+    {
+      "name": "PHP",
+      "fileCount": 2,
+      "confidence": 0.95,
+      "evidence": [
+        "Detected 2 PHP files.",
+        "Detected PHP manifest signal."
+      ]
+    }
+  ],
+  "packageManagers": [
+    {
+      "name": "composer",
+      "confidence": 0.82,
+      "evidence": [
+        "Detected composer from composer.json."
+      ]
+    }
+  ],
+  "monorepo": {
+    "detected": false,
+    "kind": "single-package",
+    "tools": [],
+    "workspaceGlobs": [],
+    "packages": [],
+    "packageCount": 0
+  },
+  "frameworks": [
+    {
+      "name": "Composer plugin",
+      "confidence": 0.9,
+      "evidence": [
+        "Detected Composer plugin from composer.json type or composer-plugin-api dependency."
+      ]
+    },
+    {
+      "name": "Psalm",
+      "confidence": 0.84,
+      "evidence": [
+        "Detected Psalm from Composer dependencies, scripts, or Psalm config files."
+      ]
+    }
+  ],
+  "directories": [
+    {
+      "path": "bin",
+      "role": "developer and framework command wrappers",
+      "confidence": 0.85
+    },
+    {
+      "path": "src",
+      "role": "application source",
+      "confidence": 0.85
+    },
+    {
+      "path": "tests",
+      "role": "tests",
+      "confidence": 0.85
+    }
+  ],
+  "entrypoints": [
+    {
+      "path": "composer.json",
+      "kind": "Composer package manifest",
+      "confidence": 0.82
+    },
+    {
+      "path": "phpunit.xml.dist",
+      "kind": "PHPUnit config",
+      "confidence": 0.82
+    },
+    {
+      "path": "psalm.xml.dist",
+      "kind": "Psalm config",
+      "confidence": 0.82
+    },
+    {
+      "path": "psalm-baseline.xml",
+      "kind": "Psalm baseline",
+      "confidence": 0.82
+    },
+    {
+      "path": "bin/install-tools",
+      "kind": "Composer bin executable",
+      "confidence": 0.86
+    },
+    {
+      "path": "install-tools-doctor",
+      "kind": "Composer bin executable",
+      "confidence": 0.86
+    },
+    {
+      "path": "src/Plugin.php",
+      "kind": "Composer plugin class",
+      "confidence": 0.86
+    }
+  ],
+  "docs": [
+    {
+      "path": "README.md",
+      "role": "readme"
+    }
+  ],
+  "ci": [],
+  "generatedHints": []
+}

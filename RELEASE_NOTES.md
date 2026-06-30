@@ -1,4 +1,4 @@
-# @ahmedshaikh/agent-ready v0.2.5
+# @ahmedshaikh/agent-ready v0.2.6
 
 Generate AGENTS.md, repo metadata, and MCP context so AI coding agents can onboard quickly.
 
@@ -29,10 +29,10 @@ Generate AGENTS.md, repo metadata, and MCP context so AI coding agents can onboa
 - Includes copy-paste and machine-readable adoption recipes for Codex, Claude, Cursor, MCP-capable hosts, and terminal agents.
 - Provides deterministic scanners for common repo facts without requiring network access or an API key.
 - Detects npm, pnpm, and Yarn workspaces, plus Turborepo and Nx monorepo signals.
-- Detects Composer libraries, Laravel, Symfony, and Pest projects, including Composer script aliases, Artisan, Symfony console, Pint, PHPUnit, PHP-CS-Fixer, PHPStan, framework directory roles, and migration risk areas.
+- Detects Composer libraries, Composer plugins, Laravel, Symfony, Pest, and Psalm/PHPStan PHP projects, including Composer script aliases, Composer `bin` executable entrypoints, plugin classes, Artisan, Symfony console, Pint, PHPUnit, PHP-CS-Fixer, framework directory roles, and migration risk areas.
 - Detects Ruby gems and Rails apps, including RSpec, Minitest, RuboCop, gemspecs, Rake tasks, executable entrypoints, and Ruby directory roles.
 - Detects Makefile, justfile, Taskfile, and common CI provider commands.
-- Covers Laravel, Symfony, Pest Composer package, generic Composer library, Rails, RSpec Ruby gem, Minitest Ruby gem, Django, Spring Boot, and ASP.NET Core fixture repos with snapshots.
+- Covers Laravel, Symfony, Pest Composer package, generic Composer library, Composer plugin, Rails, RSpec Ruby gem, Minitest Ruby gem, Django, Spring Boot, and ASP.NET Core fixture repos with snapshots.
 - Snapshot-tests `AGENTS.md`, `repo-map.json`, and `commands.json` for every fixture.
 - Warns when `AGENTS.md` references stale local files, with strict mode support for CI.
 - Supports strict validation, metadata and runtime report schemas, fixture snapshots, MCP compatibility checks, package smoke checks, and a GitHub Action.
@@ -76,6 +76,7 @@ Generate AGENTS.md, repo metadata, and MCP context so AI coding agents can onboa
 - `laravel-app`: Laravel application for support request intake, queueing, and account lookup.
 - `node-next-pnpm`: Customer portal built with Next.js for account and billing workflows.
 - `php-composer-library`: Log Tools is a small Composer library for routing application log records.
+- `php-composer-plugin`: Install Tools is a Composer plugin for publishing package assets.
 - `php-pest-package`: Tiny Composer package for expressive Pest assertions and matcher helpers.
 - `python-fastapi-uv`: FastAPI service for support ticket triage and account lookup.
 - `rails-api`: Rails API for billing operations and account lifecycle workflows.

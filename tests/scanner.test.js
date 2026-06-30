@@ -612,6 +612,69 @@ test("detects generic Composer libraries without a PHP framework", async () => {
   assert.ok(scan.commands.some((item) => item.name === "lint" && item.command === "vendor/bin/php-cs-fixer fix --dry-run --diff"));
 });
 
+test("detects Composer plugins, Psalm, and Composer bin executables", async () => {
+  const root = await makeFixture({
+    "README.md": "# Install Tools\n\nInstall Tools is a Composer plugin for publishing package assets.\n",
+    "composer.json": JSON.stringify({
+      name: "acme/install-tools",
+      description: "Composer plugin for publishing package assets.",
+      type: "composer-plugin",
+      require: {
+        php: "^8.2",
+        "composer-plugin-api": "^2.6"
+      },
+      "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "phpunit/phpunit": "^11.0",
+        "vimeo/psalm": "^5.0"
+      },
+      autoload: {
+        "psr-4": {
+          "Acme\\InstallTools\\": "src/"
+        }
+      },
+      extra: {
+        class: "Acme\\InstallTools\\Plugin"
+      },
+      bin: [
+        "bin/install-tools",
+        "install-tools-doctor"
+      ],
+      scripts: {
+        tests: "phpunit",
+        psalm: "psalm",
+        cs: "php-cs-fixer fix --dry-run --diff"
+      }
+    }),
+    "src/Plugin.php": "<?php\nnamespace Acme\\InstallTools;\nclass Plugin {}\n",
+    "bin/install-tools": "#!/usr/bin/env php\n<?php\n",
+    "install-tools-doctor": "#!/usr/bin/env php\n<?php\n",
+    "tests/PluginTest.php": "<?php\nnamespace Acme\\InstallTools\\Tests;\nuse PHPUnit\\Framework\\TestCase;\nclass PluginTest extends TestCase {}\n",
+    "phpunit.xml.dist": "<phpunit />\n",
+    "psalm.xml.dist": "<psalm />\n",
+    "psalm-baseline.xml": "<files />\n"
+  });
+
+  const scan = await scanRepo({ root });
+
+  assert.equal(scan.summary.purpose, "Install Tools is a Composer plugin for publishing package assets.");
+  assert.ok(scan.languages.some((item) => item.name === "PHP"));
+  assert.ok(scan.packageManagers.some((item) => item.name === "composer"));
+  assert.ok(scan.frameworks.some((item) => item.name === "Composer plugin"));
+  assert.ok(scan.frameworks.some((item) => item.name === "Psalm"));
+  assert.ok(!scan.frameworks.some((item) => item.name === "Composer library"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "composer.json" && item.kind === "Composer package manifest"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "src/Plugin.php" && item.kind === "Composer plugin class"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "bin/install-tools" && item.kind === "Composer bin executable"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "install-tools-doctor" && item.kind === "Composer bin executable"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "psalm.xml.dist" && item.kind === "Psalm config"));
+  assert.ok(scan.entrypoints.some((item) => item.path === "psalm-baseline.xml" && item.kind === "Psalm baseline"));
+  assert.ok(scan.commands.some((item) => item.name === "install" && item.command === "composer install"));
+  assert.ok(scan.commands.some((item) => item.name === "test" && item.command === "composer tests"));
+  assert.ok(scan.commands.some((item) => item.name === "typecheck" && item.command === "composer psalm"));
+  assert.ok(scan.commands.some((item) => item.name === "lint" && item.command === "composer cs"));
+});
+
 test("detects Django projects and manage.py test command", async () => {
   const root = await makeFixture({
     "README.md": "# Support Desk\n\nDjango service for support ticket workflows.\n",

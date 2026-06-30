@@ -307,3 +307,52 @@ Follow-up candidates:
 - Test Composer plugin packages.
 - Test Composer packages that use Psalm instead of PHPStan.
 - Detect Composer `bin` executables as package entrypoints.
+
+## 2026-06-30: External Composer plugin and Psalm repo check
+
+Package tested: `@ahmedshaikh/agent-ready@0.2.5`
+
+Target repos: shallow clones of `composer/installers` and `vimeo/psalm` into
+`/private/tmp`, then ran the published CLI through `pnpm dlx`.
+
+Commands exercised:
+
+```bash
+agent-ready scan --json
+```
+
+What worked:
+
+- PHP and Composer were detected in both repos.
+- `composer/installers` surfaced `composer test` and `composer phpstan` from
+  Composer scripts.
+- `vimeo/psalm` surfaced the package purpose, Composer install guidance, and a
+  lint command from Composer scripts.
+
+Friction found:
+
+- `composer/installers` was not identified as a Composer plugin even though
+  `composer.json` has `"type": "composer-plugin"`.
+- The Composer plugin class from `extra.class` was not surfaced as an
+  entrypoint.
+- `vimeo/psalm` was not identified as a Psalm/static-analysis project.
+- `vimeo/psalm` fell back to raw PHPUnit instead of the declared
+  `composer tests` script.
+- `vimeo/psalm` missed the declared `composer psalm` static-analysis script.
+- Psalm config/baseline files and Composer `bin` executables were not surfaced
+  as entrypoints.
+
+Finding fixed:
+
+- Added Composer plugin classification, plugin class entrypoints resolved from
+  `extra.class` and PSR-4 autoload data, Psalm config/baseline/dependency/script
+  detection, Composer `tests`/`phpunit`/Psalm script aliases, Composer `bin`
+  executable entrypoints, and a committed Composer plugin/Psalm fixture with
+  AGENTS.md/repo-map/commands snapshots.
+
+Follow-up candidates:
+
+- Test Composer packages that use PHP_CodeSniffer without PHP-CS-Fixer.
+- Detect Composer plugin activation notes from `config.allow-plugins`.
+- Consider separate command labels for packages that publish multiple CLI
+  executables.

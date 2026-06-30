@@ -260,6 +260,10 @@ function detectEntrypoints(files) {
     ["phpstan.dist.neon", "PHPStan config"],
     [".php-cs-fixer.php", "PHP-CS-Fixer config"],
     [".php-cs-fixer.dist.php", "PHP-CS-Fixer config"],
+    ["psalm.xml", "Psalm config"],
+    ["psalm.xml.dist", "Psalm config"],
+    ["psalm.dist.xml", "Psalm config"],
+    ["psalm-baseline.xml", "Psalm baseline"],
     ["Program.cs", ".NET application entrypoint"]
   ];
 
@@ -276,6 +280,9 @@ function detectEntrypoints(files) {
     }
     if (/^phpstan[^/]*\.neon$/.test(file) && file !== "phpstan.neon" && file !== "phpstan.dist.neon") {
       entrypoints.push({ path: file, kind: "PHPStan config", confidence: 0.78 });
+    }
+    if (/^psalm-baseline[^/]*\.xml(?:\.dist)?$/.test(file) && file !== "psalm-baseline.xml") {
+      entrypoints.push({ path: file, kind: "Psalm baseline", confidence: 0.78 });
     }
     if (/^exe\/[^/]+$/.test(file)) {
       entrypoints.push({ path: file, kind: "Ruby executable entrypoint", confidence: 0.84 });
@@ -843,9 +850,103 @@ function hasComposerScript(composerJson, name) {
   return Object.prototype.hasOwnProperty.call(composerJson?.scripts ?? {}, name);
 }
 
+function composerStringList(value) {
+  if (typeof value === "string" && value.trim()) {
+    return [value.trim()];
+  }
+  if (Array.isArray(value)) {
+    return value.filter((item) => typeof item === "string" && item.trim()).map((item) => item.trim());
+  }
+  return [];
+}
+
+function isSafeComposerRelativePath(value) {
+  return Boolean(value)
+    && !path.posix.isAbsolute(value)
+    && !value.includes("\\")
+    && !value.split("/").includes("..")
+    && !value.endsWith("/");
+}
+
+function composerBinEntrypoints(composerJson, files) {
+  return composerStringList(composerJson?.bin)
+    .filter(isSafeComposerRelativePath)
+    .filter((file) => files.has(file))
+    .sort((a, b) => a.localeCompare(b))
+    .map((file) => ({
+      path: file,
+      kind: "Composer bin executable",
+      confidence: 0.86
+    }));
+}
+
+function composerAutoloadPrefixes(composerJson) {
+  const psr4 = composerJson?.autoload?.["psr-4"] ?? {};
+  const prefixes = [];
+  for (const [namespace, dirs] of Object.entries(psr4)) {
+    for (const dir of composerStringList(dirs)) {
+      const normalizedDir = dir.replace(/\/$/, "");
+      prefixes.push({
+        namespace,
+        dir: normalizedDir === "." ? "" : normalizedDir
+      });
+    }
+  }
+  return prefixes;
+}
+
+function classNameToPath(className) {
+  return `${className.replace(/^\\+/, "").replace(/\\/g, "/")}.php`;
+}
+
+function composerPluginClassEntrypoints(composerJson, files) {
+  const pluginClasses = composerStringList(composerJson?.extra?.class);
+  if (pluginClasses.length === 0) {
+    return [];
+  }
+
+  const prefixes = composerAutoloadPrefixes(composerJson);
+  const entrypoints = [];
+  for (const pluginClass of pluginClasses) {
+    const normalizedClass = pluginClass.replace(/^\\+/, "");
+    const candidates = [];
+    for (const prefix of prefixes) {
+      if (!normalizedClass.startsWith(prefix.namespace)) {
+        continue;
+      }
+      const relativeClass = normalizedClass.slice(prefix.namespace.length);
+      const classPath = classNameToPath(relativeClass);
+      candidates.push(prefix.dir ? `${prefix.dir}/${classPath}` : classPath);
+    }
+    candidates.push(`src/${classNameToPath(normalizedClass.split("\\").at(-1) ?? normalizedClass)}`);
+
+    for (const candidate of candidates) {
+      if (isSafeComposerRelativePath(candidate) && files.has(candidate)) {
+        entrypoints.push({
+          path: candidate,
+          kind: "Composer plugin class",
+          confidence: 0.86
+        });
+        break;
+      }
+    }
+  }
+
+  return entrypoints;
+}
+
+function hasPsalmConfig(files) {
+  return [...files].some((file) => /^psalm(?:\.dist)?\.xml$/.test(file) || file === "psalm.xml.dist");
+}
+
+function hasPsalmBaseline(files) {
+  return [...files].some((file) => /^psalm-baseline[^/]*\.xml(?:\.dist)?$/.test(file));
+}
+
 async function detectPhp(root, files, evidence) {
   const commands = [];
   const frameworks = [];
+  const entrypoints = [];
   const composerJson = files.has("composer.json") ? await readJsonFile(path.join(root, "composer.json")) : null;
   const deps = composerDependencies(composerJson);
   const purpose = typeof composerJson?.description === "string" && composerJson.description.trim()
@@ -853,11 +954,12 @@ async function detectPhp(root, files, evidence) {
     : null;
 
   if (!composerJson && !files.has("artisan") && !files.has("public/index.php")) {
-    return { commands, frameworks, purpose };
+    return { commands, frameworks, purpose, entrypoints };
   }
 
   if (composerJson) {
     commands.push(command("install", "composer install", files.has("composer.lock") ? "composer.lock" : "composer.json", files.has("composer.lock") ? 0.9 : 0.82));
+    entrypoints.push(...composerBinEntrypoints(composerJson, files));
   }
 
   const isComposerLibrary = composerJson?.type === "library";
@@ -867,6 +969,16 @@ async function detectPhp(root, files, evidence) {
       confidence: 0.76,
       evidence: [addEvidence(evidence, "Detected Composer library from composer.json type.")]
     });
+  }
+
+  const isComposerPlugin = composerJson?.type === "composer-plugin" || hasComposerDependency(deps, "composer-plugin-api");
+  if (isComposerPlugin) {
+    frameworks.push({
+      name: "Composer plugin",
+      confidence: composerJson?.type === "composer-plugin" ? 0.9 : 0.8,
+      evidence: [addEvidence(evidence, "Detected Composer plugin from composer.json type or composer-plugin-api dependency.")]
+    });
+    entrypoints.push(...composerPluginClassEntrypoints(composerJson, files));
   }
 
   const hasLaravel = hasComposerDependency(deps, "laravel/framework")
@@ -927,6 +1039,9 @@ async function detectPhp(root, files, evidence) {
   const composerScripts = composerJson?.scripts ?? {};
   const composerScriptLabels = [
     ["test", "test"],
+    ["tests", "test"],
+    ["phpunit", "test"],
+    ["phpunit-std", "test"],
     ["test:unit", "unit tests"],
     ["test:integration", "integration tests"],
     ["test:parallel", "parallel tests"],
@@ -937,6 +1052,9 @@ async function detectPhp(root, files, evidence) {
     ["test:static", "typecheck"],
     ["phpstan", "typecheck"],
     ["phpstan-baseline", "typecheck"],
+    ["psalm", "typecheck"],
+    ["psalm:check", "typecheck"],
+    ["psalm-check", "typecheck"],
     ["lint", "lint"],
     ["cs", "lint"],
     ["cs-fix", "lint"],
@@ -980,6 +1098,25 @@ async function detectPhp(root, files, evidence) {
     }
     addEvidence(evidence, "Detected PHP-CS-Fixer from PHP project files.");
   }
+
+  const hasPsalm = packageName === "vimeo/psalm"
+    || hasComposerDependency(deps, "vimeo/psalm")
+    || hasComposerDependency(deps, "psalm/psalm")
+    || Object.keys(deps).some((name) => name.startsWith("psalm/plugin-"))
+    || hasPsalmConfig(files)
+    || hasPsalmBaseline(files)
+    || hasComposerScript(composerJson, "psalm");
+  if (hasPsalm) {
+    frameworks.push({
+      name: "Psalm",
+      confidence: 0.84,
+      evidence: [addEvidence(evidence, "Detected Psalm from Composer dependencies, scripts, or Psalm config files.")]
+    });
+    if (!commands.some((item) => item.name === "typecheck")) {
+      commands.push(command("typecheck", "vendor/bin/psalm", "Psalm detection", 0.78));
+    }
+  }
+
   if (hasComposerDependency(deps, "phpstan/phpstan") || [...files].some((file) => /^phpstan[^/]*\.neon$/.test(file))) {
     if (!commands.some((item) => item.name === "typecheck")) {
       commands.push(command("typecheck", "vendor/bin/phpstan analyse", "PHPStan detection", 0.78));
@@ -987,7 +1124,7 @@ async function detectPhp(root, files, evidence) {
     addEvidence(evidence, "Detected PHPStan from PHP project files.");
   }
 
-  return { commands, frameworks, purpose };
+  return { commands, frameworks, purpose, entrypoints };
 }
 
 async function detectJava(root, files, evidence) {
@@ -1558,7 +1695,7 @@ export async function scanRepo(options = {}) {
   const packageManagers = detectPackageManagers(files, evidence);
   const languages = detectLanguages(files, entries, evidence);
   const directories = detectDirectories(entries, config);
-  const entrypoints = detectEntrypoints(files);
+  const staticEntrypoints = detectEntrypoints(files);
   const monorepo = await detectMonorepo(root, files, packageManagers, evidence);
 
   const node = await detectNode(root, files, packageManagers, evidence);
@@ -1601,6 +1738,10 @@ export async function scanRepo(options = {}) {
     [...node.frameworks, ...python.frameworks, ...ruby.frameworks, ...php.frameworks, ...java.frameworks, ...dotnet.frameworks, ...go.frameworks, ...rust.frameworks],
     (item) => item.name
   ).sort((a, b) => a.name.localeCompare(b.name));
+  const entrypoints = uniqueBy(
+    [...staticEntrypoints, ...php.entrypoints],
+    (item) => `${item.path}:${item.kind}`
+  );
 
   const purpose = config.sections?.purpose ?? docsResult.purpose ?? php.purpose ?? ruby.purpose ?? node.purpose ?? "Repository purpose was not confidently detected.";
   const primaryLanguage = [...languages].sort((a, b) => b.confidence - a.confidence || b.fileCount - a.fileCount)[0]?.name ?? null;

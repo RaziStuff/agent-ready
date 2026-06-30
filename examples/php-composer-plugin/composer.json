@@ -1,0 +1,31 @@
+{
+  "name": "acme/install-tools",
+  "description": "Composer plugin for publishing package assets.",
+  "type": "composer-plugin",
+  "require": {
+    "php": "^8.2",
+    "composer-plugin-api": "^2.6"
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^3.0",
+    "phpunit/phpunit": "^11.0",
+    "vimeo/psalm": "^5.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Acme\\InstallTools\\": "src/"
+    }
+  },
+  "extra": {
+    "class": "Acme\\InstallTools\\Plugin"
+  },
+  "bin": [
+    "bin/install-tools",
+    "install-tools-doctor"
+  ],
+  "scripts": {
+    "tests": "phpunit",
+    "psalm": "psalm",
+    "cs": "php-cs-fixer fix --dry-run --diff"
+  }
+}

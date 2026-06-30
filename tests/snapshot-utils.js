@@ -18,6 +18,7 @@ export const SNAPSHOT_CASES = [
   "symfony-app",
   "php-pest-package",
   "php-composer-library",
+  "php-composer-plugin",
   "django-service",
   "spring-boot-api",
   "dotnet-web-api"
